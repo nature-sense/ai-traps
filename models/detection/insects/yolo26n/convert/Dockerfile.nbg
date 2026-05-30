@@ -1,0 +1,61 @@
+# ── Dockerfile.nbg ─────────────────────────────────────────────────────────────
+# Build:  docker build -f Dockerfile.nbg -t nbg-converter .
+# Run:    docker run --rm -v $(pwd)/models:/models nbg-converter \
+#           python /convert_nbg.py --input /models/best.onnx --output /models/yolo26n.nbg
+#
+# Requires an x86_64 Linux host (ACUITY Toolkit is not available on ARM or macOS).
+#
+# PREREQUISITE: You must place the ACUITY Toolkit package in this directory.
+#   The ACUITY Toolkit is provided by VeriSilicon / Allwinner under NDA.
+#   Expected file: acuity-toolkit-*.tar.gz
+# ────────────────────────────────────────────────────────────────────────────────
+
+FROM ubuntu:22.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+ENV PYTHONUNBUFFERED=1
+
+# ── System dependencies ────────────────────────────────────────────────────────
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    python3 \
+    python3-pip \
+    python3-dev \
+    python3-venv \
+    wget \
+    unzip \
+    libgl1-mesa-glx \
+    libglib2.0-0 \
+    libsm6 \
+    libxext6 \
+    libxrender-dev \
+    libgomp1 \
+    && rm -rf /var/lib/apt/lists/*
+
+# ── Install ACUITY Toolkit ─────────────────────────────────────────────────────
+# The ACUITY Toolkit is VeriSilicon's proprietary tool for converting ONNX/PyTorch
+# models to NBG format for Vivante VIPLite NPUs.
+#
+# It is typically distributed as a tarball (acuity-toolkit-*.tar.gz) containing:
+#   - Python wheels for the conversion libraries
+#   - Pre-built binaries (acuity-cli, etc.)
+#   - Example scripts and configuration templates
+#
+# To obtain the toolkit:
+#   1. Contact VeriSilicon or Allwinner for access (NDA required)
+#   2. Download the Linux x86_64 package
+#   3. Place the tarball in this directory as acuity-toolkit.tar.gz
+#
+# Uncomment and adjust the lines below once you have the toolkit:
+#
+# COPY acuity-toolkit.tar.gz /tmp/
+# RUN tar xzf /tmp/acuity-toolkit.tar.gz -C /opt/ && \
+#     rm /tmp/acuity-toolkit.tar.gz && \
+#     pip3 install --no-cache-dir /opt/acuity-toolkit/wheels/*.whl
+#
+# For now, install a placeholder so the Dockerfile builds:
+RUN pip3 install --no-cache-dir numpy onnx onnxruntime
+
+# ── Copy conversion script ─────────────────────────────────────────────────────
+COPY convert_nbg.py /convert_nbg.py
+
+ENTRYPOINT ["python3", "/convert_nbg.py"]

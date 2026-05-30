@@ -1,0 +1,7 @@
+# ── YOLO26n Insect Detection Training ─────────────────────────────────────────
+# Install with:  pip install -r requirements.txt
+#
+# Requires a GPU (NVIDIA CUDA) for reasonable training times.
+# CPU training is possible but will be very slow.
+
+ultralytics>=8.3.0

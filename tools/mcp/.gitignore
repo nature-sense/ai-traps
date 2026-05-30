@@ -1,0 +1,19 @@
+# PyCharm
+.idea/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+*.egg
+.venv/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temp files
+*.tar.gz
+/tmp/

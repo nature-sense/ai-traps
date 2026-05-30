@@ -1,0 +1,5 @@
+option('platform', type: 'string', value: 'host',
+  description: 'Target platform. Valid values: rock3c, cubie-a7s, rdk-x5, host')
+
+option('toolkit_build_dir', type: 'string', value: '../toolkit/build',
+  description: 'Path to the pre-built toolkit build directory containing libai-trap-toolkit.a')

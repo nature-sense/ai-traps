@@ -1,0 +1,658 @@
+openapi: "3.0.3"
+info:
+  title: Camera Trap REST API
+  description: |
+    REST API + SSE for remote monitoring and control of the NatureSense AI Camera Trap.
+
+    ## Session Lifecycle
+    1. **Provision** the trap (one-time): `POST /v1/provision`
+    2. **Start a session**: `POST /v1/traps/{trapId}/sessions`
+       - Inference/tracking/cropping/storage begin
+    3. **Monitor** via SSE: `GET /v1/events`
+    4. **Stop the session**: `PUT /v1/traps/{trapId}/sessions/{id}/stop`
+       - Inference/tracking/cropping/storage stop
+       - MJPEG stream stays alive for commissioning
+
+    ## SSE (Server-Sent Events)
+    Connect to `GET /v1/events` for real-time events:
+    - `session_started` — when a session begins
+    - `session_stopped` — when a session ends
+    - `session_deleted` — when an old session is auto-deleted (max_sessions limit)
+    - `track_detected` — when a new track is detected
+    - `crop_saved` — when a crop image is saved to disk
+
+
+    ## MJPEG Streams
+    - `GET /stream.mjpg` — 640×480 with bounding box overlays
+    - `GET /stream_hires.mjpg` — 1920×1080 raw (no overlays)
+  version: "1.0.0"
+
+servers:
+  - url: "http://{trap-ip}:8080"
+    description: "Camera trap device (LAN only, no auth)"
+    variables:
+      trap-ip:
+        default: "192.168.1.100"
+        description: "IP address of the camera trap device"
+
+paths:
+  # ── Provisioning ──────────────────────────────────────────────────────────
+  /v1/provision:
+    post:
+      summary: "Provision the trap with a unique ID (one-time operation)"
+      operationId: provisionTrap
+      tags: [Provisioning]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [trapId]
+              properties:
+                trapId:
+                  type: string
+                  description: "Unique identifier for this trap (e.g. serial number)"
+                  example: "CT-2026-0001"
+      responses:
+        "201":
+          description: "Trap provisioned successfully"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProvisionResponse"
+        "400":
+          description: "Missing or invalid trapId"
+        "409":
+          description: "Already provisioned"
+
+  # ── Trap Status ───────────────────────────────────────────────────────────
+  "/v1/traps/{trapId}":
+    get:
+      summary: "Get trap status and active session info"
+      operationId: getTrapStatus
+      tags: [Trap]
+      parameters:
+        - name: trapId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: "Trap status"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TrapStatus"
+        "404":
+          description: "Trap not found"
+
+  # ── Sessions ──────────────────────────────────────────────────────────────
+  "/v1/traps/{trapId}/sessions":
+    post:
+      summary: "Start a new monitoring session"
+      operationId: startSession
+      tags: [Sessions]
+      parameters:
+        - name: trapId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "201":
+          description: "Session started"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Session"
+        "404":
+          description: "Trap not found"
+        "500":
+          description: "Failed to start session"
+    get:
+      summary: "List all sessions (most recent first)"
+      operationId: listSessions
+      tags: [Sessions]
+      parameters:
+        - name: trapId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 50
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+      responses:
+        "200":
+          description: "List of sessions"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  sessions:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Session"
+
+  "/v1/traps/{trapId}/sessions/active":
+    get:
+      summary: "Get the currently active session (if any)"
+      operationId: getActiveSession
+      tags: [Sessions]
+      parameters:
+        - name: trapId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: "Active session info or {active: false}"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/ActiveSession"
+                  - type: object
+                    properties:
+                      active:
+                        type: boolean
+                        enum: [false]
+
+  "/v1/traps/{trapId}/sessions/{sessionId}":
+    get:
+      summary: "Get session details"
+      operationId: getSession
+      tags: [Sessions]
+      parameters:
+        - name: trapId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: "Session details"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Session"
+
+  "/v1/traps/{trapId}/sessions/{sessionId}/stop":
+    put:
+      summary: "Stop a monitoring session"
+      operationId: stopSession
+      tags: [Sessions]
+      parameters:
+        - name: trapId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: "Session stopped"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Session"
+        "400":
+          description: "Session not active"
+        "404":
+          description: "Trap not found"
+
+  # ── Detections ────────────────────────────────────────────────────────────
+  "/v1/traps/{trapId}/sessions/{sessionId}/detections":
+    get:
+      summary: "List detections for a session"
+      operationId: listDetections
+      tags: [Detections]
+      parameters:
+        - name: trapId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 50
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+      responses:
+        "200":
+          description: "List of detections"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detections:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Detection"
+
+  "/v1/traps/{trapId}/detections/{detectionId}":
+    get:
+      summary: "Get a single detection"
+      operationId: getDetection
+      tags: [Detections]
+      parameters:
+        - name: trapId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: detectionId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: "Detection details"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Detection"
+
+  # ── Crop Images ───────────────────────────────────────────────────────────
+  "/v1/crops/{date}/{filename}":
+    get:
+      summary: "Serve a crop JPEG image"
+      operationId: getCropImage
+      tags: [Images]
+      parameters:
+        - name: date
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: "^\\d{4}-\\d{2}-\\d{2}$"
+            example: "2026-05-12"
+        - name: filename
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: "^\\d+_\\d+\\.jpg$"
+            example: "1715500000_3.jpg"
+      responses:
+        "200":
+          description: "JPEG image"
+          content:
+            image/jpeg:
+              schema:
+                type: string
+                format: binary
+        "404":
+          description: "Image not found"
+
+  # ── SSE ───────────────────────────────────────────────────────────────────
+  /v1/events:
+    get:
+      summary: "SSE (Server-Sent Events) stream for real-time monitoring"
+      operationId: subscribeEvents
+      tags: [SSE]
+      responses:
+        "200":
+          description: "SSE event stream"
+          content:
+            text/event-stream:
+              schema:
+                type: string
+                description: "SSE stream with events: session_started, session_stopped, session_deleted, track_detected, crop_saved"
+
+      x-codeSamples:
+        - lang: JavaScript
+          source: |
+            const evtSource = new EventSource("http://192.168.1.100:8080/v1/events");
+            evtSource.addEventListener("crop_saved", (e) => {
+              const data = JSON.parse(e.data);
+              console.log("New crop:", data.imageUrl);
+            });
+        - lang: Dart
+          source: |
+            import 'dart:async';
+            import 'package:http/http.dart' as http;
+            import 'package:eventsource/eventsource.dart';
+
+            final client = http.Client();
+            final eventSource = EventSource(
+              Uri.parse('http://192.168.1.100:8080/v1/events'),
+              client: client,
+            );
+            eventSource.addEventListener('crop_saved', (event) {
+              final data = jsonDecode(event.data);
+              print('New crop: ${data['imageUrl']}');
+            });
+
+  # ── MJPEG Streams ─────────────────────────────────────────────────────────
+  /stream.mjpg:
+    get:
+      summary: "MJPEG stream (640×480 with bounding box overlays)"
+      operationId: streamMjpeg
+      tags: [Streams]
+      responses:
+        "200":
+          description: "MJPEG multipart stream"
+          content:
+            multipart/x-mixed-replace:
+              schema:
+                type: string
+                format: binary
+
+  /stream_hires.mjpg:
+    get:
+      summary: "Hi-res MJPEG stream (1920×1080 raw, no overlays)"
+      operationId: streamHiresMjpeg
+      tags: [Streams]
+      responses:
+        "200":
+          description: "MJPEG multipart stream"
+          content:
+            multipart/x-mixed-replace:
+              schema:
+                type: string
+                format: binary
+
+  # ── System Metrics ──────────────────────────────────────────────────────────
+  "/v1/traps/{trapId}/system":
+    get:
+      summary: "Get real-time system metrics (CPU, memory, disk, temperature, pipeline performance)"
+      operationId: getSystemMetrics
+      tags: [System]
+      parameters:
+        - name: trapId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: "System metrics snapshot"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SystemMetrics"
+        "404":
+          description: "Trap not found"
+
+  /status:
+    get:
+      summary: "Server status (JSON)"
+      operationId: getStatus
+      tags: [System]
+
+      responses:
+        "200":
+          description: "Server status"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum: [running, stopped]
+                  port:
+                    type: integer
+                  clients_served:
+                    type: integer
+                  frames_served:
+                    type: integer
+                  sse_clients:
+                    type: integer
+
+components:
+  schemas:
+    ProvisionResponse:
+      type: object
+      properties:
+        trapId:
+          type: string
+        status:
+          type: string
+          enum: [provisioned]
+
+    TrapStatus:
+      type: object
+      properties:
+        trapId:
+          type: string
+        status:
+          type: string
+          enum: [online]
+        activeSession:
+          oneOf:
+            - $ref: "#/components/schemas/ActiveSession"
+            - type: object
+              properties:
+                active:
+                  type: boolean
+                  enum: [false]
+
+    Session:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: "Session ID (auto-increment)"
+        startedAt:
+          type: integer
+          description: "Unix timestamp in milliseconds"
+        stoppedAt:
+          type: integer
+          nullable: true
+          description: "Unix timestamp in milliseconds (null if still active)"
+        detectionCount:
+          type: integer
+          description: "Number of detections in this session"
+
+    ActiveSession:
+      type: object
+      properties:
+        active:
+          type: boolean
+          enum: [true]
+        sessionId:
+          type: integer
+        startedAt:
+          type: integer
+        detectionCount:
+          type: integer
+
+    Detection:
+      type: object
+      properties:
+        id:
+          type: integer
+        timestamp:
+          type: integer
+          description: "Unix timestamp in milliseconds"
+        trackId:
+          type: integer
+          description: "Track ID assigned by ByteTracker"
+        classId:
+          type: integer
+          description: "YOLO class ID"
+        confidence:
+          type: number
+          format: float
+        sessionId:
+          type: integer
+        imageUrl:
+          type: string
+          description: "URL to the crop JPEG (relative to server root)"
+          example: "/v1/crops/2026-05-12/1715500000_3.jpg"
+
+    SseEvent:
+      type: object
+      description: "Payload of an SSE event (varies by event type)"
+      properties:
+        sessionId:
+          type: integer
+        trackId:
+          type: integer
+        classId:
+          type: integer
+        confidence:
+          type: number
+          format: float
+        timestamp:
+          type: integer
+        imageUrl:
+          type: string
+        detectionId:
+          type: integer
+        startedAt:
+          type: integer
+        stoppedAt:
+          type: integer
+        detectionCount:
+          type: integer
+
+    SystemMetrics:
+      type: object
+      description: "Real-time system health and pipeline performance metrics"
+      properties:
+        timestamp_ms:
+          type: integer
+          description: "Unix timestamp in milliseconds"
+        uptime_seconds:
+          type: integer
+          description: "Process uptime in seconds"
+        cpu:
+          type: object
+          properties:
+            temp_celsius:
+              type: number
+              format: float
+              description: "CPU temperature in °C"
+            usage_percent:
+              type: number
+              format: float
+              description: "CPU usage percentage"
+            freq_mhz:
+              type: integer
+              description: "CPU frequency in MHz"
+            load_avg_1m:
+              type: number
+              format: float
+            load_avg_5m:
+              type: number
+              format: float
+            load_avg_15m:
+              type: number
+              format: float
+        memory:
+          type: object
+          properties:
+            total_kb:
+              type: integer
+            available_kb:
+              type: integer
+            free_kb:
+              type: integer
+            used_kb:
+              type: integer
+            swap_total_kb:
+              type: integer
+            swap_used_kb:
+              type: integer
+        storage:
+          type: object
+          properties:
+            root:
+              type: object
+              properties:
+                total_bytes:
+                  type: integer
+                used_bytes:
+                  type: integer
+            captures:
+              type: object
+              properties:
+                total_bytes:
+                  type: integer
+                used_bytes:
+                  type: integer
+        npu:
+          type: object
+          properties:
+            temp_celsius:
+              type: number
+              format: float
+              description: "NPU temperature in °C (if available)"
+        network:
+          type: object
+          properties:
+            rx_bytes:
+              type: integer
+              description: "Cumulative bytes received"
+            tx_bytes:
+              type: integer
+              description: "Cumulative bytes transmitted"
+        pipeline:
+          type: object
+          properties:
+            fps:
+              type: number
+              format: float
+              description: "Pipeline frames per second (smoothed over 30 frames)"
+            inference_time_us:
+              type: number
+              format: float
+              description: "NPU inference time per frame in microseconds"
+            tracking_time_us:
+              type: number
+              format: float
+              description: "Tracker IoU matching time per frame in microseconds"
+            tick_time_us:
+              type: number
+              format: float
+              description: "Total pipeline tick time in microseconds"
+            frames_processed:
+              type: integer
+              description: "Cumulative frames processed"
+        power:
+          type: object
+          properties:
+            voltage_v:
+              type: number
+              format: float
+              description: "Supply voltage in volts (if available)"
+            current_a:
+              type: number
+              format: float
+              description: "Supply current in amps (if available)"
+

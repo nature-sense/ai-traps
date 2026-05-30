@@ -700,6 +700,46 @@ async def list_tools() -> list[Tool]:
                 "required": ["platform"]
             }
         ),
+
+        # ── Convert Model Tool ──
+        Tool(
+            name="convert_model",
+            description="Convert ONNX model to target-specific format (RKNN for rock3c, NBG for cubie-a7s) on the target board via SSH.",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "platform": {
+                        "type": "string",
+                        "description": "Target platform: rock3c or cubie-a7s",
+                        "enum": ["rock3c", "cubie-a7s"]
+                    },
+                    "trap_type": {
+                        "type": "string",
+                        "description": "Trap type (e.g., 'detection', 'classification'). Determines which model to compile.",
+                        "default": "detection"
+                    },
+                    "host": {
+                        "type": "string",
+                        "description": "Board hostname (default: per-platform)"
+                    },
+                    "user": {
+                        "type": "string",
+                        "description": "SSH user (default: per-platform)"
+                    },
+                    "quantize": {
+                        "type": "boolean",
+                        "description": "Enable INT8 quantization (default: true)",
+                        "default": True
+                    },
+                    "timeout": {
+                        "type": "number",
+                        "description": "Max conversion time in seconds (default: 600, max: 900)",
+                        "default": 600
+                    }
+                },
+                "required": ["platform"]
+            }
+        ),
     ]
 
 
@@ -1346,6 +1386,31 @@ async def handle_call_tool(name: str, arguments: dict | None) -> list[TextConten
                 "crash_info": crash_info,
                 "gdb_output": gdb_result["combined"][-5000:]
             }, indent=2))]
+
+        # ── convert_model ──
+        elif name == "convert_model":
+            platform = args.get("platform")
+            if not platform:
+                return [TextContent(type="text", text="Error: 'platform' parameter is required")]
+
+            trap_type = args.get("trap_type", "detection")
+            project_root = args.get("project_root", str(Path.home() / "naturesense" / "ai-traps"))
+            quantize = args.get("quantize", True)
+            timeout = min(args.get("timeout", 600), 900)
+
+            if platform == "rock3c":
+                result = compile_rknn_model(project_root, trap_type)
+            elif platform == "cubie-a7s":
+                result = compile_nbg_model(project_root, trap_type)
+            else:
+                result = {
+                    "component": "model",
+                    "platform": platform,
+                    "success": False,
+                    "message": f"Model conversion not supported for platform '{platform}'"
+                }
+
+            return [TextContent(type="text", text=json.dumps(result, indent=2))]
 
         # ── list_binaries ──
         elif name == "list_binaries":

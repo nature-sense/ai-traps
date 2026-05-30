@@ -50,9 +50,6 @@ actor_sources = files(
   # Decision (decide when to trigger capture)
   'decision/decision_actor.cpp',
 
-  # Storage (SQLite + JPEG persistence)
-  'storage2/storage_actor.cpp',
-
   # HTTP server + SSE + MJPEG streaming
   'http-sse/http_sse_actor.cpp',
   'http-sse/civetweb.c',

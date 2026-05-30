@@ -100,7 +100,6 @@ Or use the MCP build tools (see [tools/mcp/](tools/mcp/README.md)).
 | **JPEGEncoderActor** | Hardware/software JPEG encoding |
 | **OverlayActor** | Draws bounding boxes on preview stream |
 | **MJPEGBridgeActor** | Serves MJPEG stream over HTTP |
-| **StorageActor** | Saves crops and metadata to SQLite |
 | **ClassifierActor** | Optional species classification (HAL) |
 | **BestShotKeeperActor** | Selects best frame per track |
 | **ActuatorActor** | Controls relays/servos for physical intervention |

@@ -236,11 +236,13 @@ bool BaseDetectionPipeline::init(const PipelineConfig& cfg) {
     registry->registerActor("http_handler", http_handler_.get());
     registry->registerActor("session_actor", session_actor_.get());
     registry->registerActor("event_publisher", event_publisher_.get());
+    registry->registerActor("mjpeg_bridge", mjpeg_bridge_.get());
 
     // ── 12. Start actors ──────────────────────────────────────────────────────
     http_server_->onStart();
     http_handler_->onStart();
     event_publisher_->onStart();
+    mjpeg_bridge_->onStart();
 
     // ── 13. Wire the pipeline ─────────────────────────────────────────────────
     wire();
@@ -256,6 +258,11 @@ void BaseDetectionPipeline::shutdown() {
 
     // Stop the run loop
     running_.store(false);
+
+    // Stop MJPEG bridge
+    if (mjpeg_bridge_) {
+        mjpeg_bridge_->onStop();
+    }
 
     // Stop event publisher
     if (event_publisher_) {
@@ -276,6 +283,7 @@ void BaseDetectionPipeline::shutdown() {
     registry->unregisterActor("session_actor");
     registry->unregisterActor("http_handler");
     registry->unregisterActor("http_server");
+    registry->unregisterActor("mjpeg_bridge");
 
     // Shutdown session actor
     if (session_actor_) {
@@ -358,12 +366,7 @@ void BaseDetectionPipeline::run_loop() {
 
     while (running_.load()) {
         // ── 1. Check if inference is enabled (session active) ──────────────────
-        if (!session_actor_->is_inference_enabled()) {
-            // No active session — skip frame processing but maintain timing
-            next_frame_time += frame_interval;
-            std::this_thread::sleep_until(next_frame_time);
-            continue;
-        }
+        bool inference_enabled = session_actor_->is_inference_enabled();
 
         // ── 2. Capture frame ───────────────────────────────────────────────────
         // camera->tick() pushes frames to out_frame_* ports, which triggers
@@ -371,16 +374,17 @@ void BaseDetectionPipeline::run_loop() {
         //   out_frame_lores  → inference.in_frame  → tracker.in_detections
         //   out_frame_full   → cropper.in_frame_full
         //   out_frame_medium → overlay.in_frame
+        //
+        // We always tick the camera so the MJPEG stream gets frames, even when
+        // no active monitoring session exists. The inference/tracker/cropper
+        // path is only triggered when inference is enabled.
         camera_->tick();
 
         // ── 3. Flush overlay ───────────────────────────────────────────────────
         // Push any pending frame that didn't receive tracked objects
         overlay_->flush();
 
-        // ── 4. Release frame buffers ───────────────────────────────────────────
-        // camera_->release_frames();
-
-        // ── 5. Frame timing ────────────────────────────────────────────────────
+        // ── 4. Frame timing ────────────────────────────────────────────────────
         next_frame_time += frame_interval;
         std::this_thread::sleep_until(next_frame_time);
     }

@@ -109,6 +109,7 @@ vsc_lib        = cpp.find_library('VSC', dirs: lib_dirs, required: false)
 gal_lib        = cpp.find_library('GAL', dirs: lib_dirs, required: false)
 
 # Standard dependencies
+yaml_cpp_dep  = dependency('yaml-cpp', required: false)
 sqlite3_dep   = dependency('sqlite3', required: false)
 jpeg_dep      = dependency('libjpeg', required: false)
 turbojpeg_dep = dependency('libturbojpeg', required: false)
@@ -172,7 +173,7 @@ endif
 # ─── Platform Dependencies ────────────────────────────────────────────────────
 # Standard system dependencies used by all platforms.
 platform_deps = []
-foreach dep : [sqlite3_dep, jpeg_dep, turbojpeg_dep, png_dep]
+foreach dep : [yaml_cpp_dep, sqlite3_dep, jpeg_dep, turbojpeg_dep, png_dep]
   if dep.found()
     platform_deps += dep
   endif
@@ -219,6 +220,9 @@ endif
 # Platform-specific HAL sources are added per-platform below.
 all_sources = actor_sources
 
+# Add config_loader.cpp (YAML config parser)
+config_loader_sources = files('src/hal/api/config_loader.cpp')
+
 # CivetWeb HTTP/SSE server (C library, compiled alongside C++ sources)
 civetweb_sources = files('src/actors/http-sse/civetweb.c')
 
@@ -226,6 +230,7 @@ if platform == 'host' or platform == 'rock3c' or platform == 'cubie-a7s'
   all_sources += platform_sources
 endif
 
+all_sources += config_loader_sources
 all_sources += civetweb_sources
 
 # CivetWeb needs NO_SSL when building without OpenSSL

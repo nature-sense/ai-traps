@@ -45,7 +45,9 @@ class _CameraStreamWidgetState extends State<CameraStreamWidget> {
   bool _disposed = false;
   Timer? _reconnectTimer;
 
-  static const String _mjpegBoundary = '--jpgboundary';
+  // Default boundary fallback. The actual boundary is detected from the
+  // Content-Type header (e.g. "multipart/x-mixed-replace; boundary=boundary_15").
+  String _mjpegBoundary = '--jpgboundary';
 
   @override
   void initState() {
@@ -91,18 +93,24 @@ class _CameraStreamWidgetState extends State<CameraStreamWidget> {
   }
 
   Future<void> _startStream() async {
-    debugPrint('[CameraStreamWidget] Starting MJPEG stream: ${widget.streamUrl}');
+    debugPrint(
+      '[CameraStreamWidget] Starting MJPEG stream: ${widget.streamUrl}',
+    );
 
     _client = http.Client();
     try {
       final request = http.Request('GET', Uri.parse(widget.streamUrl));
       final response = await _client!.send(request);
 
-      debugPrint('[CameraStreamWidget] Response status: ${response.statusCode}');
+      debugPrint(
+        '[CameraStreamWidget] Response status: ${response.statusCode}',
+      );
       debugPrint('[CameraStreamWidget] Response headers: ${response.headers}');
 
       if (response.statusCode != 200) {
-        throw Exception('HTTP ${response.statusCode}: ${response.reasonPhrase}');
+        throw Exception(
+          'HTTP ${response.statusCode}: ${response.reasonPhrase}',
+        );
       }
 
       // Detect boundary from Content-Type header
@@ -110,13 +118,19 @@ class _CameraStreamWidgetState extends State<CameraStreamWidget> {
       final contentType = response.headers['content-type'] ?? '';
       debugPrint('[CameraStreamWidget] Content-Type: $contentType');
       if (contentType.contains('boundary=')) {
-        final boundaryMatch = RegExp(r'boundary=(.+?)(?:;|$)').firstMatch(contentType);
+        final boundaryMatch = RegExp(
+          r'boundary=(.+?)(?:;|$)',
+        ).firstMatch(contentType);
         if (boundaryMatch != null) {
           boundary = '--${boundaryMatch.group(1)!}';
-          debugPrint('[CameraStreamWidget] Using boundary from header: "$boundary"');
+          debugPrint(
+            '[CameraStreamWidget] Using boundary from header: "$boundary"',
+          );
         }
       } else {
-        debugPrint('[CameraStreamWidget] No boundary in Content-Type, using default: "$boundary"');
+        debugPrint(
+          '[CameraStreamWidget] No boundary in Content-Type, using default: "$boundary"',
+        );
       }
 
       // Read the stream in chunks and parse MJPEG frames
@@ -146,7 +160,9 @@ class _CameraStreamWidgetState extends State<CameraStreamWidget> {
                   final frameLen = chunks.length - boundary.length;
                   if (frameLen > 100) {
                     // Skip the HTTP headers before the JPEG data (find SOI marker 0xFFD8)
-                    final jpegData = Uint8List.fromList(chunks.sublist(0, frameLen));
+                    final jpegData = Uint8List.fromList(
+                      chunks.sublist(0, frameLen),
+                    );
                     int jpegStart = 0;
                     for (int i = 0; i < jpegData.length - 1; i++) {
                       if (jpegData[i] == 0xFF && jpegData[i + 1] == 0xD8) {
@@ -184,23 +200,32 @@ class _CameraStreamWidgetState extends State<CameraStreamWidget> {
           }
 
           // Log every 500KB received if no frames decoded yet
-          if (_frameCount == 0 && totalBytesReceived % (500 * 1024) < data.length) {
+          if (_frameCount == 0 &&
+              totalBytesReceived % (500 * 1024) < data.length) {
             debugPrint(
               '[CameraStreamWidget] Received ${totalBytesReceived ~/ 1024}KB, '
               'no frames decoded yet. Buffer size: ${chunks.length} bytes',
             );
             // Dump first 200 bytes as hex to see what we're getting
             if (totalBytesReceived < 5000) {
-              final preview = chunks.take(200).map((b) => b.toRadixString(16).padLeft(2, '0')).join(' ');
+              final preview = chunks
+                  .take(200)
+                  .map((b) => b.toRadixString(16).padLeft(2, '0'))
+                  .join(' ');
               debugPrint('[CameraStreamWidget] First bytes hex: $preview');
               // Also try to show as ASCII
-              final ascii = chunks.take(200).map((b) => b >= 32 && b < 127 ? String.fromCharCode(b) : '.').join();
+              final ascii = chunks
+                  .take(200)
+                  .map((b) => b >= 32 && b < 127 ? String.fromCharCode(b) : '.')
+                  .join();
               debugPrint('[CameraStreamWidget] First bytes ASCII: $ascii');
             }
           }
         },
         onDone: () {
-          debugPrint('[CameraStreamWidget] Stream ended. Total bytes: $totalBytesReceived, Frames: $_frameCount');
+          debugPrint(
+            '[CameraStreamWidget] Stream ended. Total bytes: $totalBytesReceived, Frames: $_frameCount',
+          );
           if (!completer.isCompleted) completer.complete();
           // Auto-reconnect when the stream ends (e.g. after navigating away)
           _scheduleReconnect();
@@ -250,9 +275,9 @@ class _CameraStreamWidgetState extends State<CameraStreamWidget> {
               padding: const EdgeInsets.symmetric(horizontal: 24),
               child: Text(
                 _error!,
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Colors.grey,
-                    ),
+                style: Theme.of(
+                  context,
+                ).textTheme.bodySmall?.copyWith(color: Colors.grey),
                 textAlign: TextAlign.center,
                 maxLines: 3,
                 overflow: TextOverflow.ellipsis,

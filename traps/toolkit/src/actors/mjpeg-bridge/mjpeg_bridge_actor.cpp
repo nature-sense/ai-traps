@@ -27,6 +27,118 @@ namespace ct {
 std::unique_ptr<HardwareJpegEncoder> MjpegBridgeActor::hw_encoder_;
 std::once_flag MjpegBridgeActor::hw_init_flag_;
 
+// ─── Constructor ───────────────────────────────────────────────────────────────
+// Initializes the in_frame pushable with a lambda that captures `this`.
+MjpegBridgeActor::MjpegBridgeActor()
+    : in_frame([this](const FrameBuffer& f) {
+        if (!active_) {
+            static int skipped = 0;
+            if (++skipped % 300 == 0)
+                std::cout << "[MjpegBridgeActor] skipped frame #" << skipped
+                          << " (active_=" << active_.load() << ")\n";
+            return;   // skip encode when no clients connected
+        }
+
+        auto jpeg = encode_jpeg(f);
+        if (jpeg.empty()) return;
+
+        // Build MjpegFrame message
+        MjpegFrame mjpeg_frame;
+        mjpeg_frame.data = jpeg;
+        mjpeg_frame.timestamp = static_cast<uint64_t>(
+            std::chrono::duration_cast<std::chrono::milliseconds>(
+                std::chrono::steady_clock::now().time_since_epoch()
+            ).count());
+        mjpeg_frame.width = f.width;
+        mjpeg_frame.height = f.height;
+        mjpeg_frame.quality = 85;
+
+        // Send to HTTP server for MJPEG streaming
+        ramen::send(server_actor_name_, std::move(mjpeg_frame));
+
+        // Push into circular buffer (overwrites oldest if full)
+        push_frame(std::move(jpeg), f.width, f.height);
+    })
+{}
+
+// ─── Lifecycle ─────────────────────────────────────────────────────────────────
+
+void MjpegBridgeActor::onStart() {
+    std::cout << "[MjpegBridgeActor] started\n";
+}
+
+void MjpegBridgeActor::onStop() {
+    std::cout << "[MjpegBridgeActor] stopped\n";
+}
+
+// ─── Message Dispatch ──────────────────────────────────────────────────────────
+
+void MjpegBridgeActor::onMessageAny(const std::type_info& type, void* msg) {
+    // Handle requests from the HTTP server for the latest frame.
+    // The HTTP server sends a request message when a new MJPEG client connects
+    // and needs the latest frame.
+    if (type == typeid(MjpegFrame)) {
+        // A request for the latest frame — pop from circular buffer and send back
+        auto latest = pop_newest();
+        if (latest.has_value()) {
+            ramen::send(server_actor_name_, std::move(latest.value()));
+        }
+    }
+}
+
+// ─── Circular Buffer ───────────────────────────────────────────────────────────
+
+void MjpegBridgeActor::push_frame(std::vector<uint8_t>&& jpeg_data, int width, int height) {
+    std::lock_guard<std::mutex> lock(buffer_mutex_);
+
+    auto now = static_cast<uint64_t>(
+        std::chrono::duration_cast<std::chrono::milliseconds>(
+            std::chrono::steady_clock::now().time_since_epoch()
+        ).count());
+
+    Slot& slot = buffer_[write_index_];
+    slot.data = std::move(jpeg_data);
+    slot.width = width;
+    slot.height = height;
+    slot.timestamp = now;
+    slot.valid = true;
+
+    write_index_ = (write_index_ + 1) % CIRCULAR_BUFFER_SIZE;
+    if (count_ < CIRCULAR_BUFFER_SIZE) {
+        ++count_;
+    } else {
+        // Buffer full — advance read index to drop oldest
+        read_index_ = (read_index_ + 1) % CIRCULAR_BUFFER_SIZE;
+    }
+}
+
+std::optional<MjpegFrame> MjpegBridgeActor::pop_newest() {
+    std::lock_guard<std::mutex> lock(buffer_mutex_);
+
+    if (count_ == 0) return std::nullopt;
+
+    // Read the newest valid slot (the one just before write_index_)
+    size_t newest = (write_index_ == 0) ? CIRCULAR_BUFFER_SIZE - 1 : write_index_ - 1;
+    Slot& slot = buffer_[newest];
+
+    if (!slot.valid) return std::nullopt;
+
+    MjpegFrame frame;
+    frame.data = slot.data;
+    frame.width = slot.width;
+    frame.height = slot.height;
+    frame.timestamp = slot.timestamp;
+    frame.quality = 85;
+
+    return frame;
+}
+
+std::optional<MjpegFrame> MjpegBridgeActor::try_get() {
+    return pop_newest();
+}
+
+// ─── JPEG Encoding ─────────────────────────────────────────────────────────────
+
 std::vector<uint8_t> MjpegBridgeActor::encode_jpeg(const FrameBuffer& f) {
 
     if (!f.data || f.width == 0 || f.height == 0) {

@@ -89,6 +89,12 @@ def main():
         default=None,
         help="SSH host for remote conversion (e.g., radxa@rock-3c.local)",
     )
+    parser.add_argument(
+        "--dataset",
+        type=str,
+        default=None,
+        help="Path to dataset.txt file for quantization calibration images",
+    )
     args = parser.parse_args()
 
     # ── Validate input ─────────────────────────────────────────────────────────
@@ -206,14 +212,10 @@ def main():
     print(f"[INFO] Configuring model...")
     ret = rknn.config(
         target_platform=args.target,
-        quantize_method="normal",
+        quantized_method="channel",
         quantized_dtype="asymmetric_quantized-8" if args.quantize else "float16",
-        batch_size=1,
         model_pruning=False,
         remove_weight=True,
-        reorder_channel="0 1 2",
-        output_optimize=1,
-        force_builtin_perm=True,
     )
     if ret != 0:
         print(f"[ERROR] rknn.config() failed with error code: {ret}")
@@ -227,8 +229,9 @@ def main():
         sys.exit(1)
 
     # ── Build RKNN model ──────────────────────────────────────────────────────
-    print(f"[INFO] Building RKNN model (quantize={args.quantize})...")
-    ret = rknn.build(do_quantization=args.quantize, dataset="")
+    dataset_path = args.dataset if args.dataset else ""
+    print(f"[INFO] Building RKNN model (quantize={args.quantize}, dataset={dataset_path})...")
+    ret = rknn.build(do_quantization=args.quantize, dataset=dataset_path)
     if ret != 0:
         print(f"[ERROR] rknn.build() failed with error code: {ret}")
         sys.exit(1)

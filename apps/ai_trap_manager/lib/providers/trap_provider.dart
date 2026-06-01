@@ -48,7 +48,8 @@ class TrapProvider with ChangeNotifier {
   Session? _activeSession;
   List<Session> _sessions = [];
   List<Detection> _detections = [];
-  int? _loadedDetectionsSessionId; // Tracks which session's detections are in _detections
+  int?
+  _loadedDetectionsSessionId; // Tracks which session's detections are in _detections
   Map<String, dynamic> _config = {};
 
   // Track unique track IDs seen during the active session (for display)
@@ -123,8 +124,12 @@ class TrapProvider with ChangeNotifier {
           _trapId = status['trapId'] as String;
           debugPrint('[TrapProvider] Got trapId from server status: $_trapId');
         } else {
-          debugPrint('[TrapProvider] No trapId in server status. trapId=$_trapId');
-          debugPrint('[TrapProvider] Session operations will fail until provisioned!');
+          debugPrint(
+            '[TrapProvider] No trapId in server status. trapId=$_trapId',
+          );
+          debugPrint(
+            '[TrapProvider] Session operations will fail until provisioned!',
+          );
         }
 
         // Connect SSE for real-time events
@@ -138,7 +143,9 @@ class TrapProvider with ChangeNotifier {
 
         // If we have a trapId, fetch the trap status
         if (_trapId != null) {
-          debugPrint('[TrapProvider] Fetching trap status for trapId: $_trapId');
+          debugPrint(
+            '[TrapProvider] Fetching trap status for trapId: $_trapId',
+          );
           await _fetchTrapStatus();
         } else {
           debugPrint('[TrapProvider] Skipping trap status fetch - no trapId');
@@ -146,7 +153,9 @@ class TrapProvider with ChangeNotifier {
       } else {
         _connectionStatus = 'Connection Failed';
         _connectionError = 'Server status: ${status['status']}';
-        debugPrint('[TrapProvider] Connection failed - unexpected status: ${status['status']}');
+        debugPrint(
+          '[TrapProvider] Connection failed - unexpected status: ${status['status']}',
+        );
       }
     } catch (e) {
       _connectionStatus = 'Error';
@@ -352,16 +361,22 @@ class TrapProvider with ChangeNotifier {
           for (final d in existingDetections) {
             _activeTrackIds.add(d.trackId);
           }
-          debugPrint('[TrapProvider] Seeded _activeTrackIds with ${_activeTrackIds.length} track IDs from ${existingDetections.length} detections');
+          debugPrint(
+            '[TrapProvider] Seeded _activeTrackIds with ${_activeTrackIds.length} track IDs from ${existingDetections.length} detections',
+          );
         } on ApiException catch (e) {
-          debugPrint('[TrapProvider] Could not fetch detections for track ID seeding: $e');
+          debugPrint(
+            '[TrapProvider] Could not fetch detections for track ID seeding: $e',
+          );
           // Fall back to server's detection count if we can't fetch detections
         } catch (e) {
           if (_isNetworkError(e)) {
             _handleRestFailure();
             return;
           }
-          debugPrint('[TrapProvider] Could not fetch detections for track ID seeding: $e');
+          debugPrint(
+            '[TrapProvider] Could not fetch detections for track ID seeding: $e',
+          );
         }
 
         _activeSession = Session(
@@ -405,7 +420,9 @@ class TrapProvider with ChangeNotifier {
     }
     if (_trapId == null) {
       debugPrint('[TrapProvider] startSession FAILED: _trapId is null');
-      debugPrint('[TrapProvider] You must provision the trap first (POST /v1/provision)');
+      debugPrint(
+        '[TrapProvider] You must provision the trap first (POST /v1/provision)',
+      );
       _connectionError = 'Trap not provisioned. Please provision first.';
       notifyListeners();
       return false;
@@ -414,7 +431,9 @@ class TrapProvider with ChangeNotifier {
     try {
       debugPrint('[TrapProvider] Calling API startSession(trapId=$_trapId)');
       final session = await _api!.startSession(_trapId!);
-      debugPrint('[TrapProvider] Session started successfully: id=${session.id} startedAt=${session.startedAt}');
+      debugPrint(
+        '[TrapProvider] Session started successfully: id=${session.id} startedAt=${session.startedAt}',
+      );
       // Clear track ID tracking for the new session
       _activeTrackIds.clear();
       _activeSession = session;
@@ -441,7 +460,9 @@ class TrapProvider with ChangeNotifier {
   /// Stop the currently active session.
   Future<bool> stopSession() async {
     debugPrint('[TrapProvider] ===== STOP SESSION =====');
-    debugPrint('[TrapProvider] _api= ${_api != null} _trapId=$_trapId _activeSession=${_activeSession?.id}');
+    debugPrint(
+      '[TrapProvider] _api= ${_api != null} _trapId=$_trapId _activeSession=${_activeSession?.id}',
+    );
 
     if (_api == null) {
       debugPrint('[TrapProvider] stopSession FAILED: _api is null');
@@ -457,9 +478,13 @@ class TrapProvider with ChangeNotifier {
     }
 
     try {
-      debugPrint('[TrapProvider] Calling API stopSession(trapId=$_trapId, sessionId=${_activeSession!.id})');
+      debugPrint(
+        '[TrapProvider] Calling API stopSession(trapId=$_trapId, sessionId=${_activeSession!.id})',
+      );
       final session = await _api!.stopSession(_trapId!, _activeSession!.id);
-      debugPrint('[TrapProvider] Session stopped successfully: id=${session.id}');
+      debugPrint(
+        '[TrapProvider] Session stopped successfully: id=${session.id}',
+      );
       _activeSession = null;
       // Update the session in the list
       final index = _sessions.indexWhere((s) => s.id == session.id);
@@ -487,15 +512,23 @@ class TrapProvider with ChangeNotifier {
 
   /// List all sessions for the current trap.
   Future<void> listSessions({int limit = 50, int offset = 0}) async {
-    debugPrint('[TrapProvider] listSessions: _api= ${_api != null} _trapId=$_trapId');
+    debugPrint(
+      '[TrapProvider] listSessions: _api= ${_api != null} _trapId=$_trapId',
+    );
     if (_api == null || _trapId == null) {
       debugPrint('[TrapProvider] listSessions skipped: api or trapId null');
       return;
     }
 
     try {
-      _sessions = await _api!.listSessions(_trapId!, limit: limit, offset: offset);
-      debugPrint('[TrapProvider] listSessions returned ${_sessions.length} sessions');
+      _sessions = await _api!.listSessions(
+        _trapId!,
+        limit: limit,
+        offset: offset,
+      );
+      debugPrint(
+        '[TrapProvider] listSessions returned ${_sessions.length} sessions',
+      );
       notifyListeners();
     } on ApiException catch (e) {
       debugPrint('[TrapProvider] listSessions API ERROR: $e');
@@ -510,7 +543,11 @@ class TrapProvider with ChangeNotifier {
   // ── Detections ──────────────────────────────────────────────────────────
 
   /// List detections for a given session.
-  Future<void> listDetections(int sessionId, {int limit = 50, int offset = 0}) async {
+  Future<void> listDetections(
+    int sessionId, {
+    int limit = 50,
+    int offset = 0,
+  }) async {
     if (_api == null || _trapId == null) return;
 
     try {
@@ -591,6 +628,10 @@ class TrapProvider with ChangeNotifier {
   // ── System Metrics ──────────────────────────────────────────────────────
 
   /// Fetch real-time system metrics from the trap.
+  ///
+  /// Note: The backend does not currently implement the system metrics
+  /// endpoint (returns 501). This method handles that gracefully by
+  /// leaving _systemMetrics as null.
   Future<void> fetchSystemMetrics() async {
     if (_api == null || _trapId == null) return;
 
@@ -598,6 +639,11 @@ class TrapProvider with ChangeNotifier {
       _systemMetrics = await _api!.getSystemMetrics(_trapId!);
       notifyListeners();
     } on ApiException catch (e) {
+      // 501 (Not Implemented) is expected — don't treat as error
+      if (e.statusCode == 501) {
+        debugPrint('[TrapProvider] System metrics not implemented on backend');
+        return;
+      }
       debugPrint('[TrapProvider] fetchSystemMetrics API ERROR: $e');
     } catch (e) {
       debugPrint('[TrapProvider] fetchSystemMetrics ERROR: $e');
@@ -675,7 +721,9 @@ class TrapProvider with ChangeNotifier {
         // If a detection already exists for this (sessionId, trackId), replace it
         // with the new one (which has an updated image URL). Otherwise, add it.
         // Only update _detections if the user is currently viewing this session's detections.
-        if (_activeSession != null && event.trackId != null && event.detectionId != null) {
+        if (_activeSession != null &&
+            event.trackId != null &&
+            event.detectionId != null) {
           _activeTrackIds.add(event.trackId!);
 
           // Build a Detection from the event data
@@ -693,7 +741,9 @@ class TrapProvider with ChangeNotifier {
           if (_loadedDetectionsSessionId == newDetection.sessionId) {
             // Check if a detection with the same (sessionId, trackId) already exists
             final existingIndex = _detections.indexWhere(
-              (d) => d.sessionId == newDetection.sessionId && d.trackId == newDetection.trackId,
+              (d) =>
+                  d.sessionId == newDetection.sessionId &&
+                  d.trackId == newDetection.trackId,
             );
 
             if (existingIndex != -1) {

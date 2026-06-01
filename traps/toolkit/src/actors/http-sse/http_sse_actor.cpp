@@ -16,6 +16,7 @@
 
 // actors/HttpSseActor.cpp
 #include "http_sse_actor.h"
+#include "mjpeg-bridge/mjpeg_bridge_actor.hpp"
 #include "civetweb.h"
 #include <sstream>
 #include <algorithm>
@@ -406,26 +407,57 @@ int HttpSseActor::handleMjpegStream(struct mg_connection* conn) {
     // Register this client
     uint64_t client_id = registerMjpegClient(conn, quality);
 
-    // Send MJPEG headers
+    // Send MJPEG headers with chunked transfer encoding so civetweb
+    // keeps the connection alive for streaming frames.
     std::string boundary = "boundary_" + std::to_string(client_id);
 
     mg_printf(conn,
         "HTTP/1.1 200 OK\r\n"
         "Content-Type: multipart/x-mixed-replace; boundary=%s\r\n"
         "Cache-Control: no-cache\r\n"
+        "Transfer-Encoding: chunked\r\n"
         "Connection: keep-alive\r\n"
         "Access-Control-Allow-Origin: *\r\n"
         "\r\n",
         boundary.c_str());
 
-    // Send the latest frame immediately if available
+    // Notify the MJPEG bridge that a client connected (so it starts encoding)
     {
+        auto* registry = ramen::ActorRegistry::instance();
+        auto* bridge = registry ? registry->get("mjpeg_bridge") : nullptr;
+        if (bridge) {
+            // Cast to MjpegBridgeActor to call client_connected()
+            auto* mjpeg_bridge = static_cast<ct::MjpegBridgeActor*>(bridge);
+            mjpeg_bridge->client_connected();
+        }
+    }
+
+    // Send the latest frame immediately if available.
+    // First try the MJPEG bridge's circular buffer (more recent), then fall
+    // back to our own cache.
+    std::optional<MjpegFrame> initial_frame;
+    {
+        auto* registry = ramen::ActorRegistry::instance();
+        auto* bridge = registry ? registry->get("mjpeg_bridge") : nullptr;
+        if (bridge) {
+            // Request the latest frame from the bridge's circular buffer
+            auto* mjpeg_bridge = static_cast<ct::MjpegBridgeActor*>(bridge);
+            auto latest = mjpeg_bridge->try_get();
+            if (latest.has_value()) {
+                initial_frame = std::move(latest.value());
+            }
+        }
+    }
+    if (!initial_frame.has_value()) {
         std::lock_guard<std::mutex> lock(frame_mutex_);
         if (latest_frame_.has_value()) {
-            MjpegFrame frame = latest_frame_.value();
-            std::string part = formatMjpegPart(frame, boundary);
-            writeToConnection(conn, part);
+            initial_frame = latest_frame_.value();
         }
+    }
+    if (initial_frame.has_value()) {
+        std::string part = formatMjpegPart(initial_frame.value(), boundary);
+        mg_send_chunk(conn, part.c_str(), part.size());
+        mg_send_chunk(conn, "", 0);
     }
 
     // Update client activity
@@ -466,11 +498,11 @@ void HttpSseActor::broadcastMjpegFrame(const MjpegFrame& frame) {
         // Update last activity
         client.last_activity = std::chrono::steady_clock::now();
 
-        // Format and send frame
+        // Format and send frame using chunked encoding (matches the
+        // Transfer-Encoding: chunked header sent in handleMjpegStream).
         std::string part = formatMjpegPart(frame, client.boundary);
-        if (!writeToConnection(client.conn, part)) {
-            stale_clients.push_back(id);
-        }
+        mg_send_chunk(client.conn, part.c_str(), part.size());
+        mg_send_chunk(client.conn, "", 0);
     }
 
     // Clean up stale clients

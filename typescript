@@ -1,0 +1,43 @@
+Script started on Sun May 31 15:57:33 2026
+[1m[7m%[27m[1m[0m                                                                                                             [0m[27m[24m[J(.venv) steve@elnor ai-traps % [K[?2004h[?2004l
+[1m[7m%[27m[1m[0m                                                                                                             [0m[27m[24m[J(.venv) steve@elnor ai-traps % [K[?2004hsssh radxa@rock-3c.local 'echo radxa | sudo -S /home/radxa/ai-traps/traps/targe [Ktts/build-rock3c/ai-trap-detection --config /etc/ai-trap.yaml &'[?2004l
+[sudo] password for radxa: AI Trap — Detection (ROCK 3C)
+[main] loading config from /etc/ai-trap.yaml
+[BaseDetectionPipeline] init
+  camera_model: imx415
+  resolution: 1920x1080 @ 15fps
+  model: /usr/share/ai-trap/models/yolo11n.rknn
+  output: /var/lib/ai-trap/detections
+rkaiq log level ff1
+XCORE:K:rk_aiq_init_lib, ISP HW ver: 21
+XCORE:K:
+************************** VERSION INFOS **************************
+version release date: 2024-08-05
+         AIQ:       AIQ v6.0x7.1
+
+git logs:
+827ef37b sync to commit e2bf986 unite-isp: add size judge logic
+867b41c9 release v6.7.1, sync to 1c51a38
+e8087cf9 release v6.0x6.3-rc2
+7da81056 hwi: fix isp32/isp32 lite cnr, ynr.
+f83264a2 aiqcore: add timeout for API rk_aiq_uapi2_sysctl_switch_scene
+
+************************ VERSION INFOS END ************************
+
+[CameraHalImx415] AIQ sensor: m00_b_imx415 2-0037
+XCORE:K:rk_aiq_uapi_sysctl_preInit_devBufCnt: dev_ent:rkraw_rx, buf_cnt:2
+XCORE:K:rk_aiq_uapi_sysctl_preInit_scene: main_scene: normal, sub_scene: 
+[CameraHalImx415] Setting scene: normal
+[CameraHalImx415] rk_aiq_uapi2_sysctl_init sns_name=m00_b_imx415 2-0037 iq_dir=/usr/share/iqfiles
+W: /home/wxt/linux-develop/rockchip-linux/buildroot/output/rockchip_rk3576_glibc2.28/build/camera-engine-rkaiq-1.0/rkaiq/iq_parser_v2/j2s/j2s.c(138) [j2s_enum_get_value]: unknown enum name: RK_AIQ_SENSOR_HDR_LINE_MODE_STAGGER for rk_aiq_sensor_hdr_line_mode_t
+
+W: /home/wxt/linux-develop/rockchip-linux/buildroot/output/rockchip_rk3576_glibc2.28/build/camera-engine-rkaiq-1.0/rkaiq/iq_parser_v2/j2s/j2s.c(138) [j2s_enum_get_value]: unknown enum name: AECV2_STRATEGY_MODE_LOWLIGHT_PRIOR for CalibDb_AeStrategyModeV2_t
+
+W: /home/wxt/linux-develop/rockchip-linux/buildroot/output/rockchip_rk3576_glibc2.28/build/camera-engine-rkaiq-1.0/rkaiq/iq_parser_v2/j2s/j2s.c(138) [j2s_enum_get_value]: unknown enum name: AECV2_STRATEGY_MODE_LOWLIGHT_PRIOR for CalibDb_AeStrategyModeV2_t
+
+W: /home/wxt/linux-develop/rockchip-linux/buildroot/output/rockchip_rk3576_glibc2.28/build/camera-engine-rkaiq-1.0/rkaiq/iq_parser_v2/j2s/j2s.c(138) [j2s_enum_get_value]: unknown enum name: AECV2_HDR_LONGFRMMODE_NORMAL for CalibDb_AeHdrLongFrmModeV2_t
+
+W: /home/wxt/linux-develop/rockchip-linux/buildroot/output/rockchip_rk3576_glibc2.28/build/camera-engine-rkaiq-1.0/rkaiq/iq_parser_v2/j2s/j2s.c(138) [j2s_enum_get_value]: unknown enum name: CALIB_AWB_HDR_FRAME_CHOOSE_MODE_MANUAL for CalibDbV2_Awb_Hdr_Fr_Ch_Mode_t
+
+W: /home/wxt/linux-develop/rockchip-linux/buildroot/output/rockchip_rk3576_glibc2.28/build/camera-engine-rkaiq-1.0/rkaiq/iq_parser_v2/j2s/j2s.c(138) [j2s_enum_get_value]: unknown enum name: CALIB_AWB_BLK_STAT_MODE_ALL_V201 for CalibDbV2_Awb_Blk_Stat_V21_t
+

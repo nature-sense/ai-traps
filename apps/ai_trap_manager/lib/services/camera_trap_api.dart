@@ -30,12 +30,9 @@ class CameraTrapApi {
   final String baseUrl;
   final http.Client _client;
 
-  CameraTrapApi({
-    required this.host,
-    this.port = 8080,
-    http.Client? client,
-  })  : baseUrl = 'http://$host:$port',
-        _client = client ?? http.Client();
+  CameraTrapApi({required this.host, this.port = 8080, http.Client? client})
+    : baseUrl = 'http://$host:$port',
+      _client = client ?? http.Client();
 
   // ── Provisioning ────────────────────────────────────────────────────────
 
@@ -50,7 +47,9 @@ class CameraTrapApi {
         headers: {'Content-Type': 'application/json'},
         body: body,
       );
-      debugPrint('[CameraTrapApi] POST $url -> ${resp.statusCode} ${resp.body}');
+      debugPrint(
+        '[CameraTrapApi] POST $url -> ${resp.statusCode} ${resp.body}',
+      );
       if (resp.statusCode == 201) {
         return jsonDecode(resp.body) as Map<String, dynamic>;
       }
@@ -90,11 +89,11 @@ class CameraTrapApi {
     debugPrint('[CameraTrapApi] POST $url');
     try {
       final resp = await _client.post(Uri.parse(url));
-      debugPrint('[CameraTrapApi] POST $url -> ${resp.statusCode} ${resp.body}');
+      debugPrint(
+        '[CameraTrapApi] POST $url -> ${resp.statusCode} ${resp.body}',
+      );
       if (resp.statusCode == 201) {
-        return Session.fromJson(
-          jsonDecode(resp.body) as Map<String, dynamic>,
-        );
+        return Session.fromJson(jsonDecode(resp.body) as Map<String, dynamic>);
       }
       throw ApiException(resp.statusCode, resp.body);
     } catch (e) {
@@ -109,7 +108,8 @@ class CameraTrapApi {
     int limit = 50,
     int offset = 0,
   }) async {
-    final url = '$baseUrl/v1/traps/$trapId/sessions?limit=$limit&offset=$offset';
+    final url =
+        '$baseUrl/v1/traps/$trapId/sessions?limit=$limit&offset=$offset';
     debugPrint('[CameraTrapApi] GET $url');
     try {
       final resp = await _client.get(Uri.parse(url));
@@ -153,9 +153,7 @@ class CameraTrapApi {
       final resp = await _client.get(Uri.parse(url));
       debugPrint('[CameraTrapApi] GET $url -> ${resp.statusCode} ${resp.body}');
       if (resp.statusCode == 200) {
-        return Session.fromJson(
-          jsonDecode(resp.body) as Map<String, dynamic>,
-        );
+        return Session.fromJson(jsonDecode(resp.body) as Map<String, dynamic>);
       }
       throw ApiException(resp.statusCode, resp.body);
     } catch (e) {
@@ -172,9 +170,7 @@ class CameraTrapApi {
       final resp = await _client.put(Uri.parse(url));
       debugPrint('[CameraTrapApi] PUT $url -> ${resp.statusCode} ${resp.body}');
       if (resp.statusCode == 200) {
-        return Session.fromJson(
-          jsonDecode(resp.body) as Map<String, dynamic>,
-        );
+        return Session.fromJson(jsonDecode(resp.body) as Map<String, dynamic>);
       }
       throw ApiException(resp.statusCode, resp.body);
     } catch (e) {
@@ -192,7 +188,8 @@ class CameraTrapApi {
     int limit = 50,
     int offset = 0,
   }) async {
-    final url = '$baseUrl/v1/traps/$trapId/sessions/$sessionId/detections'
+    final url =
+        '$baseUrl/v1/traps/$trapId/sessions/$sessionId/detections'
         '?limit=$limit&offset=$offset';
     debugPrint('[CameraTrapApi] GET $url');
     try {
@@ -268,7 +265,10 @@ class CameraTrapApi {
   // ── System Metrics ──────────────────────────────────────────────────────
 
   /// Get real-time system metrics (CPU, memory, disk, temperature, pipeline).
-  Future<SystemMetrics> getSystemMetrics(String trapId) async {
+  ///
+  /// Note: The backend does not currently implement this endpoint (returns 501).
+  /// Returns null when the endpoint is not available.
+  Future<SystemMetrics?> getSystemMetrics(String trapId) async {
     final url = '$baseUrl/v1/traps/$trapId/system';
     debugPrint('[CameraTrapApi] GET $url');
     try {
@@ -278,6 +278,12 @@ class CameraTrapApi {
         return SystemMetrics.fromJson(
           jsonDecode(resp.body) as Map<String, dynamic>,
         );
+      }
+      if (resp.statusCode == 501) {
+        debugPrint(
+          '[CameraTrapApi] System metrics endpoint not implemented (501)',
+        );
+        return null;
       }
       throw ApiException(resp.statusCode, resp.body);
     } catch (e) {
@@ -289,12 +295,15 @@ class CameraTrapApi {
   // ── SSE ─────────────────────────────────────────────────────────────────
 
   /// Get the URL for the SSE event stream.
-  String get sseUrl => '$baseUrl/v1/events';
+  /// The backend serves SSE at /events (not /v1/events).
+  String get sseUrl => '$baseUrl/events';
 
   // ── WebSocket ───────────────────────────────────────────────────────────
 
   /// Get the WebSocket URL.
-  String get wsUrl => '$baseUrl/ws'.replaceFirst('http', 'ws');
+  /// Note: The backend does not currently expose a WebSocket endpoint.
+  /// SSE at /events is the supported real-time channel.
+  String get wsUrl => '$baseUrl/events'.replaceFirst('http', 'ws');
 
   /// Dispose the HTTP client.
   void dispose() {

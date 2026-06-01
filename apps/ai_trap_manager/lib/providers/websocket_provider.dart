@@ -33,7 +33,7 @@ class WebSocketProvider with ChangeNotifier {
 
   // ── State ───────────────────────────────────────────────────────────────
   String _lastEvent = 'No events yet';
-  List<String> _eventHistory = [];
+  final List<String> _eventHistory = [];
   SseEvent? _lastSseEvent;
   String _connectionType = 'none'; // 'websocket', 'sse', or 'none'
 

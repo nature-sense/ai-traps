@@ -17,7 +17,7 @@ import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 
 class BleProvider with ChangeNotifier {
   bool _isScanning = false;
-  List<BluetoothDevice> _devices = [];
+  final List<BluetoothDevice> _devices = [];
   BluetoothDevice? _connectedDevice;
   String _connectionStatus = 'Disconnected';
 

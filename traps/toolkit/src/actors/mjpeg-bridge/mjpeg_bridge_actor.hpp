@@ -19,6 +19,7 @@
 #include <ramen.hpp>
 #include "hal/api/types.hpp"
 #include "jpeg-encoder/hardware_jpeg_encoder.hpp"
+#include "http_sse_actor.h"
 #include <atomic>
 #include <mutex>
 #include <optional>
@@ -26,17 +27,28 @@
 #include <vector>
 #include <memory>
 #include <iostream>
+#include <cstdint>
+#include <array>
+#include <chrono>
 
 namespace ct {
 
 // ─── MjpegBridgeActor ──────────────────────────────────────────────────────────────
 // Bridges the single-threaded Ramen pipeline to the multi-threaded HTTP server.
 //
-// Pipeline thread:  pushes frame_medium → in_frame → JPEG encode → latest_
-// HTTP handler thread: calls try_get() to drain latest_ and write a MIME part
+// This is a proper Ramen actor (extends ramen::Actor) with a mutex-protected
+// circular buffer that handles the speed disparity between the pipeline writer
+// thread and the HTTP handler thread.
 //
-// Single-slot design: if the HTTP client is slow the encoder simply overwrites
-// the previous frame (drop policy).  No queue buildup, no back-pressure.
+// Pipeline thread:  pushes frame_medium → in_frame → JPEG encode → circular buffer
+//                   → sends MjpegFrame to HttpSseActor via ramen::send()
+// HTTP handler thread: calls try_get() to drain latest frame from circular buffer
+//
+// Circular buffer design:
+//   - Fixed-size ring buffer (CIRCULAR_BUFFER_SIZE slots)
+//   - Writer (pipeline thread) always overwrites the oldest slot if full (drop policy)
+//   - Reader (HTTP handler thread) reads the newest available slot
+//   - No heap allocations during steady-state operation
 //
 // JPEG encoding happens here (not in CaptureNode) so frames are only encoded
 // when at least one HTTP client is connected (active_ guard).
@@ -44,45 +56,69 @@ namespace ct {
 // Uses Rockchip MPP hardware JPEG encoder (VEPU2 on RK3566) for NV12→JPEG
 // conversion. Falls back to software libjpeg-turbo if MPP is unavailable.
 // Hardware encoding takes ~4ms per 640×480 frame vs ~15ms for software.
-struct MjpegBridgeActor {
-    // ── Input (wired inside Ramen graph) ──────────────────────────────────────
-    ramen::Pushable<FrameBuffer> in_frame = [this](const FrameBuffer& f) {
+class MjpegBridgeActor : public ramen::Actor {
+public:
+    MjpegBridgeActor();
+    ~MjpegBridgeActor() noexcept override = default;
 
-        if (!active_) {
-            static int skipped = 0;
-            if (++skipped % 300 == 0)
-                std::cout << "[MjpegBridgeActor] skipped frame #" << skipped << " (active_=" << active_.load() << ")\n";
-            return;   // skip encode when no clients connected
-        }
-        auto jpeg = encode_jpeg(f);
-        std::lock_guard lock(mutex_);
-        latest_ = std::move(jpeg);
-    };
+    // ── Ramen Actor Lifecycle ──────────────────────────────────────────────────
+    void onStart() override;
+    void onStop() override;
+
+    // ── Type-erased message dispatch ───────────────────────────────────────────
+    // Handles requests from the HTTP server for the latest frame.
+    void onMessageAny(const std::type_info& type, void* msg) override;
+
+    // ── Input (wired inside Ramen graph) ──────────────────────────────────────
+    // Receives NV12 frames from the overlay, encodes to JPEG, and pushes into
+    // the circular buffer. Initialized in constructor.
+    ramen::Pushable<FrameBuffer> in_frame;
 
     // ── Called by HTTP handler thread ─────────────────────────────────────────
-    // Returns the latest frame and clears the slot, or nullopt if none ready.
-    std::optional<std::vector<uint8_t>> try_get() {
-        std::lock_guard lock(mutex_);
-        return std::exchange(latest_, std::nullopt);
-    }
+    // Returns the latest frame from the circular buffer, or nullopt if empty.
+    std::optional<MjpegFrame> try_get();
 
     // Track connected client count so we can skip encoding when idle.
     void client_connected()    { ++active_; }
     void client_disconnected() { if (active_ > 0) --active_; }
 
-private:
-    std::vector<uint8_t> encode_jpeg(const FrameBuffer& f);
+    // Name of the HTTP server actor to send MJPEG frames to.
+    std::string server_actor_name_{"http_server"};
 
+private:
+    // ── Circular Buffer ────────────────────────────────────────────────────────
+    static constexpr size_t CIRCULAR_BUFFER_SIZE = 4;
+
+    struct Slot {
+        std::vector<uint8_t> data;
+        int width = 0;
+        int height = 0;
+        uint64_t timestamp = 0;
+        bool valid = false;
+    };
+
+    // Push a new frame into the circular buffer (writer side, pipeline thread).
+    void push_frame(std::vector<uint8_t>&& jpeg_data, int width, int height);
+
+    // Pop the newest valid frame from the circular buffer (reader side, HTTP thread).
+    std::optional<MjpegFrame> pop_newest();
+
+    std::array<Slot, CIRCULAR_BUFFER_SIZE> buffer_;
+    std::mutex buffer_mutex_;
+    size_t write_index_{0};
+    size_t read_index_{0};
+    size_t count_{0};
+
+    // ── JPEG Encoding ──────────────────────────────────────────────────────────
+    std::vector<uint8_t> encode_jpeg(const FrameBuffer& f);
 
     // Hardware MPP encoder (lazy-initialized, shared across all bridge instances)
     static std::unique_ptr<HardwareJpegEncoder> hw_encoder_;
     static std::once_flag hw_init_flag_;
 
-    std::mutex                           mutex_;
-    std::optional<std::vector<uint8_t>> latest_;
-    std::atomic<int>                     active_{0};
+    // ── State ──────────────────────────────────────────────────────────────────
+    std::atomic<int> active_{0};
 };
 
 
 } // namespace ct
-

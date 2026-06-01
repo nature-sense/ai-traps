@@ -1,0 +1,48 @@
+# ─── AI Camera Trap Configuration — Radxa Cubie A7S (Allwinner A527) ──────────
+# Camera: Radxa Camera 4K (IMX415) via V4L2
+# Inference: Vivante VIPLite NPU (NBG model format)
+# Scaling: CPU-based bilinear (no RGA hardware scaler)
+
+camera:
+  model: "a7s"
+  full_w: 1920
+  full_h: 1080
+  med_w: 640
+  med_h: 480
+  lores_w: 320
+  lores_h: 320
+  fps: 15
+  device: "/dev/video0"
+  scene_dir: ""
+  iq_dir: "/usr/share/iqfiles"
+
+inference:
+  backend: "bpu"
+  model_path: "/usr/share/ai-trap/models/yolo11n.nbg"
+  confidence_threshold: 0.5
+
+storage:
+  output_dir: "/var/lib/ai-trap/detections"
+  db_path: "/var/lib/ai-trap/trap.db"
+
+cropper:
+  padding_px: 10
+  min_confidence: 0.5
+
+classifier:
+  model_path: ""
+  confidence_threshold: 0.5
+  input_width: 224
+  input_height: 224
+
+actuator:
+  type: "none"
+  gpio: -1
+  duration_ms: 3000
+
+motion_sensor:
+  gpio: -1
+
+decision:
+  trigger_confidence: 0.6
+  cooldown_ms: 3000

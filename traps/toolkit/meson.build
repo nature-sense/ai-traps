@@ -115,6 +115,9 @@ jpeg_dep      = dependency('libjpeg', required: false)
 turbojpeg_dep = dependency('libturbojpeg', required: false)
 png_dep       = dependency('libpng', required: false)
 
+# systemd (sd-bus for BlueZ D-Bus GATT integration)
+systemd_dep   = dependency('libsystemd', required: false)
+
 # Build internal include list
 rk_inc = []
 foreach d : inc_dirs
@@ -173,7 +176,7 @@ endif
 # ─── Platform Dependencies ────────────────────────────────────────────────────
 # Standard system dependencies used by all platforms.
 platform_deps = []
-foreach dep : [yaml_cpp_dep, sqlite3_dep, jpeg_dep, turbojpeg_dep, png_dep]
+foreach dep : [yaml_cpp_dep, sqlite3_dep, jpeg_dep, turbojpeg_dep, png_dep, systemd_dep]
   if dep.found()
     platform_deps += dep
   endif

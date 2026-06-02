@@ -16,8 +16,9 @@
 
 
 """
-MCP Server for NatureSense AI Camera Trap REST API.
-Uses mDNS hostnames (e.g., rock-3c.local) to address traps.
+MCP Server for NatureSense AI Camera Trap REST API + BLE GATT Interface.
+Uses mDNS hostnames (e.g., rock-3c.local) to address traps for REST API,
+and BLE (via bleak) for local BLE GATT discovery and provisioning.
 
 Usage:
   This script is run by Cline as an MCP server via STDIN/STDOUT JSON-RPC.
@@ -28,7 +29,7 @@ Installation:
   chmod +x /Users/steve/.local/bin/trap-mcp-server.py
 
 Dependencies:
-  pip install mcp httpx
+  pip install mcp httpx bleak
 
 MCP Config (cline_mcp_settings.json):
   {
@@ -49,23 +50,209 @@ MCP Config (cline_mcp_settings.json):
           "get_server_status",
           "get_recent_detections",
           "get_stream_urls",
-          "discover_traps"
+          "discover_traps",
+          "ble_scan_traps",
+          "ble_read_trap_id",
+          "ble_read_wifi_state"
         ]
       }
     }
   }
 """
 
+import asyncio
 import json
 import subprocess
+import struct
 import httpx
 from mcp.server import Server
 from mcp.server.models import InitializationOptions
 import mcp.server.stdio
 import mcp.types as types
 
+# BLE GATT Service UUIDs (from docs/ble-gatt-service.md)
+BLE_SERVICE_UUID = "A1C00001-0001-4A54-8000-0A4D4943414D"
+BLE_CHAR_TRAP_ID = "A1C00002-0001-4A54-8000-0A4D4943414D"
+BLE_CHAR_WIFI_STATE = "A1C00003-0001-4A54-8000-0A4D4943414D"
+BLE_CHAR_PROVISION_STATION = "A1C00004-0001-4A54-8000-0A4D4943414D"
+BLE_CHAR_PROVISION_AP = "A1C00005-0001-4A54-8000-0A4D4943414D"
+BLE_CHAR_CMD_RESPONSE = "A1C00006-0001-4A54-8000-0A4D4943414D"
+
+# Manufacturer data constants
+MANUFACTURER_ID = 0xFFFF  # Development company ID
+BLE_PROTOCOL_VERSION = 0x01
+BLE_SERVICE_SHORT_UUID = 0x0001
+
+# WiFi state enum (from docs/ble-gatt-service.md)
+WIFI_STATE_NAMES = {
+    0x00: "WIFI_OFF",
+    0x01: "WIFI_STATION",
+    0x02: "WIFI_AP",
+    0x03: "WIFI_STATION_CONNECTING",
+    0x04: "WIFI_STATION_FAILED",
+}
+
+# Command response status codes (from docs/ble-gatt-service.md)
+CMD_STATUS_NAMES = {
+    0x00: "SUCCESS",
+    0x01: "ACCEPTED",
+    0x02: "INVALID_FORMAT",
+    0x03: "SSID_TOO_LONG",
+    0x04: "PASSWORD_TOO_LONG",
+    0x05: "CONFIG_FAILED",
+    0x06: "CONNECTION_FAILED",
+    0x07: "INTERNAL_ERROR",
+}
+
 server = Server("naturesense-trap-mcp")
 
+# ---------------------------------------------------------------------------
+# BLE helper functions
+# ---------------------------------------------------------------------------
+
+def _parse_manufacturer_data(manu_data: bytes) -> dict | None:
+    """
+    Parse manufacturer-specific data from a BLE advertisement.
+    Format (from docs/ble-gatt-service.md):
+      Byte 0:       Protocol Version (0x01)
+      Bytes 1-2:    Service UUID (0x0001)
+      Bytes 3-18:   Trap ID (16 bytes, ASCII, null-padded)
+      Byte 19:      WiFi State
+    Returns a dict with trap_id and wifi_state, or None if not a trap.
+    """
+    if len(manu_data) < 20:
+        return None
+
+    proto_ver = manu_data[0]
+    service_uuid = struct.unpack("<H", manu_data[1:3])[0]
+
+    if proto_ver != BLE_PROTOCOL_VERSION or service_uuid != BLE_SERVICE_SHORT_UUID:
+        return None
+
+    # Extract trap ID (16 bytes, null-padded ASCII)
+    trap_id_bytes = manu_data[3:19]
+    trap_id = trap_id_bytes.rstrip(b"\x00").decode("ascii", errors="replace")
+
+    wifi_state = manu_data[19]
+
+    return {
+        "trap_id": trap_id,
+        "wifi_state": wifi_state,
+        "wifi_state_name": WIFI_STATE_NAMES.get(wifi_state, f"UNKNOWN_{wifi_state}"),
+    }
+
+
+def _encode_provision_data(ssid: str, password: str) -> bytes:
+    """
+    Encode SSID + password for BLE provisioning write.
+    Format (from docs/ble-gatt-service.md):
+      Byte 0:       SSID Length (uint8)
+      Bytes 1..N:   SSID (UTF-8)
+      Byte N+1:     Password Length (uint8)
+      Bytes N+2..M: Password (UTF-8)
+    """
+    ssid_bytes = ssid.encode("utf-8")
+    password_bytes = password.encode("utf-8")
+
+    if len(ssid_bytes) > 32:
+        raise ValueError(f"SSID too long: {len(ssid_bytes)} bytes (max 32)")
+    if len(password_bytes) > 32:
+        raise ValueError(f"Password too long: {len(password_bytes)} bytes (max 32)")
+
+    data = bytearray()
+    data.append(len(ssid_bytes))
+    data.extend(ssid_bytes)
+    data.append(len(password_bytes))
+    data.extend(password_bytes)
+    return bytes(data)
+
+
+async def _ble_connect_and_read(ble_address: str, char_uuid: str) -> bytes:
+    """
+    Connect to a BLE device, read a characteristic, and disconnect.
+    """
+    from bleak import BleakClient
+
+    async with BleakClient(ble_address, timeout=20.0) as client:
+        value = await client.read_gatt_char(char_uuid)
+        return value
+
+
+async def _ble_connect_and_write(
+    ble_address: str,
+    write_char_uuid: str,
+    data: bytes,
+    notify_char_uuid: str | None = None,
+    notify_timeout: float = 15.0,
+) -> dict:
+    """
+    Connect to a BLE device, write to a characteristic, optionally wait for
+    a notification response, and disconnect.
+
+    Returns a dict with:
+      - "status": the notification status code (if notify_char_uuid provided)
+      - "status_name": human-readable status name
+      - "message": optional human-readable message from the notification
+      - "notification_received": whether a notification was received
+    """
+    from bleak import BleakClient
+
+    notification_result = {"data": None, "received": False}
+
+    def notification_handler(sender, data):
+        notification_result["data"] = data
+        notification_result["received"] = True
+
+    async with BleakClient(ble_address, timeout=20.0) as client:
+        # Enable notifications if requested
+        if notify_char_uuid:
+            await client.start_notify(notify_char_uuid, notification_handler)
+
+        # Write the provisioning data
+        await client.write_gatt_char(write_char_uuid, data)
+
+        # Wait for notification (e.g., Command Response)
+        if notify_char_uuid:
+            waited = 0.0
+            step = 0.5
+            while waited < notify_timeout:
+                if notification_result["received"]:
+                    break
+                await asyncio.sleep(step)
+                waited += step
+
+            # Stop notifications
+            await client.stop_notify(notify_char_uuid)
+
+        if notification_result["received"] and notification_result["data"]:
+            raw = notification_result["data"]
+            status_code = raw[0]
+            message = raw[1:].rstrip(b"\x00").decode("utf-8", errors="replace") if len(raw) > 1 else ""
+            return {
+                "status": status_code,
+                "status_name": CMD_STATUS_NAMES.get(status_code, f"UNKNOWN_{status_code}"),
+                "message": message,
+                "notification_received": True,
+            }
+        elif notify_char_uuid:
+            return {
+                "status": None,
+                "status_name": "TIMEOUT",
+                "message": "No command response notification received within timeout",
+                "notification_received": False,
+            }
+        else:
+            return {
+                "status": None,
+                "status_name": "WRITTEN",
+                "message": "Data written successfully (no notification requested)",
+                "notification_received": False,
+            }
+
+
+# ---------------------------------------------------------------------------
+# REST API helper
+# ---------------------------------------------------------------------------
 
 async def _request(trap_host: str, method: str, path: str, json_data: dict = None) -> dict:
     """
@@ -80,11 +267,15 @@ async def _request(trap_host: str, method: str, path: str, json_data: dict = Non
         return resp.json() if resp.content else {}
 
 
+# ---------------------------------------------------------------------------
+# Tool definitions
+# ---------------------------------------------------------------------------
+
 @server.list_tools()
 async def handle_list_tools() -> list[types.Tool]:
     """Register all MCP tools with trapHost parameter."""
 
-    # Common properties for all tools (trapHost is always required)
+    # Common properties for all REST API tools (trapHost is always required)
     base_properties = {
         "trapHost": {
             "type": "string",
@@ -93,6 +284,8 @@ async def handle_list_tools() -> list[types.Tool]:
     }
 
     return [
+        # ===== REST API tools (existing) =====
+
         # ----- Read-only tools (safe for auto-approve) -----
         types.Tool(
             name="get_trap_status",
@@ -281,8 +474,105 @@ async def handle_list_tools() -> list[types.Tool]:
                 "required": []
             }
         ),
+
+        # ===== BLE GATT tools (new) =====
+
+        # ----- BLE read-only tools (safe for auto-approve) -----
+        types.Tool(
+            name="ble_scan_traps",
+            description="Scan for AI Camera Traps via BLE advertisements. Returns discovered traps with their BLE address, trap ID, WiFi state, and RSSI.",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "scan_duration": {
+                        "type": "integer",
+                        "description": "Duration of BLE scan in seconds (default: 10)",
+                        "default": 10
+                    }
+                },
+                "required": []
+            }
+        ),
+        types.Tool(
+            name="ble_read_trap_id",
+            description="Connect to a trap via BLE and read its Trap Identity characteristic. Requires the trap's BLE address (obtained from ble_scan_traps).",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "ble_address": {
+                        "type": "string",
+                        "description": "BLE MAC address of the trap (e.g., 'AA:BB:CC:DD:EE:FF')"
+                    }
+                },
+                "required": ["ble_address"]
+            }
+        ),
+        types.Tool(
+            name="ble_read_wifi_state",
+            description="Connect to a trap via BLE and read its WiFi State characteristic. Requires the trap's BLE address (obtained from ble_scan_traps).",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "ble_address": {
+                        "type": "string",
+                        "description": "BLE MAC address of the trap (e.g., 'AA:BB:CC:DD:EE:FF')"
+                    }
+                },
+                "required": ["ble_address"]
+            }
+        ),
+
+        # ----- BLE state-changing tools (require manual approval) -----
+        types.Tool(
+            name="ble_provision_station",
+            description="Provision a trap to connect to a WiFi network as a station via BLE GATT. Writes SSID + password to the WiFi Provision Station characteristic. Requires BLE pairing (Numeric Comparison).",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "ble_address": {
+                        "type": "string",
+                        "description": "BLE MAC address of the trap (e.g., 'AA:BB:CC:DD:EE:FF')"
+                    },
+                    "ssid": {
+                        "type": "string",
+                        "description": "WiFi network SSID (1-32 characters)"
+                    },
+                    "password": {
+                        "type": "string",
+                        "description": "WiFi network password (0-32 characters; empty for open network)"
+                    }
+                },
+                "required": ["ble_address", "ssid", "password"]
+            }
+        ),
+        types.Tool(
+            name="ble_provision_ap",
+            description="Provision a trap to start a WiFi Access Point via BLE GATT. Writes SSID + password to the WiFi Provision AP characteristic. Requires BLE pairing (Numeric Comparison).",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "ble_address": {
+                        "type": "string",
+                        "description": "BLE MAC address of the trap (e.g., 'AA:BB:CC:DD:EE:FF')"
+                    },
+                    "ssid": {
+                        "type": "string",
+                        "description": "AP network SSID (1-32 characters)"
+                    },
+                    "password": {
+                        "type": "string",
+                        "description": "AP network password (8-32 characters; empty for open AP)"
+                    }
+                },
+                "required": ["ble_address", "ssid", "password"]
+            }
+        ),
     ]
 
+
+# ---------------------------------------------------------------------------
+# Tool execution
+# ---------------------------------------------------------------------------
 
 @server.call_tool()
 async def handle_call_tool(
@@ -291,6 +581,26 @@ async def handle_call_tool(
 ) -> list[types.TextContent]:
     """Execute the requested tool."""
     args = arguments or {}
+
+    # ===== BLE GATT tools =====
+    # These don't need trapHost — they use BLE directly
+
+    if name == "ble_scan_traps":
+        return await _handle_ble_scan(args)
+
+    if name == "ble_read_trap_id":
+        return await _handle_ble_read_trap_id(args)
+
+    if name == "ble_read_wifi_state":
+        return await _handle_ble_read_wifi_state(args)
+
+    if name == "ble_provision_station":
+        return await _handle_ble_provision(args, station_mode=True)
+
+    if name == "ble_provision_ap":
+        return await _handle_ble_provision(args, station_mode=False)
+
+    # ===== REST API tools =====
 
     # Special case: discover_traps doesn't need trapHost
     if name == "discover_traps":
@@ -424,6 +734,260 @@ async def handle_call_tool(
         return [types.TextContent(type="text", text=f"Error: {str(e)}")]
 
 
+# ---------------------------------------------------------------------------
+# BLE tool handlers
+# ---------------------------------------------------------------------------
+
+async def _handle_ble_scan(args: dict) -> list[types.TextContent]:
+    """Handle ble_scan_traps: scan for BLE advertisements from traps."""
+    scan_duration = args.get("scan_duration", 10)
+
+    try:
+        from bleak import BleakScanner
+
+        discovered_traps = []
+
+        def detection_callback(device, advertisement_data):
+            # Check for manufacturer data
+            if MANUFACTURER_ID not in (advertisement_data.manufacturer_data or {}):
+                return
+
+            manu_data = advertisement_data.manufacturer_data[MANUFACTURER_ID]
+            parsed = _parse_manufacturer_data(manu_data)
+            if parsed is None:
+                return
+
+            discovered_traps.append({
+                "ble_address": device.address,
+                "name": device.name or "Unknown",
+                "rssi": advertisement_data.rssi,
+                "trap_id": parsed["trap_id"],
+                "wifi_state": parsed["wifi_state"],
+                "wifi_state_name": parsed["wifi_state_name"],
+            })
+
+        scanner = BleakScanner(detection_callback)
+        await scanner.start()
+        await asyncio.sleep(scan_duration)
+        await scanner.stop()
+
+        if not discovered_traps:
+            return [types.TextContent(
+                type="text",
+                text=json.dumps({
+                    "message": "No AI Camera Traps found via BLE",
+                    "note": "Ensure the trap is powered on and advertising. Scan duration: {}s".format(scan_duration),
+                    "discovered_traps": [],
+                }, indent=2)
+            )]
+
+        return [types.TextContent(
+            type="text",
+            text=json.dumps({
+                "scan_duration_seconds": scan_duration,
+                "traps_found": len(discovered_traps),
+                "discovered_traps": discovered_traps,
+            }, indent=2)
+        )]
+
+    except ImportError:
+        return [types.TextContent(
+            type="text",
+            text=json.dumps({
+                "error": "bleak library not installed",
+                "message": "Install bleak: pip install bleak"
+            }, indent=2)
+        )]
+    except Exception as e:
+        return [types.TextContent(
+            type="text",
+            text=json.dumps({
+                "error": f"BLE scan failed: {str(e)}",
+                "message": "Ensure Bluetooth is enabled on this machine. On macOS, grant Bluetooth permission."
+            }, indent=2)
+        )]
+
+
+async def _handle_ble_read_trap_id(args: dict) -> list[types.TextContent]:
+    """Handle ble_read_trap_id: read the Trap Identity characteristic."""
+    ble_address = args.get("ble_address")
+    if not ble_address:
+        return [types.TextContent(
+            type="text",
+            text="Error: 'ble_address' parameter is required (e.g., 'AA:BB:CC:DD:EE:FF')"
+        )]
+
+    try:
+        from bleak import BleakClient
+        from bleak.exceptions import BleakError
+
+        value = await _ble_connect_and_read(ble_address, BLE_CHAR_TRAP_ID)
+        trap_id = value.rstrip(b"\x00").decode("utf-8", errors="replace")
+
+        return [types.TextContent(
+            type="text",
+            text=json.dumps({
+                "ble_address": ble_address,
+                "trap_id": trap_id,
+                "raw_hex": value.hex(),
+            }, indent=2)
+        )]
+
+    except ImportError:
+        return [types.TextContent(
+            type="text",
+            text=json.dumps({
+                "error": "bleak library not installed",
+                "message": "Install bleak: pip install bleak"
+            }, indent=2)
+        )]
+    except BleakError as e:
+        return [types.TextContent(
+            type="text",
+            text=json.dumps({
+                "error": f"BLE connection failed: {str(e)}",
+                "message": "Ensure the trap is powered on, advertising, and within range. The BLE address should be obtained from ble_scan_traps."
+            }, indent=2)
+        )]
+    except Exception as e:
+        return [types.TextContent(
+            type="text",
+            text=json.dumps({
+                "error": f"Failed to read trap ID: {str(e)}"
+            }, indent=2)
+        )]
+
+
+async def _handle_ble_read_wifi_state(args: dict) -> list[types.TextContent]:
+    """Handle ble_read_wifi_state: read the WiFi State characteristic."""
+    ble_address = args.get("ble_address")
+    if not ble_address:
+        return [types.TextContent(
+            type="text",
+            text="Error: 'ble_address' parameter is required (e.g., 'AA:BB:CC:DD:EE:FF')"
+        )]
+
+    try:
+        from bleak.exceptions import BleakError
+
+        value = await _ble_connect_and_read(ble_address, BLE_CHAR_WIFI_STATE)
+        wifi_state = value[0] if value else 0xFF
+        wifi_state_name = WIFI_STATE_NAMES.get(wifi_state, f"UNKNOWN_{wifi_state}")
+
+        return [types.TextContent(
+            type="text",
+            text=json.dumps({
+                "ble_address": ble_address,
+                "wifi_state": wifi_state,
+                "wifi_state_name": wifi_state_name,
+                "raw_hex": value.hex(),
+            }, indent=2)
+        )]
+
+    except ImportError:
+        return [types.TextContent(
+            type="text",
+            text=json.dumps({
+                "error": "bleak library not installed",
+                "message": "Install bleak: pip install bleak"
+            }, indent=2)
+        )]
+    except BleakError as e:
+        return [types.TextContent(
+            type="text",
+            text=json.dumps({
+                "error": f"BLE connection failed: {str(e)}",
+                "message": "Ensure the trap is powered on, advertising, and within range. The BLE address should be obtained from ble_scan_traps."
+            }, indent=2)
+        )]
+    except Exception as e:
+        return [types.TextContent(
+            type="text",
+            text=json.dumps({
+                "error": f"Failed to read WiFi state: {str(e)}"
+            }, indent=2)
+        )]
+
+
+async def _handle_ble_provision(args: dict, station_mode: bool) -> list[types.TextContent]:
+    """Handle ble_provision_station or ble_provision_ap."""
+    ble_address = args.get("ble_address")
+    ssid = args.get("ssid", "")
+    password = args.get("password", "")
+
+    if not ble_address:
+        return [types.TextContent(
+            type="text",
+            text="Error: 'ble_address' parameter is required (e.g., 'AA:BB:CC:DD:EE:FF')"
+        )]
+    if not ssid:
+        return [types.TextContent(
+            type="text",
+            text="Error: 'ssid' parameter is required"
+        )]
+
+    mode_name = "station" if station_mode else "access point"
+    write_char = BLE_CHAR_PROVISION_STATION if station_mode else BLE_CHAR_PROVISION_AP
+
+    try:
+        from bleak.exceptions import BleakError
+
+        # Encode the provisioning data
+        provision_data = _encode_provision_data(ssid, password)
+
+        # Write to the characteristic and wait for Command Response notification
+        result = await _ble_connect_and_write(
+            ble_address,
+            write_char,
+            provision_data,
+            notify_char_uuid=BLE_CHAR_CMD_RESPONSE,
+            notify_timeout=15.0,
+        )
+
+        return [types.TextContent(
+            type="text",
+            text=json.dumps({
+                "ble_address": ble_address,
+                "mode": mode_name,
+                "ssid": ssid,
+                "provision_data_hex": provision_data.hex(),
+                "response": result,
+            }, indent=2)
+        )]
+
+    except ValueError as e:
+        return [types.TextContent(
+            type="text",
+            text=json.dumps({
+                "error": f"Invalid provisioning data: {str(e)}",
+                "message": "SSID must be 1-32 characters, password must be 0-32 characters."
+            }, indent=2)
+        )]
+    except ImportError:
+        return [types.TextContent(
+            type="text",
+            text=json.dumps({
+                "error": "bleak library not installed",
+                "message": "Install bleak: pip install bleak"
+            }, indent=2)
+        )]
+    except BleakError as e:
+        return [types.TextContent(
+            type="text",
+            text=json.dumps({
+                "error": f"BLE connection failed: {str(e)}",
+                "message": "Ensure the trap is powered on, advertising, and within range. BLE provisioning requires pairing (Numeric Comparison)."
+            }, indent=2)
+        )]
+    except Exception as e:
+        return [types.TextContent(
+            type="text",
+            text=json.dumps({
+                "error": f"Failed to provision {mode_name} mode: {str(e)}"
+            }, indent=2)
+        )]
+
+
 async def main():
     async with mcp.server.stdio.stdio_server() as (read_stream, write_stream):
         await server.run(
@@ -431,11 +995,10 @@ async def main():
             write_stream,
             InitializationOptions(
                 server_name="naturesense-trap-mcp",
-                server_version="1.0.0"
+                server_version="1.1.0"
             )
         )
 
 
 if __name__ == "__main__":
-    import asyncio
     asyncio.run(main())

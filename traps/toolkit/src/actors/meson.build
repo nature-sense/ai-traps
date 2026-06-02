@@ -59,4 +59,7 @@ actor_sources = files(
 
   # Event publisher (generic event dispatch to SSE / future backends)
   'event-publisher/event_publisher_actor.cpp',
+
+  # WiFi provisioning (BLE GATT service for remote WiFi configuration)
+  'wifi-provisioning/wifi_provisioning_actor.cpp',
 )

@@ -711,11 +711,14 @@ bool WifiProvisioningActor::setupAdvertisement() {
 
     std::cout << "[WifiProvisioningActor] advertisement registered with BlueZ\n";
 
-    // ── Set adapter Discoverable to true (with infinite timeout) ────────────
-    // Without this, the adapter won't be discoverable by BLE scanners even
-    // though the advertisement is registered with BlueZ. We also set
-    // DiscoverableTimeout to 0 (infinite) so BlueZ doesn't automatically turn
-    // Discoverable back off after the default 180-second timeout.
+    // ── Set adapter Powered to true (if not already) ────────────────────────
+    // The adapter must be powered on for BLE advertising to work.
+    // We do NOT set Discoverable=true because that enables legacy advertising
+    // mode which sends the controller name but NOT the manufacturer data from
+    // the LEAdvertisement. Instead, we rely on the registered LEAdvertisement
+    // (with Type=peripheral, LocalName, and ManufacturerData) to handle
+    // discoverability and include the manufacturer data in the advertising
+    // packets.
     {
         // Helper lambda to set a property asynchronously
         auto set_adapter_property = [&](const char* property, const char* type_sig, ...) -> bool {
@@ -793,14 +796,10 @@ bool WifiProvisioningActor::setupAdvertisement() {
             return future.get();
         };
 
-        // First set DiscoverableTimeout to 0 (infinite) so BlueZ doesn't
-        // automatically turn Discoverable off after the default timeout.
-        set_adapter_property("DiscoverableTimeout", "u", (uint32_t)0);
-
-        // Then set Discoverable to true
-        bool ok = set_adapter_property("Discoverable", "b", 1);
+        // Ensure the adapter is powered on
+        bool ok = set_adapter_property("Powered", "b", 1);
         if (ok) {
-            std::cout << "[WifiProvisioningActor] adapter set discoverable (infinite timeout)\n";
+            std::cout << "[WifiProvisioningActor] adapter powered on\n";
         }
     }
 

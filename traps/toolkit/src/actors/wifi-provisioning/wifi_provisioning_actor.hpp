@@ -24,6 +24,7 @@
 #include <mutex>
 #include <thread>
 #include <vector>
+#include <systemd/sd-bus.h>
 
 namespace ct {
 

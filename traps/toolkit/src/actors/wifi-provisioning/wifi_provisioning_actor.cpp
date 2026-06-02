@@ -775,27 +775,44 @@ int WifiProvisioningActor::onGetAllProperties(
 // ── D-Bus LE Advertisement Property Getters ────────────────────────────────
 
 int WifiProvisioningActor::onAdvGetType(
-    sd_bus_message* msg, void* userdata, sd_bus_error* ret_error)
+    sd_bus* bus, const char* path, const char* interface,
+    const char* property, sd_bus_message* reply,
+    void* userdata, sd_bus_error* ret_error)
 {
+    (void)bus;
+    (void)path;
+    (void)interface;
+    (void)property;
     (void)userdata;
     (void)ret_error;
     // Return "peripheral" — a connectable advertisement
-    return sd_bus_reply_method_return(msg, "v", "s", bluez::ADV_TYPE_PERIPHERAL);
+    return sd_bus_reply_method_return(reply, "v", "s", bluez::ADV_TYPE_PERIPHERAL);
 }
 
 int WifiProvisioningActor::onAdvGetServiceUUIDs(
-    sd_bus_message* msg, void* userdata, sd_bus_error* ret_error)
+    sd_bus* bus, const char* path, const char* interface,
+    const char* property, sd_bus_message* reply,
+    void* userdata, sd_bus_error* ret_error)
 {
+    (void)bus;
+    (void)path;
+    (void)interface;
+    (void)property;
     (void)userdata;
     (void)ret_error;
     // Return an array containing our GATT service UUID
-    int ret = sd_bus_reply_method_return(msg, "v", "as", 1, gatt_uuids::SERVICE);
-    return ret;
+    return sd_bus_reply_method_return(reply, "v", "as", 1, gatt_uuids::SERVICE);
 }
 
 int WifiProvisioningActor::onAdvGetManufacturerData(
-    sd_bus_message* msg, void* userdata, sd_bus_error* ret_error)
+    sd_bus* bus, const char* path, const char* interface,
+    const char* property, sd_bus_message* reply,
+    void* userdata, sd_bus_error* ret_error)
 {
+    (void)bus;
+    (void)path;
+    (void)interface;
+    (void)property;
     auto* self = static_cast<WifiProvisioningActor*>(userdata);
     if (self == nullptr) {
         return sd_bus_error_set_const(ret_error, bluez::SERVICE, "Internal error");
@@ -814,21 +831,21 @@ int WifiProvisioningActor::onAdvGetManufacturerData(
     int ret;
 
     // Open the outer variant
-    ret = sd_bus_message_open_container(msg, 'v', "a{sv}");
+    ret = sd_bus_message_open_container(reply, 'v', "a{sv}");
     if (ret < 0) {
         logDbusError("onAdvGetManufacturerData: open variant", ret);
         return ret;
     }
 
     // Open the dict container: a{sv}
-    ret = sd_bus_message_open_container(msg, SD_BUS_TYPE_ARRAY, "{sv}");
+    ret = sd_bus_message_open_container(reply, SD_BUS_TYPE_ARRAY, "{sv}");
     if (ret < 0) {
         logDbusError("onAdvGetManufacturerData: open array", ret);
         return ret;
     }
 
     // Open a dict entry: {
-    ret = sd_bus_message_open_container(msg, SD_BUS_TYPE_DICT_ENTRY, "sv");
+    ret = sd_bus_message_open_container(reply, SD_BUS_TYPE_DICT_ENTRY, "sv");
     if (ret < 0) {
         logDbusError("onAdvGetManufacturerData: open dict entry", ret);
         return ret;
@@ -836,48 +853,48 @@ int WifiProvisioningActor::onAdvGetManufacturerData(
 
     // Key: company ID as uint16 (0xFFFF)
     uint16_t company_id = 0xFFFF;
-    ret = sd_bus_message_append(msg, "q", company_id);
+    ret = sd_bus_message_append(reply, "q", company_id);
     if (ret < 0) {
         logDbusError("onAdvGetManufacturerData: append key", ret);
         return ret;
     }
 
     // Value: variant containing array of bytes (ay)
-    ret = sd_bus_message_open_container(msg, 'v', "ay");
+    ret = sd_bus_message_open_container(reply, 'v', "ay");
     if (ret < 0) {
         logDbusError("onAdvGetManufacturerData: open value variant", ret);
         return ret;
     }
 
-    ret = sd_bus_message_append_array(msg, 'y', manu_data.data(), manu_data.size());
+    ret = sd_bus_message_append_array(reply, 'y', manu_data.data(), manu_data.size());
     if (ret < 0) {
         logDbusError("onAdvGetManufacturerData: append array", ret);
         return ret;
     }
 
     // Close value variant
-    ret = sd_bus_message_close_container(msg);
+    ret = sd_bus_message_close_container(reply);
     if (ret < 0) {
         logDbusError("onAdvGetManufacturerData: close value variant", ret);
         return ret;
     }
 
     // Close dict entry
-    ret = sd_bus_message_close_container(msg);
+    ret = sd_bus_message_close_container(reply);
     if (ret < 0) {
         logDbusError("onAdvGetManufacturerData: close dict entry", ret);
         return ret;
     }
 
     // Close dict array
-    ret = sd_bus_message_close_container(msg);
+    ret = sd_bus_message_close_container(reply);
     if (ret < 0) {
         logDbusError("onAdvGetManufacturerData: close array", ret);
         return ret;
     }
 
     // Close outer variant
-    ret = sd_bus_message_close_container(msg);
+    ret = sd_bus_message_close_container(reply);
     if (ret < 0) {
         logDbusError("onAdvGetManufacturerData: close outer variant", ret);
         return ret;
@@ -888,16 +905,23 @@ int WifiProvisioningActor::onAdvGetManufacturerData(
 
 
 int WifiProvisioningActor::onAdvGetLocalName(
-    sd_bus_message* msg, void* userdata, sd_bus_error* ret_error)
+    sd_bus* bus, const char* path, const char* interface,
+    const char* property, sd_bus_message* reply,
+    void* userdata, sd_bus_error* ret_error)
 {
+    (void)bus;
+    (void)path;
+    (void)interface;
+    (void)property;
     auto* self = static_cast<WifiProvisioningActor*>(userdata);
     if (self == nullptr) {
         return sd_bus_error_set_const(ret_error, bluez::SERVICE, "Internal error");
     }
 
     // Return the trap ID as the local name
-    return sd_bus_reply_method_return(msg, "v", "s", self->trap_id_.c_str());
+    return sd_bus_reply_method_return(reply, "v", "s", self->trap_id_.c_str());
 }
+
 
 // ── Helpers ────────────────────────────────────────────────────────────────
 

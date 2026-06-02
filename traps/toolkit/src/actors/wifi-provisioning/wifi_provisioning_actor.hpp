@@ -251,16 +251,25 @@ private:
 
     // ── D-Bus LE Advertisement Property Getters (static, called by sd-bus vtable) ─
     // Returns the advertisement type string ("peripheral").
-    static int onAdvGetType(sd_bus_message* msg, void* userdata, sd_bus_error* ret_error);
+    // Signature: sd_bus_property_get_t
+    static int onAdvGetType(sd_bus* bus, const char* path, const char* interface,
+                            const char* property, sd_bus_message* reply,
+                            void* userdata, sd_bus_error* ret_error);
 
     // Returns the service UUIDs array.
-    static int onAdvGetServiceUUIDs(sd_bus_message* msg, void* userdata, sd_bus_error* ret_error);
+    static int onAdvGetServiceUUIDs(sd_bus* bus, const char* path, const char* interface,
+                                    const char* property, sd_bus_message* reply,
+                                    void* userdata, sd_bus_error* ret_error);
 
     // Returns the manufacturer data dict.
-    static int onAdvGetManufacturerData(sd_bus_message* msg, void* userdata, sd_bus_error* ret_error);
+    static int onAdvGetManufacturerData(sd_bus* bus, const char* path, const char* interface,
+                                        const char* property, sd_bus_message* reply,
+                                        void* userdata, sd_bus_error* ret_error);
 
     // Returns the local name (trap ID).
-    static int onAdvGetLocalName(sd_bus_message* msg, void* userdata, sd_bus_error* ret_error);
+    static int onAdvGetLocalName(sd_bus* bus, const char* path, const char* interface,
+                                 const char* property, sd_bus_message* reply,
+                                 void* userdata, sd_bus_error* ret_error);
 
     // ── Helpers ────────────────────────────────────────────────────────────────
     // Send a PropertiesChanged signal for a GATT characteristic.

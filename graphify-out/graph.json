@@ -9,7 +9,7 @@
       "source_file": "tools/mcp/scripts/generate_project_graph.py",
       "source_location": "L1",
       "id": "tools_mcp_scripts_generate_project_graph_py",
-      "community": 38
+      "community": 37
     },
     {
       "label": "draw_module_structure()",
@@ -17,7 +17,7 @@
       "source_file": "tools/mcp/scripts/generate_project_graph.py",
       "source_location": "L69",
       "id": "generate_project_graph_draw_module_structure",
-      "community": 38
+      "community": 37
     },
     {
       "label": "draw_actor_pipeline()",
@@ -25,7 +25,7 @@
       "source_file": "tools/mcp/scripts/generate_project_graph.py",
       "source_location": "L117",
       "id": "generate_project_graph_draw_actor_pipeline",
-      "community": 38
+      "community": 37
     },
     {
       "label": "draw_build_deploy()",
@@ -33,7 +33,7 @@
       "source_file": "tools/mcp/scripts/generate_project_graph.py",
       "source_location": "L237",
       "id": "generate_project_graph_draw_build_deploy",
-      "community": 38
+      "community": 37
     },
     {
       "label": "draw_data_flow()",
@@ -41,7 +41,7 @@
       "source_file": "tools/mcp/scripts/generate_project_graph.py",
       "source_location": "L359",
       "id": "generate_project_graph_draw_data_flow",
-      "community": 38
+      "community": 37
     },
     {
       "label": "main()",
@@ -49,7 +49,7 @@
       "source_file": "tools/mcp/scripts/generate_project_graph.py",
       "source_location": "L448",
       "id": "generate_project_graph_main",
-      "community": 38
+      "community": 37
     },
     {
       "label": "trap-mcp-server.py",
@@ -249,7 +249,7 @@
       "source_file": "tools/mcp/scripts/mcp-build-server.py",
       "source_location": "L1",
       "id": "tools_mcp_scripts_mcp_build_server_py",
-      "community": 59
+      "community": 58
     },
     {
       "label": "main()",
@@ -257,14 +257,14 @@
       "source_file": "tools/mcp/scripts/mcp-build-server.py",
       "source_location": "L33",
       "id": "mcp_build_server_main",
-      "community": 59
+      "community": 58
     },
     {
       "label": "Run the MCP build server",
       "file_type": "rationale",
       "source_file": "tools/mcp/scripts/mcp-build-server.py",
       "source_location": "L34",
-      "community": 59,
+      "community": 58,
       "id": "mcp_build_server_rationale_34"
     },
     {
@@ -273,7 +273,7 @@
       "source_file": "tools/mcp/scripts/generate_actor_diagram.py",
       "source_location": "L1",
       "id": "tools_mcp_scripts_generate_actor_diagram_py",
-      "community": 60
+      "community": 59
     },
     {
       "label": "get_port_position()",
@@ -281,14 +281,14 @@
       "source_file": "tools/mcp/scripts/generate_actor_diagram.py",
       "source_location": "L280",
       "id": "generate_actor_diagram_get_port_position",
-      "community": 60
+      "community": 59
     },
     {
       "label": "Get the (x, y) position of a port on an actor.",
       "file_type": "rationale",
       "source_file": "tools/mcp/scripts/generate_actor_diagram.py",
       "source_location": "L281",
-      "community": 60,
+      "community": 59,
       "id": "generate_actor_diagram_rationale_281"
     },
     {
@@ -433,7 +433,7 @@
       "source_file": "tools/mcp/scripts/build_server.py",
       "source_location": "L1",
       "id": "tools_mcp_scripts_build_server_py",
-      "community": 61
+      "community": 60
     },
     {
       "label": "main()",
@@ -441,14 +441,14 @@
       "source_file": "tools/mcp/scripts/build_server.py",
       "source_location": "L42",
       "id": "build_server_main",
-      "community": 61
+      "community": 60
     },
     {
       "label": "Run the build server with uvicorn.",
       "file_type": "rationale",
       "source_file": "tools/mcp/scripts/build_server.py",
       "source_location": "L43",
-      "community": 61,
+      "community": 60,
       "id": "build_server_rationale_43"
     },
     {
@@ -849,7 +849,7 @@
       "source_file": "tools/mcp/scripts/mcp_build/build.py",
       "source_location": "L1",
       "id": "tools_mcp_scripts_mcp_build_build_py",
-      "community": 16
+      "community": 15
     },
     {
       "label": "build_toolkit()",
@@ -857,7 +857,7 @@
       "source_file": "tools/mcp/scripts/mcp_build/build.py",
       "source_location": "L15",
       "id": "build_build_toolkit",
-      "community": 16
+      "community": 15
     },
     {
       "label": "build_target()",
@@ -865,14 +865,14 @@
       "source_file": "tools/mcp/scripts/mcp_build/build.py",
       "source_location": "L83",
       "id": "build_build_target",
-      "community": 16
+      "community": 15
     },
     {
       "label": "Build functions for toolkit and target binaries.  Handles rsync-based source syn",
       "file_type": "rationale",
       "source_file": "tools/mcp/scripts/mcp_build/build.py",
       "source_location": "L1",
-      "community": 16,
+      "community": 15,
       "id": "build_rationale_1"
     },
     {
@@ -880,7 +880,7 @@
       "file_type": "rationale",
       "source_file": "tools/mcp/scripts/mcp_build/build.py",
       "source_location": "L16",
-      "community": 16,
+      "community": 15,
       "id": "build_rationale_16"
     },
     {
@@ -888,7 +888,7 @@
       "file_type": "rationale",
       "source_file": "tools/mcp/scripts/mcp_build/build.py",
       "source_location": "L84",
-      "community": 16,
+      "community": 15,
       "id": "build_rationale_84"
     },
     {
@@ -897,7 +897,7 @@
       "source_file": "tools/mcp/scripts/mcp_build/config.py",
       "source_location": "L1",
       "id": "tools_mcp_scripts_mcp_build_config_py",
-      "community": 17
+      "community": 16
     },
     {
       "label": "get_platform_config()",
@@ -905,7 +905,7 @@
       "source_file": "tools/mcp/scripts/mcp_build/config.py",
       "source_location": "L57",
       "id": "config_get_platform_config",
-      "community": 17
+      "community": 16
     },
     {
       "label": "resolve_config()",
@@ -913,7 +913,7 @@
       "source_file": "tools/mcp/scripts/mcp_build/config.py",
       "source_location": "L62",
       "id": "config_resolve_config",
-      "community": 17
+      "community": 16
     },
     {
       "label": "get_binary_path()",
@@ -921,7 +921,7 @@
       "source_file": "tools/mcp/scripts/mcp_build/config.py",
       "source_location": "L83",
       "id": "config_get_binary_path",
-      "community": 17
+      "community": 16
     },
     {
       "label": "get_run_command()",
@@ -929,7 +929,7 @@
       "source_file": "tools/mcp/scripts/mcp_build/config.py",
       "source_location": "L89",
       "id": "config_get_run_command",
-      "community": 17
+      "community": 16
     },
     {
       "label": "ssh_execute()",
@@ -937,7 +937,7 @@
       "source_file": "tools/mcp/scripts/mcp_build/config.py",
       "source_location": "L100",
       "id": "config_ssh_execute",
-      "community": 17
+      "community": 16
     },
     {
       "label": "ssh_execute_background()",
@@ -945,14 +945,14 @@
       "source_file": "tools/mcp/scripts/mcp_build/config.py",
       "source_location": "L130",
       "id": "config_ssh_execute_background",
-      "community": 17
+      "community": 16
     },
     {
       "label": "Platform configuration and SSH helpers.  Defines platform-specific settings for",
       "file_type": "rationale",
       "source_file": "tools/mcp/scripts/mcp_build/config.py",
       "source_location": "L1",
-      "community": 17,
+      "community": 16,
       "id": "config_rationale_1"
     },
     {
@@ -960,7 +960,7 @@
       "file_type": "rationale",
       "source_file": "tools/mcp/scripts/mcp_build/config.py",
       "source_location": "L58",
-      "community": 17,
+      "community": 16,
       "id": "config_rationale_58"
     },
     {
@@ -968,7 +968,7 @@
       "file_type": "rationale",
       "source_file": "tools/mcp/scripts/mcp_build/config.py",
       "source_location": "L63",
-      "community": 17,
+      "community": 16,
       "id": "config_rationale_63"
     },
     {
@@ -976,7 +976,7 @@
       "file_type": "rationale",
       "source_file": "tools/mcp/scripts/mcp_build/config.py",
       "source_location": "L84",
-      "community": 17,
+      "community": 16,
       "id": "config_rationale_84"
     },
     {
@@ -984,7 +984,7 @@
       "file_type": "rationale",
       "source_file": "tools/mcp/scripts/mcp_build/config.py",
       "source_location": "L90",
-      "community": 17,
+      "community": 16,
       "id": "config_rationale_90"
     },
     {
@@ -992,7 +992,7 @@
       "file_type": "rationale",
       "source_file": "tools/mcp/scripts/mcp_build/config.py",
       "source_location": "L101",
-      "community": 17,
+      "community": 16,
       "id": "config_rationale_101"
     },
     {
@@ -1000,7 +1000,7 @@
       "file_type": "rationale",
       "source_file": "tools/mcp/scripts/mcp_build/config.py",
       "source_location": "L131",
-      "community": 17,
+      "community": 16,
       "id": "config_rationale_131"
     },
     {
@@ -1009,7 +1009,7 @@
       "source_file": "tools/mcp/scripts/mcp_build/deploy.py",
       "source_location": "L1",
       "id": "tools_mcp_scripts_mcp_build_deploy_py",
-      "community": 33
+      "community": 32
     },
     {
       "label": "generate_config_yaml()",
@@ -1017,7 +1017,7 @@
       "source_file": "tools/mcp/scripts/mcp_build/deploy.py",
       "source_location": "L17",
       "id": "deploy_generate_config_yaml",
-      "community": 33
+      "community": 32
     },
     {
       "label": "generate_systemd_service()",
@@ -1025,7 +1025,7 @@
       "source_file": "tools/mcp/scripts/mcp_build/deploy.py",
       "source_location": "L165",
       "id": "deploy_generate_systemd_service",
-      "community": 33
+      "community": 32
     },
     {
       "label": "deploy_to_board()",
@@ -1033,14 +1033,14 @@
       "source_file": "tools/mcp/scripts/mcp_build/deploy.py",
       "source_location": "L183",
       "id": "deploy_deploy_to_board",
-      "community": 33
+      "community": 32
     },
     {
       "label": "Deploy pipeline functions.  Handles config generation, systemd service creation,",
       "file_type": "rationale",
       "source_file": "tools/mcp/scripts/mcp_build/deploy.py",
       "source_location": "L1",
-      "community": 33,
+      "community": 32,
       "id": "deploy_rationale_1"
     },
     {
@@ -1048,7 +1048,7 @@
       "file_type": "rationale",
       "source_file": "tools/mcp/scripts/mcp_build/deploy.py",
       "source_location": "L18",
-      "community": 33,
+      "community": 32,
       "id": "deploy_rationale_18"
     },
     {
@@ -1056,7 +1056,7 @@
       "file_type": "rationale",
       "source_file": "tools/mcp/scripts/mcp_build/deploy.py",
       "source_location": "L166",
-      "community": 33,
+      "community": 32,
       "id": "deploy_rationale_166"
     },
     {
@@ -1064,7 +1064,7 @@
       "file_type": "rationale",
       "source_file": "tools/mcp/scripts/mcp_build/deploy.py",
       "source_location": "L184",
-      "community": 33,
+      "community": 32,
       "id": "deploy_rationale_184"
     },
     {
@@ -1417,7 +1417,7 @@
       "source_file": "tools/mcp/scripts/mcp_build/tools.py",
       "source_location": "L1",
       "id": "tools_mcp_scripts_mcp_build_tools_py",
-      "community": 49
+      "community": 48
     },
     {
       "label": "list_tools()",
@@ -1425,14 +1425,14 @@
       "source_file": "tools/mcp/scripts/mcp_build/tools.py",
       "source_location": "L14",
       "id": "tools_list_tools",
-      "community": 49
+      "community": 48
     },
     {
       "label": "MCP tool definitions.  Defines the schemas for all tools exposed by the ai-trap-",
       "file_type": "rationale",
       "source_file": "tools/mcp/scripts/mcp_build/tools.py",
       "source_location": "L1",
-      "community": 49,
+      "community": 48,
       "id": "tools_rationale_1"
     },
     {
@@ -1440,7 +1440,7 @@
       "file_type": "rationale",
       "source_file": "tools/mcp/scripts/mcp_build/tools.py",
       "source_location": "L15",
-      "community": 49,
+      "community": 48,
       "id": "tools_rationale_15"
     },
     {
@@ -1449,14 +1449,14 @@
       "source_file": "tools/mcp/scripts/mcp_build/__init__.py",
       "source_location": "L1",
       "id": "tools_mcp_scripts_mcp_build_init_py",
-      "community": 62
+      "community": 61
     },
     {
       "label": "Build Server Package - AI Camera Trap Build Server  A FastAPI-based build server",
       "file_type": "rationale",
       "source_file": "tools/mcp/scripts/build_server/__init__.py",
       "source_location": "L1",
-      "community": 62,
+      "community": 61,
       "id": "init_rationale_1"
     },
     {
@@ -1465,7 +1465,7 @@
       "source_file": "tools/mcp/scripts/mcp_build/parsers.py",
       "source_location": "L1",
       "id": "tools_mcp_scripts_mcp_build_parsers_py",
-      "community": 16
+      "community": 15
     },
     {
       "label": "CompilerErrorParser",
@@ -1473,7 +1473,7 @@
       "source_file": "tools/mcp/scripts/mcp_build/parsers.py",
       "source_location": "L12",
       "id": "parsers_compilererrorparser",
-      "community": 16
+      "community": 15
     },
     {
       "label": "parse_line()",
@@ -1481,7 +1481,7 @@
       "source_file": "tools/mcp/scripts/mcp_build/parsers.py",
       "source_location": "L36",
       "id": "parsers_parse_line",
-      "community": 16
+      "community": 15
     },
     {
       "label": "parse_output()",
@@ -1489,7 +1489,7 @@
       "source_file": "tools/mcp/scripts/mcp_build/parsers.py",
       "source_location": "L73",
       "id": "parsers_parse_output",
-      "community": 16
+      "community": 15
     },
     {
       "label": "CrashParser",
@@ -1497,7 +1497,7 @@
       "source_file": "tools/mcp/scripts/mcp_build/parsers.py",
       "source_location": "L124",
       "id": "parsers_crashparser",
-      "community": 16
+      "community": 15
     },
     {
       "label": "parse_gdb_output()",
@@ -1505,14 +1505,14 @@
       "source_file": "tools/mcp/scripts/mcp_build/parsers.py",
       "source_location": "L149",
       "id": "parsers_parse_gdb_output",
-      "community": 16
+      "community": 15
     },
     {
       "label": "Compiler error and crash output parsers.  Provides structured parsing of GCC/Cla",
       "file_type": "rationale",
       "source_file": "tools/mcp/scripts/mcp_build/parsers.py",
       "source_location": "L1",
-      "community": 16,
+      "community": 15,
       "id": "parsers_rationale_1"
     },
     {
@@ -1520,7 +1520,7 @@
       "file_type": "rationale",
       "source_file": "tools/mcp/scripts/mcp_build/parsers.py",
       "source_location": "L13",
-      "community": 16,
+      "community": 15,
       "id": "parsers_rationale_13"
     },
     {
@@ -1528,7 +1528,7 @@
       "file_type": "rationale",
       "source_file": "tools/mcp/scripts/mcp_build/parsers.py",
       "source_location": "L37",
-      "community": 97,
+      "community": 96,
       "id": "parsers_rationale_37"
     },
     {
@@ -1536,7 +1536,7 @@
       "file_type": "rationale",
       "source_file": "tools/mcp/scripts/mcp_build/parsers.py",
       "source_location": "L74",
-      "community": 98,
+      "community": 97,
       "id": "parsers_rationale_74"
     },
     {
@@ -1544,7 +1544,7 @@
       "file_type": "rationale",
       "source_file": "tools/mcp/scripts/mcp_build/parsers.py",
       "source_location": "L125",
-      "community": 16,
+      "community": 15,
       "id": "parsers_rationale_125"
     },
     {
@@ -1552,7 +1552,7 @@
       "file_type": "rationale",
       "source_file": "tools/mcp/scripts/mcp_build/parsers.py",
       "source_location": "L150",
-      "community": 99,
+      "community": 98,
       "id": "parsers_rationale_150"
     },
     {
@@ -1561,7 +1561,7 @@
       "source_file": "tools/mcp/scripts/mcp_build/model.py",
       "source_location": "L1",
       "id": "tools_mcp_scripts_mcp_build_model_py",
-      "community": 39
+      "community": 38
     },
     {
       "label": "compile_rknn_model()",
@@ -1569,7 +1569,7 @@
       "source_file": "tools/mcp/scripts/mcp_build/model.py",
       "source_location": "L17",
       "id": "model_compile_rknn_model",
-      "community": 39
+      "community": 38
     },
     {
       "label": "compile_nbg_model()",
@@ -1577,14 +1577,14 @@
       "source_file": "tools/mcp/scripts/mcp_build/model.py",
       "source_location": "L139",
       "id": "model_compile_nbg_model",
-      "community": 39
+      "community": 38
     },
     {
       "label": "Model compilation functions.  Supports compiling ONNX models to: - RKNN format f",
       "file_type": "rationale",
       "source_file": "tools/mcp/scripts/mcp_build/model.py",
       "source_location": "L1",
-      "community": 39,
+      "community": 38,
       "id": "model_rationale_1"
     },
     {
@@ -1592,7 +1592,7 @@
       "file_type": "rationale",
       "source_file": "tools/mcp/scripts/mcp_build/model.py",
       "source_location": "L18",
-      "community": 39,
+      "community": 38,
       "id": "model_rationale_18"
     },
     {
@@ -1600,7 +1600,7 @@
       "file_type": "rationale",
       "source_file": "tools/mcp/scripts/mcp_build/model.py",
       "source_location": "L140",
-      "community": 39,
+      "community": 38,
       "id": "model_rationale_140"
     },
     {
@@ -1881,7 +1881,7 @@
       "source_file": "tools/mcp/scripts/build_server/__init__.py",
       "source_location": "L1",
       "id": "tools_mcp_scripts_build_server_init_py",
-      "community": 62
+      "community": 61
     },
     {
       "label": "rock3c.py",
@@ -1889,7 +1889,7 @@
       "source_file": "tools/mcp/scripts/build_server/rock3c.py",
       "source_location": "L1",
       "id": "tools_mcp_scripts_build_server_rock3c_py",
-      "community": 25
+      "community": 24
     },
     {
       "label": "Rock3cPlatform",
@@ -1913,7 +1913,7 @@
       "source_file": "tools/mcp/scripts/build_server/rock3c.py",
       "source_location": "L25",
       "id": "rock3c_platform",
-      "community": 25
+      "community": 24
     },
     {
       "label": "platform_name()",
@@ -1921,7 +1921,7 @@
       "source_file": "tools/mcp/scripts/build_server/rock3c.py",
       "source_location": "L29",
       "id": "rock3c_platform_name",
-      "community": 25
+      "community": 24
     },
     {
       "label": "meson_cross_file()",
@@ -1929,7 +1929,7 @@
       "source_file": "tools/mcp/scripts/build_server/rock3c.py",
       "source_location": "L33",
       "id": "rock3c_meson_cross_file",
-      "community": 25
+      "community": 24
     },
     {
       "label": "default_build_dir()",
@@ -1937,7 +1937,7 @@
       "source_file": "tools/mcp/scripts/build_server/rock3c.py",
       "source_location": "L37",
       "id": "rock3c_default_build_dir",
-      "community": 25
+      "community": 24
     },
     {
       "label": "default_trap_name()",
@@ -1945,7 +1945,7 @@
       "source_file": "tools/mcp/scripts/build_server/rock3c.py",
       "source_location": "L41",
       "id": "rock3c_default_trap_name",
-      "community": 25
+      "community": 24
     },
     {
       "label": "model_type()",
@@ -1953,7 +1953,7 @@
       "source_file": "tools/mcp/scripts/build_server/rock3c.py",
       "source_location": "L45",
       "id": "rock3c_model_type",
-      "community": 25
+      "community": 24
     },
     {
       "label": "model_install_dir()",
@@ -1961,7 +1961,7 @@
       "source_file": "tools/mcp/scripts/build_server/rock3c.py",
       "source_location": "L49",
       "id": "rock3c_model_install_dir",
-      "community": 25
+      "community": 24
     },
     {
       "label": "config_install_dir()",
@@ -1969,7 +1969,7 @@
       "source_file": "tools/mcp/scripts/build_server/rock3c.py",
       "source_location": "L53",
       "id": "rock3c_config_install_dir",
-      "community": 25
+      "community": 24
     },
     {
       "label": "trap_install_dir()",
@@ -1977,7 +1977,7 @@
       "source_file": "tools/mcp/scripts/build_server/rock3c.py",
       "source_location": "L57",
       "id": "rock3c_trap_install_dir",
-      "community": 25
+      "community": 24
     },
     {
       "label": ".check_dependencies()",
@@ -2249,7 +2249,7 @@
       "source_file": "tools/mcp/scripts/build_server/base_platform.py",
       "source_location": "L1",
       "id": "tools_mcp_scripts_build_server_base_platform_py",
-      "community": 13
+      "community": 1
     },
     {
       "label": "PlatformBase",
@@ -2265,7 +2265,7 @@
       "source_file": "",
       "source_location": "",
       "id": "abc",
-      "community": 13
+      "community": 1
     },
     {
       "label": ".__init__()",
@@ -2281,7 +2281,7 @@
       "source_file": "tools/mcp/scripts/build_server/base_platform.py",
       "source_location": "L40",
       "id": "base_platform_platform",
-      "community": 13
+      "community": 1
     },
     {
       "label": "platform_name()",
@@ -2289,7 +2289,7 @@
       "source_file": "tools/mcp/scripts/build_server/base_platform.py",
       "source_location": "L46",
       "id": "base_platform_platform_name",
-      "community": 13
+      "community": 1
     },
     {
       "label": "meson_cross_file()",
@@ -2297,7 +2297,7 @@
       "source_file": "tools/mcp/scripts/build_server/base_platform.py",
       "source_location": "L52",
       "id": "base_platform_meson_cross_file",
-      "community": 13
+      "community": 1
     },
     {
       "label": "default_build_dir()",
@@ -2305,7 +2305,7 @@
       "source_file": "tools/mcp/scripts/build_server/base_platform.py",
       "source_location": "L58",
       "id": "base_platform_default_build_dir",
-      "community": 13
+      "community": 1
     },
     {
       "label": "default_trap_name()",
@@ -2313,7 +2313,7 @@
       "source_file": "tools/mcp/scripts/build_server/base_platform.py",
       "source_location": "L64",
       "id": "base_platform_default_trap_name",
-      "community": 13
+      "community": 1
     },
     {
       "label": "model_type()",
@@ -2321,7 +2321,7 @@
       "source_file": "tools/mcp/scripts/build_server/base_platform.py",
       "source_location": "L70",
       "id": "base_platform_model_type",
-      "community": 13
+      "community": 1
     },
     {
       "label": "model_install_dir()",
@@ -2329,7 +2329,7 @@
       "source_file": "tools/mcp/scripts/build_server/base_platform.py",
       "source_location": "L76",
       "id": "base_platform_model_install_dir",
-      "community": 13
+      "community": 1
     },
     {
       "label": "config_install_dir()",
@@ -2337,7 +2337,7 @@
       "source_file": "tools/mcp/scripts/build_server/base_platform.py",
       "source_location": "L82",
       "id": "base_platform_config_install_dir",
-      "community": 13
+      "community": 1
     },
     {
       "label": "trap_install_dir()",
@@ -2345,7 +2345,7 @@
       "source_file": "tools/mcp/scripts/build_server/base_platform.py",
       "source_location": "L88",
       "id": "base_platform_trap_install_dir",
-      "community": 13
+      "community": 1
     },
     {
       "label": "check_dependencies()",
@@ -2353,7 +2353,7 @@
       "source_file": "tools/mcp/scripts/build_server/base_platform.py",
       "source_location": "L95",
       "id": "base_platform_check_dependencies",
-      "community": 13
+      "community": 1
     },
     {
       "label": "setup_dependencies()",
@@ -2361,7 +2361,7 @@
       "source_file": "tools/mcp/scripts/build_server/base_platform.py",
       "source_location": "L100",
       "id": "base_platform_setup_dependencies",
-      "community": 13
+      "community": 1
     },
     {
       "label": "get_meson_setup_command()",
@@ -2369,7 +2369,7 @@
       "source_file": "tools/mcp/scripts/build_server/base_platform.py",
       "source_location": "L107",
       "id": "base_platform_get_meson_setup_command",
-      "community": 13
+      "community": 1
     },
     {
       "label": "get_target_meson_setup_command()",
@@ -2377,7 +2377,7 @@
       "source_file": "tools/mcp/scripts/build_server/base_platform.py",
       "source_location": "L112",
       "id": "base_platform_get_target_meson_setup_command",
-      "community": 13
+      "community": 1
     },
     {
       "label": "get_model_compile_command()",
@@ -2385,7 +2385,7 @@
       "source_file": "tools/mcp/scripts/build_server/base_platform.py",
       "source_location": "L117",
       "id": "base_platform_get_model_compile_command",
-      "community": 13
+      "community": 1
     },
     {
       "label": "generate_config_yaml()",
@@ -2393,7 +2393,7 @@
       "source_file": "tools/mcp/scripts/build_server/base_platform.py",
       "source_location": "L124",
       "id": "base_platform_generate_config_yaml",
-      "community": 13
+      "community": 1
     },
     {
       "label": ".get_hostname()",
@@ -2504,7 +2504,7 @@
       "file_type": "rationale",
       "source_file": "tools/mcp/scripts/build_server/base_platform.py",
       "source_location": "L1",
-      "community": 13,
+      "community": 1,
       "id": "base_platform_rationale_1"
     },
     {
@@ -2985,7 +2985,7 @@
       "source_file": "tools/scripts/add_license_headers.py",
       "source_location": "L1",
       "id": "tools_scripts_add_license_headers_py",
-      "community": 34
+      "community": 33
     },
     {
       "label": "should_skip()",
@@ -2993,7 +2993,7 @@
       "source_file": "tools/scripts/add_license_headers.py",
       "source_location": "L172",
       "id": "add_license_headers_should_skip",
-      "community": 34
+      "community": 33
     },
     {
       "label": "has_license()",
@@ -3001,7 +3001,7 @@
       "source_file": "tools/scripts/add_license_headers.py",
       "source_location": "L195",
       "id": "add_license_headers_has_license",
-      "community": 34
+      "community": 33
     },
     {
       "label": "add_header()",
@@ -3009,7 +3009,7 @@
       "source_file": "tools/scripts/add_license_headers.py",
       "source_location": "L203",
       "id": "add_license_headers_add_header",
-      "community": 34
+      "community": 33
     },
     {
       "label": "main()",
@@ -3017,14 +3017,14 @@
       "source_file": "tools/scripts/add_license_headers.py",
       "source_location": "L244",
       "id": "add_license_headers_main",
-      "community": 34
+      "community": 33
     },
     {
       "label": "Check if a file should be skipped.",
       "file_type": "rationale",
       "source_file": "tools/scripts/add_license_headers.py",
       "source_location": "L173",
-      "community": 34,
+      "community": 33,
       "id": "add_license_headers_rationale_173"
     },
     {
@@ -3032,7 +3032,7 @@
       "file_type": "rationale",
       "source_file": "tools/scripts/add_license_headers.py",
       "source_location": "L196",
-      "community": 34,
+      "community": 33,
       "id": "add_license_headers_rationale_196"
     },
     {
@@ -3040,7 +3040,7 @@
       "file_type": "rationale",
       "source_file": "tools/scripts/add_license_headers.py",
       "source_location": "L204",
-      "community": 34,
+      "community": 33,
       "id": "add_license_headers_rationale_204"
     },
     {
@@ -3049,7 +3049,7 @@
       "source_file": "tools/scripts/ble_scan_traps.py",
       "source_location": "L1",
       "id": "tools_scripts_ble_scan_traps_py",
-      "community": 63
+      "community": 62
     },
     {
       "label": "parse_manufacturer_data()",
@@ -3057,7 +3057,7 @@
       "source_file": "tools/scripts/ble_scan_traps.py",
       "source_location": "L23",
       "id": "ble_scan_traps_parse_manufacturer_data",
-      "community": 63
+      "community": 62
     },
     {
       "label": "scan()",
@@ -3065,7 +3065,7 @@
       "source_file": "tools/scripts/ble_scan_traps.py",
       "source_location": "L39",
       "id": "ble_scan_traps_scan",
-      "community": 63
+      "community": 62
     },
     {
       "label": "sanity_check_for_cpp.cpp",
@@ -3073,7 +3073,7 @@
       "source_file": "traps/targets/build-host/meson-private/sanity_check_for_cpp.cpp",
       "source_location": "L1",
       "id": "traps_targets_build_host_meson_private_sanity_check_for_cpp_cpp",
-      "community": 50
+      "community": 49
     },
     {
       "label": "breakCCompiler",
@@ -3081,7 +3081,7 @@
       "source_file": "traps/toolkit/build-host/meson-private/sanity_check_for_cpp.cpp",
       "source_location": "L1",
       "id": "sanity_check_for_cpp_breakccompiler",
-      "community": 50
+      "community": 49
     },
     {
       "label": "main()",
@@ -3089,7 +3089,7 @@
       "source_file": "traps/toolkit/build-host/meson-private/sanity_check_for_cpp.cpp",
       "source_location": "L1",
       "id": "sanity_check_for_cpp_main",
-      "community": 50
+      "community": 49
     },
     {
       "label": "sanity_check_for_c.c",
@@ -3097,7 +3097,7 @@
       "source_file": "traps/targets/build-host/meson-private/sanity_check_for_c.c",
       "source_location": "L1",
       "id": "traps_targets_build_host_meson_private_sanity_check_for_c_c",
-      "community": 64
+      "community": 63
     },
     {
       "label": "main()",
@@ -3105,7 +3105,7 @@
       "source_file": "traps/toolkit/build-host/meson-private/sanity_check_for_c.c",
       "source_location": "L1",
       "id": "sanity_check_for_c_main",
-      "community": 64
+      "community": 63
     },
     {
       "label": "base_detection_pipeline.cpp",
@@ -3265,7 +3265,7 @@
       "source_file": "traps/targets/src/detection/platforms/rock3c/rock3c_detection_pipeline.cpp",
       "source_location": "L1",
       "id": "traps_targets_src_detection_platforms_rock3c_rock3c_detection_pipeline_cpp",
-      "community": 35
+      "community": 34
     },
     {
       "label": "Rock3cDetectionPipeline",
@@ -3273,7 +3273,7 @@
       "source_file": "traps/targets/src/detection/platforms/rock3c/rock3c_detection_pipeline.hpp",
       "source_location": "L34",
       "id": "rock3c_detection_pipeline_rock3cdetectionpipeline",
-      "community": 35
+      "community": 34
     },
     {
       "label": "init()",
@@ -3281,7 +3281,7 @@
       "source_file": "traps/targets/src/detection/platforms/rock3c/rock3c_detection_pipeline.cpp",
       "source_location": "L37",
       "id": "rock3c_detection_pipeline_init",
-      "community": 35
+      "community": 34
     },
     {
       "label": "shutdown()",
@@ -3289,7 +3289,7 @@
       "source_file": "traps/targets/src/detection/platforms/rock3c/rock3c_detection_pipeline.cpp",
       "source_location": "L70",
       "id": "rock3c_detection_pipeline_shutdown",
-      "community": 35
+      "community": 34
     },
     {
       "label": "createCamera()",
@@ -3297,7 +3297,7 @@
       "source_file": "traps/targets/src/detection/platforms/rock3c/rock3c_detection_pipeline.cpp",
       "source_location": "L87",
       "id": "rock3c_detection_pipeline_createcamera",
-      "community": 35
+      "community": 34
     },
     {
       "label": "createInferenceHAL()",
@@ -3305,7 +3305,7 @@
       "source_file": "traps/targets/src/detection/platforms/rock3c/rock3c_detection_pipeline.cpp",
       "source_location": "L93",
       "id": "rock3c_detection_pipeline_createinferencehal",
-      "community": 35
+      "community": 34
     },
     {
       "label": "main.cpp",
@@ -3337,7 +3337,7 @@
       "source_file": "traps/targets/src/detection/platforms/rock3c/rock3c_detection_pipeline.hpp",
       "source_location": "L1",
       "id": "traps_targets_src_detection_platforms_rock3c_rock3c_detection_pipeline_hpp",
-      "community": 35
+      "community": 34
     },
     {
       "label": "native_detection_pipeline.hpp",
@@ -3345,7 +3345,7 @@
       "source_file": "traps/targets/src/detection/platforms/native/native_detection_pipeline.hpp",
       "source_location": "L1",
       "id": "traps_targets_src_detection_platforms_native_native_detection_pipeline_hpp",
-      "community": 81
+      "community": 80
     },
     {
       "label": "NativeDetectionPipeline",
@@ -3353,7 +3353,7 @@
       "source_file": "traps/targets/src/detection/platforms/native/native_detection_pipeline.hpp",
       "source_location": "L26",
       "id": "native_detection_pipeline_nativedetectionpipeline",
-      "community": 81
+      "community": 80
     },
     {
       "label": "main.cpp",
@@ -3369,7 +3369,7 @@
       "source_file": "traps/targets/src/detection/platforms/native/native_detection_pipeline.cpp",
       "source_location": "L1",
       "id": "traps_targets_src_detection_platforms_native_native_detection_pipeline_cpp",
-      "community": 65
+      "community": 64
     },
     {
       "label": "createCamera()",
@@ -3377,7 +3377,7 @@
       "source_file": "traps/targets/src/detection/platforms/native/native_detection_pipeline.cpp",
       "source_location": "L27",
       "id": "native_detection_pipeline_createcamera",
-      "community": 65
+      "community": 64
     },
     {
       "label": "createInferenceHAL()",
@@ -3385,7 +3385,7 @@
       "source_file": "traps/targets/src/detection/platforms/native/native_detection_pipeline.cpp",
       "source_location": "L34",
       "id": "native_detection_pipeline_createinferencehal",
-      "community": 65
+      "community": 64
     },
     {
       "label": "cubie_a7s_detection_pipeline.cpp",
@@ -3393,7 +3393,7 @@
       "source_file": "traps/targets/src/detection/platforms/cubie-a7s/cubie_a7s_detection_pipeline.cpp",
       "source_location": "L1",
       "id": "traps_targets_src_detection_platforms_cubie_a7s_cubie_a7s_detection_pipeline_cpp",
-      "community": 66
+      "community": 65
     },
     {
       "label": "createCamera()",
@@ -3401,7 +3401,7 @@
       "source_file": "traps/targets/src/detection/platforms/cubie-a7s/cubie_a7s_detection_pipeline.cpp",
       "source_location": "L27",
       "id": "cubie_a7s_detection_pipeline_createcamera",
-      "community": 66
+      "community": 65
     },
     {
       "label": "createInferenceHAL()",
@@ -3409,7 +3409,7 @@
       "source_file": "traps/targets/src/detection/platforms/cubie-a7s/cubie_a7s_detection_pipeline.cpp",
       "source_location": "L33",
       "id": "cubie_a7s_detection_pipeline_createinferencehal",
-      "community": 66
+      "community": 65
     },
     {
       "label": "main.cpp",
@@ -3425,7 +3425,7 @@
       "source_file": "traps/targets/src/detection/platforms/cubie-a7s/cubie_a7s_detection_pipeline.hpp",
       "source_location": "L1",
       "id": "traps_targets_src_detection_platforms_cubie_a7s_cubie_a7s_detection_pipeline_hpp",
-      "community": 82
+      "community": 81
     },
     {
       "label": "CubieA7sDetectionPipeline",
@@ -3433,7 +3433,7 @@
       "source_file": "traps/targets/src/detection/platforms/cubie-a7s/cubie_a7s_detection_pipeline.hpp",
       "source_location": "L26",
       "id": "cubie_a7s_detection_pipeline_cubiea7sdetectionpipeline",
-      "community": 82
+      "community": 81
     },
     {
       "label": "types.hpp",
@@ -3441,7 +3441,7 @@
       "source_file": "traps/targets/src/detection/actors/types.hpp",
       "source_location": "L1",
       "id": "traps_targets_src_detection_actors_types_hpp",
-      "community": 100
+      "community": 99
     },
     {
       "label": "http_handler_actor.cpp",
@@ -3777,7 +3777,7 @@
       "source_file": "traps/targets/src/detection/actors/session/session_actor.hpp",
       "source_location": "L1",
       "id": "traps_targets_src_detection_actors_session_session_actor_hpp",
-      "community": 101
+      "community": 100
     },
     {
       "label": "json.hpp",
@@ -4865,7 +4865,7 @@
       "source_file": "traps/toolkit/build-host/meson-private/sanity_check_for_cpp.cpp",
       "source_location": "L1",
       "id": "traps_toolkit_build_host_meson_private_sanity_check_for_cpp_cpp",
-      "community": 50
+      "community": 49
     },
     {
       "label": "sanity_check_for_c.c",
@@ -4873,7 +4873,7 @@
       "source_file": "traps/toolkit/build-host/meson-private/sanity_check_for_c.c",
       "source_location": "L1",
       "id": "traps_toolkit_build_host_meson_private_sanity_check_for_c_c",
-      "community": 64
+      "community": 63
     },
     {
       "label": "CMakeCCompilerId.c",
@@ -4881,7 +4881,7 @@
       "source_file": "traps/toolkit/build-host/meson-private/__CMake_compiler_info__/CMakeFiles/4.3.1/CompilerIdC/CMakeCCompilerId.c",
       "source_location": "L1",
       "id": "traps_toolkit_build_host_meson_private_cmake_compiler_info_cmakefiles_4_3_1_compileridc_cmakeccompilerid_c",
-      "community": 83
+      "community": 82
     },
     {
       "label": "main()",
@@ -4889,7 +4889,7 @@
       "source_file": "traps/toolkit/build-host/meson-private/__CMake_compiler_info__/CMakeFiles/4.3.1/CompilerIdC/CMakeCCompilerId.c",
       "source_location": "L902",
       "id": "cmakeccompilerid_main",
-      "community": 83
+      "community": 82
     },
     {
       "label": "apple-sdk.c",
@@ -4897,7 +4897,7 @@
       "source_file": "traps/toolkit/build-host/meson-private/__CMake_compiler_info__/CMakeFiles/4.3.1/CompilerIdC/apple-sdk.c",
       "source_location": "L1",
       "id": "traps_toolkit_build_host_meson_private_cmake_compiler_info_cmakefiles_4_3_1_compileridc_apple_sdk_c",
-      "community": 102
+      "community": 101
     },
     {
       "label": "CMakeCXXCompilerId.cpp",
@@ -4905,7 +4905,7 @@
       "source_file": "traps/toolkit/build-host/meson-private/__CMake_compiler_info__/CMakeFiles/4.3.1/CompilerIdCXX/CMakeCXXCompilerId.cpp",
       "source_location": "L1",
       "id": "traps_toolkit_build_host_meson_private_cmake_compiler_info_cmakefiles_4_3_1_compileridcxx_cmakecxxcompilerid_cpp",
-      "community": 84
+      "community": 83
     },
     {
       "label": "main()",
@@ -4913,7 +4913,7 @@
       "source_file": "traps/toolkit/build-host/meson-private/__CMake_compiler_info__/CMakeFiles/4.3.1/CompilerIdCXX/CMakeCXXCompilerId.cpp",
       "source_location": "L924",
       "id": "cmakecxxcompilerid_main",
-      "community": 84
+      "community": 83
     },
     {
       "label": "apple-sdk.cpp",
@@ -4921,7 +4921,7 @@
       "source_file": "traps/toolkit/build-host/meson-private/__CMake_compiler_info__/CMakeFiles/4.3.1/CompilerIdCXX/apple-sdk.cpp",
       "source_location": "L1",
       "id": "traps_toolkit_build_host_meson_private_cmake_compiler_info_cmakefiles_4_3_1_compileridcxx_apple_sdk_cpp",
-      "community": 103
+      "community": 102
     },
     {
       "label": "camera_hal_imx219.cpp",
@@ -4929,7 +4929,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/camera_hal_imx219.cpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_hal_platforms_rock3c_camera_hal_imx219_cpp",
-      "community": 14
+      "community": 13
     },
     {
       "label": "alloc_dma_buf()",
@@ -4937,7 +4937,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/camera_hal_imx219.cpp",
       "source_location": "L40",
       "id": "camera_hal_imx219_alloc_dma_buf",
-      "community": 14
+      "community": 13
     },
     {
       "label": "map_dma_buf()",
@@ -4945,7 +4945,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/camera_hal_imx219.cpp",
       "source_location": "L66",
       "id": "camera_hal_imx219_map_dma_buf",
-      "community": 14
+      "community": 13
     },
     {
       "label": "unmap_dma_buf()",
@@ -4953,7 +4953,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/camera_hal_imx219.cpp",
       "source_location": "L76",
       "id": "camera_hal_imx219_unmap_dma_buf",
-      "community": 14
+      "community": 13
     },
     {
       "label": "scale_nv12()",
@@ -4961,7 +4961,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/camera_hal_imx219.cpp",
       "source_location": "L87",
       "id": "camera_hal_imx219_scale_nv12",
-      "community": 14
+      "community": 13
     },
     {
       "label": "aiq_err_cb()",
@@ -4969,7 +4969,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/camera_hal_imx219.cpp",
       "source_location": "L123",
       "id": "camera_hal_imx219_aiq_err_cb",
-      "community": 14
+      "community": 13
     },
     {
       "label": "aiq_sof_cb()",
@@ -4977,7 +4977,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/camera_hal_imx219.cpp",
       "source_location": "L130",
       "id": "camera_hal_imx219_aiq_sof_cb",
-      "community": 14
+      "community": 13
     },
     {
       "label": "init_aiq()",
@@ -4985,7 +4985,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/camera_hal_imx219.cpp",
       "source_location": "L137",
       "id": "camera_hal_imx219_init_aiq",
-      "community": 14
+      "community": 13
     },
     {
       "label": "init_v4l2()",
@@ -4993,7 +4993,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/camera_hal_imx219.cpp",
       "source_location": "L197",
       "id": "camera_hal_imx219_init_v4l2",
-      "community": 14
+      "community": 13
     },
     {
       "label": "init_v4l2_mmap()",
@@ -5001,7 +5001,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/camera_hal_imx219.cpp",
       "source_location": "L331",
       "id": "camera_hal_imx219_init_v4l2_mmap",
-      "community": 14
+      "community": 13
     },
     {
       "label": "init_scaler_buffers()",
@@ -5009,7 +5009,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/camera_hal_imx219.cpp",
       "source_location": "L430",
       "id": "camera_hal_imx219_init_scaler_buffers",
-      "community": 14
+      "community": 13
     },
     {
       "label": "init()",
@@ -5017,7 +5017,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/camera_hal_imx219.cpp",
       "source_location": "L457",
       "id": "camera_hal_imx219_init",
-      "community": 14
+      "community": 13
     },
     {
       "label": "acquire_frames()",
@@ -5025,7 +5025,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/camera_hal_imx219.cpp",
       "source_location": "L482",
       "id": "camera_hal_imx219_acquire_frames",
-      "community": 14
+      "community": 13
     },
     {
       "label": "acquire_frames_impl()",
@@ -5033,7 +5033,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/camera_hal_imx219.cpp",
       "source_location": "L494",
       "id": "camera_hal_imx219_acquire_frames_impl",
-      "community": 14
+      "community": 13
     },
     {
       "label": "release_frames()",
@@ -5041,7 +5041,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/camera_hal_imx219.cpp",
       "source_location": "L582",
       "id": "camera_hal_imx219_release_frames",
-      "community": 14
+      "community": 13
     },
     {
       "label": "release_frames_impl()",
@@ -5049,7 +5049,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/camera_hal_imx219.cpp",
       "source_location": "L586",
       "id": "camera_hal_imx219_release_frames_impl",
-      "community": 14
+      "community": 13
     },
     {
       "label": "shutdown()",
@@ -5057,7 +5057,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/camera_hal_imx219.cpp",
       "source_location": "L597",
       "id": "camera_hal_imx219_shutdown",
-      "community": 14
+      "community": 13
     },
     {
       "label": "camera_hal_imx415.hpp",
@@ -5065,7 +5065,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/camera_hal_imx415.hpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_hal_platforms_rock3c_camera_hal_imx415_hpp",
-      "community": 104
+      "community": 103
     },
     {
       "label": "video_scaler_hal_rga.cpp",
@@ -5073,7 +5073,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/video_scaler_hal_rga.cpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_hal_platforms_rock3c_video_scaler_hal_rga_cpp",
-      "community": 40
+      "community": 39
     },
     {
       "label": "VideoScalerRGA",
@@ -5081,7 +5081,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/video_scaler_hal_rga.hpp",
       "source_location": "L29",
       "id": "video_scaler_hal_rga_videoscalerrga",
-      "community": 40
+      "community": 39
     },
     {
       "label": "scale_nv12()",
@@ -5089,7 +5089,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/video_scaler_hal_rga.cpp",
       "source_location": "L31",
       "id": "video_scaler_hal_rga_scale_nv12",
-      "community": 40
+      "community": 39
     },
     {
       "label": "scale_nv12_to_bgr()",
@@ -5097,7 +5097,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/video_scaler_hal_rga.cpp",
       "source_location": "L37",
       "id": "video_scaler_hal_rga_scale_nv12_to_bgr",
-      "community": 40
+      "community": 39
     },
     {
       "label": "blit()",
@@ -5105,7 +5105,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/video_scaler_hal_rga.cpp",
       "source_location": "L43",
       "id": "video_scaler_hal_rga_blit",
-      "community": 40
+      "community": 39
     },
     {
       "label": "inference_hal_rknn.cpp",
@@ -5113,7 +5113,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/inference_hal_rknn.cpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_hal_platforms_rock3c_inference_hal_rknn_cpp",
-      "community": 27
+      "community": 26
     },
     {
       "label": "InferenceHalRKNN",
@@ -5121,7 +5121,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/inference_hal_rknn.hpp",
       "source_location": "L41",
       "id": "inference_hal_rknn_inferencehalrknn",
-      "community": 27
+      "community": 26
     },
     {
       "label": "init()",
@@ -5129,7 +5129,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/inference_hal_rknn.cpp",
       "source_location": "L49",
       "id": "inference_hal_rknn_init",
-      "community": 27
+      "community": 26
     },
     {
       "label": "detect()",
@@ -5137,7 +5137,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/inference_hal_rknn.cpp",
       "source_location": "L144",
       "id": "inference_hal_rknn_detect",
-      "community": 27
+      "community": 26
     },
     {
       "label": "shutdown()",
@@ -5145,7 +5145,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/inference_hal_rknn.cpp",
       "source_location": "L376",
       "id": "inference_hal_rknn_shutdown",
-      "community": 27
+      "community": 26
     },
     {
       "label": "nv12_to_rgb_resize()",
@@ -5153,7 +5153,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/inference_hal_rknn.cpp",
       "source_location": "L391",
       "id": "inference_hal_rknn_nv12_to_rgb_resize",
-      "community": 27
+      "community": 26
     },
     {
       "label": "nms()",
@@ -5161,7 +5161,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/inference_hal_rknn.cpp",
       "source_location": "L447",
       "id": "inference_hal_rknn_nms",
-      "community": 27
+      "community": 26
     },
     {
       "label": "inference_hal_rknn.hpp",
@@ -5169,7 +5169,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/inference_hal_rknn.hpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_hal_platforms_rock3c_inference_hal_rknn_hpp",
-      "community": 27
+      "community": 26
     },
     {
       "label": ".InferenceHalRKNN()",
@@ -5177,7 +5177,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/inference_hal_rknn.hpp",
       "source_location": "L47",
       "id": "inference_hal_rknn_inferencehalrknn_inferencehalrknn",
-      "community": 27
+      "community": 26
     },
     {
       "label": "camera_hal_imx219.hpp",
@@ -5185,7 +5185,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/camera_hal_imx219.hpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_hal_platforms_rock3c_camera_hal_imx219_hpp",
-      "community": 105
+      "community": 104
     },
     {
       "label": "camera_hal_imx415.cpp",
@@ -5193,7 +5193,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/camera_hal_imx415.cpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_hal_platforms_rock3c_camera_hal_imx415_cpp",
-      "community": 15
+      "community": 14
     },
     {
       "label": "alloc_dma_buf()",
@@ -5201,7 +5201,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/camera_hal_imx415.cpp",
       "source_location": "L40",
       "id": "camera_hal_imx415_alloc_dma_buf",
-      "community": 15
+      "community": 14
     },
     {
       "label": "map_dma_buf()",
@@ -5209,7 +5209,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/camera_hal_imx415.cpp",
       "source_location": "L66",
       "id": "camera_hal_imx415_map_dma_buf",
-      "community": 15
+      "community": 14
     },
     {
       "label": "unmap_dma_buf()",
@@ -5217,7 +5217,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/camera_hal_imx415.cpp",
       "source_location": "L76",
       "id": "camera_hal_imx415_unmap_dma_buf",
-      "community": 15
+      "community": 14
     },
     {
       "label": "scale_nv12()",
@@ -5225,7 +5225,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/camera_hal_imx415.cpp",
       "source_location": "L87",
       "id": "camera_hal_imx415_scale_nv12",
-      "community": 15
+      "community": 14
     },
     {
       "label": "aiq_err_cb()",
@@ -5233,7 +5233,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/camera_hal_imx415.cpp",
       "source_location": "L123",
       "id": "camera_hal_imx415_aiq_err_cb",
-      "community": 15
+      "community": 14
     },
     {
       "label": "aiq_sof_cb()",
@@ -5241,7 +5241,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/camera_hal_imx415.cpp",
       "source_location": "L130",
       "id": "camera_hal_imx415_aiq_sof_cb",
-      "community": 15
+      "community": 14
     },
     {
       "label": "init_aiq()",
@@ -5249,7 +5249,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/camera_hal_imx415.cpp",
       "source_location": "L137",
       "id": "camera_hal_imx415_init_aiq",
-      "community": 15
+      "community": 14
     },
     {
       "label": "init_v4l2()",
@@ -5257,7 +5257,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/camera_hal_imx415.cpp",
       "source_location": "L197",
       "id": "camera_hal_imx415_init_v4l2",
-      "community": 15
+      "community": 14
     },
     {
       "label": "init_v4l2_mmap()",
@@ -5265,7 +5265,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/camera_hal_imx415.cpp",
       "source_location": "L250",
       "id": "camera_hal_imx415_init_v4l2_mmap",
-      "community": 15
+      "community": 14
     },
     {
       "label": "init_scaler_buffers()",
@@ -5273,7 +5273,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/camera_hal_imx415.cpp",
       "source_location": "L349",
       "id": "camera_hal_imx415_init_scaler_buffers",
-      "community": 15
+      "community": 14
     },
     {
       "label": "init()",
@@ -5281,7 +5281,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/camera_hal_imx415.cpp",
       "source_location": "L376",
       "id": "camera_hal_imx415_init",
-      "community": 15
+      "community": 14
     },
     {
       "label": "acquire_frames()",
@@ -5289,7 +5289,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/camera_hal_imx415.cpp",
       "source_location": "L401",
       "id": "camera_hal_imx415_acquire_frames",
-      "community": 15
+      "community": 14
     },
     {
       "label": "acquire_frames_impl()",
@@ -5297,7 +5297,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/camera_hal_imx415.cpp",
       "source_location": "L413",
       "id": "camera_hal_imx415_acquire_frames_impl",
-      "community": 15
+      "community": 14
     },
     {
       "label": "release_frames()",
@@ -5305,7 +5305,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/camera_hal_imx415.cpp",
       "source_location": "L501",
       "id": "camera_hal_imx415_release_frames",
-      "community": 15
+      "community": 14
     },
     {
       "label": "release_frames_impl()",
@@ -5313,7 +5313,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/camera_hal_imx415.cpp",
       "source_location": "L505",
       "id": "camera_hal_imx415_release_frames_impl",
-      "community": 15
+      "community": 14
     },
     {
       "label": "shutdown()",
@@ -5321,7 +5321,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/camera_hal_imx415.cpp",
       "source_location": "L516",
       "id": "camera_hal_imx415_shutdown",
-      "community": 15
+      "community": 14
     },
     {
       "label": "video_scaler_hal_rga.hpp",
@@ -5329,7 +5329,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/video_scaler_hal_rga.hpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_hal_platforms_rock3c_video_scaler_hal_rga_hpp",
-      "community": 40
+      "community": 39
     },
     {
       "label": "camera_hal_native.hpp",
@@ -5337,7 +5337,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/native/camera_hal_native.hpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_hal_platforms_native_camera_hal_native_hpp",
-      "community": 106
+      "community": 105
     },
     {
       "label": "inference_hal_native.cpp",
@@ -5345,7 +5345,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/native/inference_hal_native.cpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_hal_platforms_native_inference_hal_native_cpp",
-      "community": 36
+      "community": 35
     },
     {
       "label": "init()",
@@ -5353,7 +5353,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/native/inference_hal_native.cpp",
       "source_location": "L22",
       "id": "inference_hal_native_init",
-      "community": 36
+      "community": 35
     },
     {
       "label": "detect()",
@@ -5361,7 +5361,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/native/inference_hal_native.cpp",
       "source_location": "L29",
       "id": "inference_hal_native_detect",
-      "community": 36
+      "community": 35
     },
     {
       "label": "last_inference_us()",
@@ -5369,7 +5369,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/native/inference_hal_native.cpp",
       "source_location": "L35",
       "id": "inference_hal_native_last_inference_us",
-      "community": 36
+      "community": 35
     },
     {
       "label": "input_width()",
@@ -5377,7 +5377,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/native/inference_hal_native.cpp",
       "source_location": "L39",
       "id": "inference_hal_native_input_width",
-      "community": 36
+      "community": 35
     },
     {
       "label": "input_height()",
@@ -5385,7 +5385,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/native/inference_hal_native.cpp",
       "source_location": "L43",
       "id": "inference_hal_native_input_height",
-      "community": 36
+      "community": 35
     },
     {
       "label": "shutdown()",
@@ -5393,7 +5393,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/native/inference_hal_native.cpp",
       "source_location": "L47",
       "id": "inference_hal_native_shutdown",
-      "community": 36
+      "community": 35
     },
     {
       "label": "classifier_hal_native.hpp",
@@ -5401,7 +5401,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/native/classifier_hal_native.hpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_hal_platforms_native_classifier_hal_native_hpp",
-      "community": 67
+      "community": 66
     },
     {
       "label": "ClassifierHalNative",
@@ -5409,7 +5409,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/native/classifier_hal_native.hpp",
       "source_location": "L28",
       "id": "classifier_hal_native_classifierhalnative",
-      "community": 67
+      "community": 66
     },
     {
       "label": ".ClassifierHalNative()",
@@ -5417,7 +5417,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/native/classifier_hal_native.hpp",
       "source_location": "L30",
       "id": "classifier_hal_native_classifierhalnative_classifierhalnative",
-      "community": 67
+      "community": 66
     },
     {
       "label": "video_scaler_native.hpp",
@@ -5425,7 +5425,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/native/video_scaler_native.hpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_hal_platforms_native_video_scaler_native_hpp",
-      "community": 107
+      "community": 106
     },
     {
       "label": "inference_hal_native.hpp",
@@ -5433,7 +5433,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/native/inference_hal_native.hpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_hal_platforms_native_inference_hal_native_hpp",
-      "community": 108
+      "community": 107
     },
     {
       "label": "classifier_hal_native.cpp",
@@ -5441,7 +5441,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/native/classifier_hal_native.cpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_hal_platforms_native_classifier_hal_native_cpp",
-      "community": 51
+      "community": 50
     },
     {
       "label": "init()",
@@ -5449,7 +5449,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/native/classifier_hal_native.cpp",
       "source_location": "L23",
       "id": "classifier_hal_native_init",
-      "community": 51
+      "community": 50
     },
     {
       "label": "classify()",
@@ -5457,7 +5457,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/native/classifier_hal_native.cpp",
       "source_location": "L30",
       "id": "classifier_hal_native_classify",
-      "community": 51
+      "community": 50
     },
     {
       "label": "shutdown()",
@@ -5465,7 +5465,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/native/classifier_hal_native.cpp",
       "source_location": "L48",
       "id": "classifier_hal_native_shutdown",
-      "community": 51
+      "community": 50
     },
     {
       "label": "video_scaler_native.cpp",
@@ -5473,7 +5473,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/native/video_scaler_native.cpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_hal_platforms_native_video_scaler_native_cpp",
-      "community": 68
+      "community": 67
     },
     {
       "label": "scale_nv12()",
@@ -5481,7 +5481,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/native/video_scaler_native.cpp",
       "source_location": "L23",
       "id": "video_scaler_native_scale_nv12",
-      "community": 68
+      "community": 67
     },
     {
       "label": "scale_nv12_to_bgr()",
@@ -5489,7 +5489,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/native/video_scaler_native.cpp",
       "source_location": "L31",
       "id": "video_scaler_native_scale_nv12_to_bgr",
-      "community": 68
+      "community": 67
     },
     {
       "label": "camera_hal_native.cpp",
@@ -5497,7 +5497,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/native/camera_hal_native.cpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_hal_platforms_native_camera_hal_native_cpp",
-      "community": 42
+      "community": 41
     },
     {
       "label": "init()",
@@ -5505,7 +5505,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/native/camera_hal_native.cpp",
       "source_location": "L23",
       "id": "camera_hal_native_init",
-      "community": 42
+      "community": 41
     },
     {
       "label": "acquire_frames()",
@@ -5513,7 +5513,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/native/camera_hal_native.cpp",
       "source_location": "L32",
       "id": "camera_hal_native_acquire_frames",
-      "community": 42
+      "community": 41
     },
     {
       "label": "release_frames()",
@@ -5521,7 +5521,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/native/camera_hal_native.cpp",
       "source_location": "L53",
       "id": "camera_hal_native_release_frames",
-      "community": 42
+      "community": 41
     },
     {
       "label": "shutdown()",
@@ -5529,7 +5529,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/native/camera_hal_native.cpp",
       "source_location": "L57",
       "id": "camera_hal_native_shutdown",
-      "community": 42
+      "community": 41
     },
     {
       "label": "camera_hal_a7s.hpp",
@@ -5537,7 +5537,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.hpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_hal_platforms_cubie_a7s_camera_hal_a7s_hpp",
-      "community": 19
+      "community": 17
     },
     {
       "label": "CameraHalA7s()",
@@ -5545,7 +5545,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.cpp",
       "source_location": "L73",
       "id": "camera_hal_a7s_camerahala7s",
-      "community": 19
+      "community": 17
     },
     {
       "label": "video_scaler_opencl.cpp",
@@ -5553,7 +5553,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/video_scaler_opencl.cpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_hal_platforms_cubie_a7s_video_scaler_opencl_cpp",
-      "community": 28
+      "community": 27
     },
     {
       "label": "nv12_resize_kernel_source()",
@@ -5561,7 +5561,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/video_scaler_opencl.cpp",
       "source_location": "L46",
       "id": "video_scaler_opencl_nv12_resize_kernel_source",
-      "community": 28
+      "community": 27
     },
     {
       "label": "VideoScalerOpenCL()",
@@ -5569,7 +5569,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/video_scaler_opencl.hpp",
       "source_location": "L46",
       "id": "video_scaler_opencl_videoscaleropencl",
-      "community": 28
+      "community": 27
     },
     {
       "label": "init_opencl()",
@@ -5577,7 +5577,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/video_scaler_opencl.cpp",
       "source_location": "L187",
       "id": "video_scaler_opencl_init_opencl",
-      "community": 28
+      "community": 27
     },
     {
       "label": "scale_nv12()",
@@ -5585,7 +5585,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/video_scaler_opencl.cpp",
       "source_location": "L258",
       "id": "video_scaler_opencl_scale_nv12",
-      "community": 28
+      "community": 27
     },
     {
       "label": "scale_nv12_to_bgr()",
@@ -5593,7 +5593,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/video_scaler_opencl.cpp",
       "source_location": "L283",
       "id": "video_scaler_opencl_scale_nv12_to_bgr",
-      "community": 28
+      "community": 27
     },
     {
       "label": "scale_frame()",
@@ -5601,7 +5601,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/video_scaler_opencl.cpp",
       "source_location": "L298",
       "id": "video_scaler_opencl_scale_frame",
-      "community": 28
+      "community": 27
     },
     {
       "label": "device_name()",
@@ -5609,7 +5609,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/video_scaler_opencl.cpp",
       "source_location": "L314",
       "id": "video_scaler_opencl_device_name",
-      "community": 28
+      "community": 27
     },
     {
       "label": "inference_hal_vip.cpp",
@@ -5617,7 +5617,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/inference_hal_vip.cpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_hal_platforms_cubie_a7s_inference_hal_vip_cpp",
-      "community": 29
+      "community": 28
     },
     {
       "label": "InferenceHalVIP()",
@@ -5625,7 +5625,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/inference_hal_vip.hpp",
       "source_location": "L59",
       "id": "inference_hal_vip_inferencehalvip",
-      "community": 29
+      "community": 28
     },
     {
       "label": "init()",
@@ -5633,7 +5633,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/inference_hal_vip.cpp",
       "source_location": "L109",
       "id": "inference_hal_vip_init",
-      "community": 29
+      "community": 28
     },
     {
       "label": "detect()",
@@ -5641,7 +5641,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/inference_hal_vip.cpp",
       "source_location": "L301",
       "id": "inference_hal_vip_detect",
-      "community": 29
+      "community": 28
     },
     {
       "label": "shutdown()",
@@ -5649,7 +5649,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/inference_hal_vip.cpp",
       "source_location": "L416",
       "id": "inference_hal_vip_shutdown",
-      "community": 29
+      "community": 28
     },
     {
       "label": "nv12_to_rgb_resize()",
@@ -5657,7 +5657,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/inference_hal_vip.cpp",
       "source_location": "L464",
       "id": "inference_hal_vip_nv12_to_rgb_resize",
-      "community": 29
+      "community": 28
     },
     {
       "label": "decode_yolo_dfl()",
@@ -5665,7 +5665,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/inference_hal_vip.cpp",
       "source_location": "L539",
       "id": "inference_hal_vip_decode_yolo_dfl",
-      "community": 29
+      "community": 28
     },
     {
       "label": "nms()",
@@ -5673,7 +5673,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/inference_hal_vip.cpp",
       "source_location": "L737",
       "id": "inference_hal_vip_nms",
-      "community": 29
+      "community": 28
     },
     {
       "label": "inference_hal_vip.hpp",
@@ -5681,7 +5681,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/inference_hal_vip.hpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_hal_platforms_cubie_a7s_inference_hal_vip_hpp",
-      "community": 29
+      "community": 28
     },
     {
       "label": "camera_hal_a7s.cpp",
@@ -5689,7 +5689,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.cpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_hal_platforms_cubie_a7s_camera_hal_a7s_cpp",
-      "community": 19
+      "community": 17
     },
     {
       "label": "v4l2_fmt_name()",
@@ -5697,7 +5697,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.cpp",
       "source_location": "L39",
       "id": "camera_hal_a7s_v4l2_fmt_name",
-      "community": 19
+      "community": 17
     },
     {
       "label": "try_open_v4l2()",
@@ -5705,7 +5705,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.cpp",
       "source_location": "L50",
       "id": "camera_hal_a7s_try_open_v4l2",
-      "community": 19
+      "community": 17
     },
     {
       "label": "init()",
@@ -5713,7 +5713,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.cpp",
       "source_location": "L80",
       "id": "camera_hal_a7s_init",
-      "community": 19
+      "community": 17
     },
     {
       "label": "init_v4l2()",
@@ -5721,7 +5721,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.cpp",
       "source_location": "L116",
       "id": "camera_hal_a7s_init_v4l2",
-      "community": 19
+      "community": 17
     },
     {
       "label": "init_v4l2_mmap()",
@@ -5729,7 +5729,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.cpp",
       "source_location": "L185",
       "id": "camera_hal_a7s_init_v4l2_mmap",
-      "community": 19
+      "community": 17
     },
     {
       "label": "set_v4l2_controls()",
@@ -5737,7 +5737,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.cpp",
       "source_location": "L258",
       "id": "camera_hal_a7s_set_v4l2_controls",
-      "community": 19
+      "community": 17
     },
     {
       "label": "acquire_frames()",
@@ -5745,7 +5745,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.cpp",
       "source_location": "L300",
       "id": "camera_hal_a7s_acquire_frames",
-      "community": 19
+      "community": 17
     },
     {
       "label": "release_frames()",
@@ -5753,7 +5753,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.cpp",
       "source_location": "L405",
       "id": "camera_hal_a7s_release_frames",
-      "community": 19
+      "community": 17
     },
     {
       "label": "shutdown()",
@@ -5761,7 +5761,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.cpp",
       "source_location": "L411",
       "id": "camera_hal_a7s_shutdown",
-      "community": 19
+      "community": 17
     },
     {
       "label": "scale_nv12_cpu()",
@@ -5769,7 +5769,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.cpp",
       "source_location": "L453",
       "id": "camera_hal_a7s_scale_nv12_cpu",
-      "community": 19
+      "community": 17
     },
     {
       "label": "video_scaler_opencl.hpp",
@@ -5777,7 +5777,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/video_scaler_opencl.hpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_hal_platforms_cubie_a7s_video_scaler_opencl_hpp",
-      "community": 28
+      "community": 27
     },
     {
       "label": "video_scaler_vse.hpp",
@@ -5785,7 +5785,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rdk-x5/video_scaler_vse.hpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_hal_platforms_rdk_x5_video_scaler_vse_hpp",
-      "community": 43
+      "community": 42
     },
     {
       "label": "VideoScalerVSE()",
@@ -5793,7 +5793,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rdk-x5/video_scaler_vse.cpp",
       "source_location": "L28",
       "id": "video_scaler_vse_videoscalervse",
-      "community": 43
+      "community": 42
     },
     {
       "label": "inference_hal_bpu.hpp",
@@ -5801,7 +5801,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rdk-x5/inference_hal_bpu.hpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_hal_platforms_rdk_x5_inference_hal_bpu_hpp",
-      "community": 30
+      "community": 29
     },
     {
       "label": "InferenceHalBPU()",
@@ -5809,7 +5809,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rdk-x5/inference_hal_bpu.cpp",
       "source_location": "L30",
       "id": "inference_hal_bpu_inferencehalbpu",
-      "community": 30
+      "community": 29
     },
     {
       "label": "camera_hal_rdkx5.hpp",
@@ -5817,7 +5817,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rdk-x5/camera_hal_rdkx5.hpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_hal_platforms_rdk_x5_camera_hal_rdkx5_hpp",
-      "community": 22
+      "community": 21
     },
     {
       "label": "CameraHalRdkX5()",
@@ -5825,7 +5825,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rdk-x5/camera_hal_rdkx5.cpp",
       "source_location": "L33",
       "id": "camera_hal_rdkx5_camerahalrdkx5",
-      "community": 22
+      "community": 21
     },
     {
       "label": "video_scaler_vse.cpp",
@@ -5833,7 +5833,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rdk-x5/video_scaler_vse.cpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_hal_platforms_rdk_x5_video_scaler_vse_cpp",
-      "community": 43
+      "community": 42
     },
     {
       "label": "scale_nv12()",
@@ -5841,7 +5841,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rdk-x5/video_scaler_vse.cpp",
       "source_location": "L38",
       "id": "video_scaler_vse_scale_nv12",
-      "community": 43
+      "community": 42
     },
     {
       "label": "scale_nv12_to_bgr()",
@@ -5849,7 +5849,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rdk-x5/video_scaler_vse.cpp",
       "source_location": "L74",
       "id": "video_scaler_vse_scale_nv12_to_bgr",
-      "community": 43
+      "community": 42
     },
     {
       "label": "inference_hal_bpu.cpp",
@@ -5857,7 +5857,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rdk-x5/inference_hal_bpu.cpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_hal_platforms_rdk_x5_inference_hal_bpu_cpp",
-      "community": 30
+      "community": 29
     },
     {
       "label": "init()",
@@ -5865,7 +5865,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rdk-x5/inference_hal_bpu.cpp",
       "source_location": "L37",
       "id": "inference_hal_bpu_init",
-      "community": 30
+      "community": 29
     },
     {
       "label": "detect()",
@@ -5873,7 +5873,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rdk-x5/inference_hal_bpu.cpp",
       "source_location": "L108",
       "id": "inference_hal_bpu_detect",
-      "community": 30
+      "community": 29
     },
     {
       "label": "nv12_to_rgb()",
@@ -5881,7 +5881,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rdk-x5/inference_hal_bpu.cpp",
       "source_location": "L128",
       "id": "inference_hal_bpu_nv12_to_rgb",
-      "community": 30
+      "community": 29
     },
     {
       "label": "decode_outputs()",
@@ -5889,7 +5889,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rdk-x5/inference_hal_bpu.cpp",
       "source_location": "L178",
       "id": "inference_hal_bpu_decode_outputs",
-      "community": 30
+      "community": 29
     },
     {
       "label": "nms()",
@@ -5897,7 +5897,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rdk-x5/inference_hal_bpu.cpp",
       "source_location": "L199",
       "id": "inference_hal_bpu_nms",
-      "community": 30
+      "community": 29
     },
     {
       "label": "shutdown()",
@@ -5905,7 +5905,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rdk-x5/inference_hal_bpu.cpp",
       "source_location": "L259",
       "id": "inference_hal_bpu_shutdown",
-      "community": 30
+      "community": 29
     },
     {
       "label": "camera_hal_rdkx5.cpp",
@@ -5913,7 +5913,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rdk-x5/camera_hal_rdkx5.cpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_hal_platforms_rdk_x5_camera_hal_rdkx5_cpp",
-      "community": 22
+      "community": 21
     },
     {
       "label": "init()",
@@ -5921,7 +5921,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rdk-x5/camera_hal_rdkx5.cpp",
       "source_location": "L40",
       "id": "camera_hal_rdkx5_init",
-      "community": 22
+      "community": 21
     },
     {
       "label": "init_v4l2()",
@@ -5929,7 +5929,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rdk-x5/camera_hal_rdkx5.cpp",
       "source_location": "L73",
       "id": "camera_hal_rdkx5_init_v4l2",
-      "community": 22
+      "community": 21
     },
     {
       "label": "init_vse_channels()",
@@ -5937,7 +5937,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rdk-x5/camera_hal_rdkx5.cpp",
       "source_location": "L217",
       "id": "camera_hal_rdkx5_init_vse_channels",
-      "community": 22
+      "community": 21
     },
     {
       "label": "alloc_vse_buffer()",
@@ -5945,7 +5945,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rdk-x5/camera_hal_rdkx5.cpp",
       "source_location": "L259",
       "id": "camera_hal_rdkx5_alloc_vse_buffer",
-      "community": 22
+      "community": 21
     },
     {
       "label": "free_vse_buffer()",
@@ -5953,7 +5953,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rdk-x5/camera_hal_rdkx5.cpp",
       "source_location": "L317",
       "id": "camera_hal_rdkx5_free_vse_buffer",
-      "community": 22
+      "community": 21
     },
     {
       "label": "acquire_frames()",
@@ -5961,7 +5961,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rdk-x5/camera_hal_rdkx5.cpp",
       "source_location": "L336",
       "id": "camera_hal_rdkx5_acquire_frames",
-      "community": 22
+      "community": 21
     },
     {
       "label": "release_frames()",
@@ -5969,7 +5969,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rdk-x5/camera_hal_rdkx5.cpp",
       "source_location": "L418",
       "id": "camera_hal_rdkx5_release_frames",
-      "community": 22
+      "community": 21
     },
     {
       "label": "shutdown()",
@@ -5977,7 +5977,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rdk-x5/camera_hal_rdkx5.cpp",
       "source_location": "L425",
       "id": "camera_hal_rdkx5_shutdown",
-      "community": 22
+      "community": 21
     },
     {
       "label": "frame_buffer.hpp",
@@ -5985,7 +5985,7 @@
       "source_file": "traps/toolkit/src/hal/api/frame_buffer.hpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_hal_api_frame_buffer_hpp",
-      "community": 109
+      "community": 108
     },
     {
       "label": "config_loader.cpp",
@@ -5993,7 +5993,7 @@
       "source_file": "traps/toolkit/src/hal/api/config_loader.cpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_hal_api_config_loader_cpp",
-      "community": 52
+      "community": 51
     },
     {
       "label": "get_or()",
@@ -6001,7 +6001,7 @@
       "source_file": "traps/toolkit/src/hal/api/config_loader.cpp",
       "source_location": "L32",
       "id": "config_loader_get_or",
-      "community": 52
+      "community": 51
     },
     {
       "label": "loadConfig()",
@@ -6009,7 +6009,7 @@
       "source_file": "traps/toolkit/src/hal/api/config_loader.cpp",
       "source_location": "L47",
       "id": "config_loader_loadconfig",
-      "community": 52
+      "community": 51
     },
     {
       "label": "saveConfig()",
@@ -6017,7 +6017,7 @@
       "source_file": "traps/toolkit/src/hal/api/config_loader.cpp",
       "source_location": "L132",
       "id": "config_loader_saveconfig",
-      "community": 52
+      "community": 51
     },
     {
       "label": "video_scaler.hpp",
@@ -6025,7 +6025,7 @@
       "source_file": "traps/toolkit/src/hal/api/video_scaler.hpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_hal_api_video_scaler_hpp",
-      "community": 85
+      "community": 84
     },
     {
       "label": "IVideoScaler()",
@@ -6033,7 +6033,7 @@
       "source_file": "traps/toolkit/src/hal/api/video_scaler.hpp",
       "source_location": "L27",
       "id": "video_scaler_ivideoscaler",
-      "community": 85
+      "community": 84
     },
     {
       "label": "classifier_hal.hpp",
@@ -6041,7 +6041,7 @@
       "source_file": "traps/toolkit/src/hal/api/classifier_hal.hpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_hal_api_classifier_hal_hpp",
-      "community": 86
+      "community": 85
     },
     {
       "label": "IClassifierHAL()",
@@ -6049,7 +6049,7 @@
       "source_file": "traps/toolkit/src/hal/api/classifier_hal.hpp",
       "source_location": "L38",
       "id": "classifier_hal_iclassifierhal",
-      "community": 86
+      "community": 85
     },
     {
       "label": "inference_hal.hpp",
@@ -6057,7 +6057,7 @@
       "source_file": "traps/toolkit/src/hal/api/inference_hal.hpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_hal_api_inference_hal_hpp",
-      "community": 87
+      "community": 86
     },
     {
       "label": "IInferenceHAL()",
@@ -6065,7 +6065,7 @@
       "source_file": "traps/toolkit/src/hal/api/inference_hal.hpp",
       "source_location": "L38",
       "id": "inference_hal_iinferencehal",
-      "community": 87
+      "community": 86
     },
     {
       "label": "config_loader.hpp",
@@ -6073,7 +6073,7 @@
       "source_file": "traps/toolkit/src/hal/api/config_loader.hpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_hal_api_config_loader_hpp",
-      "community": 110
+      "community": 109
     },
     {
       "label": "types.hpp",
@@ -6081,7 +6081,7 @@
       "source_file": "traps/toolkit/src/hal/api/types.hpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_hal_api_types_hpp",
-      "community": 111
+      "community": 110
     },
     {
       "label": "camera_hal.hpp",
@@ -6089,7 +6089,7 @@
       "source_file": "traps/toolkit/src/hal/api/camera_hal.hpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_hal_api_camera_hal_hpp",
-      "community": 88
+      "community": 87
     },
     {
       "label": "ICameraHAL()",
@@ -6097,7 +6097,7 @@
       "source_file": "traps/toolkit/src/hal/api/camera_hal.hpp",
       "source_location": "L41",
       "id": "camera_hal_icamerahal",
-      "community": 88
+      "community": 87
     },
     {
       "label": "ramen.hpp",
@@ -6105,7 +6105,7 @@
       "source_file": "traps/toolkit/src/actors/ramen.hpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_actors_ramen_hpp",
-      "community": 5
+      "community": 6
     },
     {
       "label": "Callable",
@@ -6113,7 +6113,7 @@
       "source_file": "traps/toolkit/src/actors/ramen.hpp",
       "source_location": "L150",
       "id": "ramen_callable",
-      "community": 5
+      "community": 6
     },
     {
       "label": "Function",
@@ -6121,7 +6121,7 @@
       "source_file": "traps/toolkit/src/actors/ramen.hpp",
       "source_location": "L160",
       "id": "ramen_function",
-      "community": 5
+      "community": 6
     },
     {
       "label": "Callable<R(A...)>",
@@ -6129,7 +6129,7 @@
       "source_file": "traps/toolkit/src/actors/ramen.hpp",
       "source_location": "L194",
       "id": "ramen_callable_r_a",
-      "community": 5
+      "community": 6
     },
     {
       "label": ".Callable()",
@@ -6137,7 +6137,7 @@
       "source_file": "traps/toolkit/src/actors/ramen.hpp",
       "source_location": "L201",
       "id": "ramen_callable_r_a_callable",
-      "community": 5
+      "community": 6
     },
     {
       "label": "Function<R(A...), footprint, alignment>",
@@ -6145,7 +6145,7 @@
       "source_file": "traps/toolkit/src/actors/ramen.hpp",
       "source_location": "L223",
       "id": "ramen_function_r_a_footprint_alignment",
-      "community": 5
+      "community": 6
     },
     {
       "label": ".Function()",
@@ -6153,7 +6153,7 @@
       "source_file": "traps/toolkit/src/actors/ramen.hpp",
       "source_location": "L240",
       "id": "ramen_function_r_a_footprint_alignment_function",
-      "community": 5
+      "community": 6
     },
     {
       "label": "construct()",
@@ -6161,7 +6161,7 @@
       "source_file": "traps/toolkit/src/actors/ramen.hpp",
       "source_location": "L290",
       "id": "ramen_construct",
-      "community": 5
+      "community": 6
     },
     {
       "label": "assign()",
@@ -6169,7 +6169,7 @@
       "source_file": "traps/toolkit/src/actors/ramen.hpp",
       "source_location": "L310",
       "id": "ramen_assign",
-      "community": 5
+      "community": 6
     },
     {
       "label": "ListNode",
@@ -6177,7 +6177,7 @@
       "source_file": "traps/toolkit/src/actors/ramen.hpp",
       "source_location": "L331",
       "id": "ramen_listnode",
-      "community": 5
+      "community": 6
     },
     {
       "label": ".ListNode()",
@@ -6185,7 +6185,7 @@
       "source_file": "traps/toolkit/src/actors/ramen.hpp",
       "source_location": "L342",
       "id": "ramen_listnode_listnode",
-      "community": 5
+      "community": 6
     },
     {
       "label": "clusterize()",
@@ -6193,7 +6193,7 @@
       "source_file": "traps/toolkit/src/actors/ramen.hpp",
       "source_location": "L401",
       "id": "ramen_clusterize",
-      "community": 5
+      "community": 6
     },
     {
       "label": "Triggerable",
@@ -6201,7 +6201,7 @@
       "source_file": "traps/toolkit/src/actors/ramen.hpp",
       "source_location": "L453",
       "id": "ramen_triggerable",
-      "community": 5
+      "community": 6
     },
     {
       "label": "Triggerable<R(A...)>",
@@ -6209,7 +6209,7 @@
       "source_file": "traps/toolkit/src/actors/ramen.hpp",
       "source_location": "L455",
       "id": "ramen_triggerable_r_a",
-      "community": 5
+      "community": 6
     },
     {
       "label": ".Triggerable()",
@@ -6217,7 +6217,7 @@
       "source_file": "traps/toolkit/src/actors/ramen.hpp",
       "source_location": "L461",
       "id": "ramen_triggerable_r_a_triggerable",
-      "community": 5
+      "community": 6
     },
     {
       "label": "Port()",
@@ -6225,7 +6225,7 @@
       "source_file": "traps/toolkit/src/actors/ramen.hpp",
       "source_location": "L483",
       "id": "ramen_port",
-      "community": 5
+      "community": 6
     },
     {
       "label": "EnableCopyMove()",
@@ -6233,7 +6233,7 @@
       "source_file": "traps/toolkit/src/actors/ramen.hpp",
       "source_location": "L497",
       "id": "ramen_enablecopymove",
-      "community": 5
+      "community": 6
     },
     {
       "label": "Behavior()",
@@ -6241,7 +6241,7 @@
       "source_file": "traps/toolkit/src/actors/ramen.hpp",
       "source_location": "L522",
       "id": "ramen_behavior",
-      "community": 5
+      "community": 6
     },
     {
       "label": "Event()",
@@ -6249,7 +6249,7 @@
       "source_file": "traps/toolkit/src/actors/ramen.hpp",
       "source_location": "L575",
       "id": "ramen_event",
-      "community": 5
+      "community": 6
     },
     {
       "label": "PushUnary()",
@@ -6257,7 +6257,7 @@
       "source_file": "traps/toolkit/src/actors/ramen.hpp",
       "source_location": "L849",
       "id": "ramen_pushunary",
-      "community": 5
+      "community": 6
     },
     {
       "label": "PullUnary()",
@@ -6265,7 +6265,7 @@
       "source_file": "traps/toolkit/src/actors/ramen.hpp",
       "source_location": "L906",
       "id": "ramen_pullunary",
-      "community": 5
+      "community": 6
     },
     {
       "label": "PullNary()",
@@ -6273,7 +6273,7 @@
       "source_file": "traps/toolkit/src/actors/ramen.hpp",
       "source_location": "L976",
       "id": "ramen_pullnary",
-      "community": 5
+      "community": 6
     },
     {
       "label": "PushCast()",
@@ -6281,7 +6281,7 @@
       "source_file": "traps/toolkit/src/actors/ramen.hpp",
       "source_location": "L1003",
       "id": "ramen_pushcast",
-      "community": 5
+      "community": 6
     },
     {
       "label": "PullCast()",
@@ -6289,7 +6289,7 @@
       "source_file": "traps/toolkit/src/actors/ramen.hpp",
       "source_location": "L1011",
       "id": "ramen_pullcast",
-      "community": 5
+      "community": 6
     },
     {
       "label": "Ctor()",
@@ -6297,7 +6297,7 @@
       "source_file": "traps/toolkit/src/actors/ramen.hpp",
       "source_location": "L1029",
       "id": "ramen_ctor",
-      "community": 5
+      "community": 6
     },
     {
       "label": "Finalizer",
@@ -6305,7 +6305,7 @@
       "source_file": "traps/toolkit/src/actors/ramen.hpp",
       "source_location": "L1045",
       "id": "ramen_finalizer",
-      "community": 5
+      "community": 6
     },
     {
       "label": ".Finalizer()",
@@ -6313,7 +6313,7 @@
       "source_file": "traps/toolkit/src/actors/ramen.hpp",
       "source_location": "L1049",
       "id": "ramen_finalizer_finalizer",
-      "community": 5
+      "community": 6
     },
     {
       "label": "ActorRegistry",
@@ -6321,7 +6321,7 @@
       "source_file": "traps/toolkit/src/actors/ramen.hpp",
       "source_location": "L1092",
       "id": "ramen_actorregistry",
-      "community": 5
+      "community": 6
     },
     {
       "label": ".ActorRegistry()",
@@ -6329,7 +6329,7 @@
       "source_file": "traps/toolkit/src/actors/ramen.hpp",
       "source_location": "L1116",
       "id": "ramen_actorregistry_actorregistry",
-      "community": 5
+      "community": 6
     },
     {
       "label": "Actor",
@@ -6337,7 +6337,7 @@
       "source_file": "traps/toolkit/src/actors/ramen.hpp",
       "source_location": "L1117",
       "id": "ramen_actor",
-      "community": 5
+      "community": 6
     },
     {
       "label": ".Actor()",
@@ -6345,7 +6345,7 @@
       "source_file": "traps/toolkit/src/actors/ramen.hpp",
       "source_location": "L1125",
       "id": "ramen_actor_actor",
-      "community": 5
+      "community": 6
     },
     {
       "label": "send()",
@@ -6353,7 +6353,7 @@
       "source_file": "traps/toolkit/src/actors/ramen.hpp",
       "source_location": "L1156",
       "id": "ramen_send",
-      "community": 5
+      "community": 6
     },
     {
       "label": "wifi_provisioning_actor.cpp",
@@ -6361,7 +6361,7 @@
       "source_file": "traps/toolkit/src/actors/wifi-provisioning/wifi_provisioning_actor.cpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_actors_wifi_provisioning_wifi_provisioning_actor_cpp",
-      "community": 6
+      "community": 5
     },
     {
       "label": "makePath()",
@@ -6369,7 +6369,7 @@
       "source_file": "traps/toolkit/src/actors/wifi-provisioning/wifi_provisioning_actor.cpp",
       "source_location": "L63",
       "id": "wifi_provisioning_actor_makepath",
-      "community": 6
+      "community": 5
     },
     {
       "label": "logDbusError()",
@@ -6377,7 +6377,7 @@
       "source_file": "traps/toolkit/src/actors/wifi-provisioning/wifi_provisioning_actor.cpp",
       "source_location": "L71",
       "id": "wifi_provisioning_actor_logdbuserror",
-      "community": 6
+      "community": 5
     },
     {
       "label": "init()",
@@ -6385,7 +6385,7 @@
       "source_file": "traps/toolkit/src/actors/wifi-provisioning/wifi_provisioning_actor.cpp",
       "source_location": "L86",
       "id": "wifi_provisioning_actor_init",
-      "community": 6
+      "community": 5
     },
     {
       "label": "shutdown()",
@@ -6393,7 +6393,7 @@
       "source_file": "traps/toolkit/src/actors/wifi-provisioning/wifi_provisioning_actor.cpp",
       "source_location": "L119",
       "id": "wifi_provisioning_actor_shutdown",
-      "community": 6
+      "community": 5
     },
     {
       "label": "getWifiState()",
@@ -6401,7 +6401,7 @@
       "source_file": "traps/toolkit/src/actors/wifi-provisioning/wifi_provisioning_actor.cpp",
       "source_location": "L137",
       "id": "wifi_provisioning_actor_getwifistate",
-      "community": 6
+      "community": 5
     },
     {
       "label": "getTrapId()",
@@ -6409,7 +6409,7 @@
       "source_file": "traps/toolkit/src/actors/wifi-provisioning/wifi_provisioning_actor.cpp",
       "source_location": "L141",
       "id": "wifi_provisioning_actor_gettrapid",
-      "community": 6
+      "community": 5
     },
     {
       "label": "getStoredSsid()",
@@ -6417,7 +6417,7 @@
       "source_file": "traps/toolkit/src/actors/wifi-provisioning/wifi_provisioning_actor.cpp",
       "source_location": "L146",
       "id": "wifi_provisioning_actor_getstoredssid",
-      "community": 6
+      "community": 5
     },
     {
       "label": "getStoredPassword()",
@@ -6425,7 +6425,7 @@
       "source_file": "traps/toolkit/src/actors/wifi-provisioning/wifi_provisioning_actor.cpp",
       "source_location": "L151",
       "id": "wifi_provisioning_actor_getstoredpassword",
-      "community": 6
+      "community": 5
     },
     {
       "label": "isRunning()",
@@ -6433,7 +6433,7 @@
       "source_file": "traps/toolkit/src/actors/wifi-provisioning/wifi_provisioning_actor.cpp",
       "source_location": "L156",
       "id": "wifi_provisioning_actor_isrunning",
-      "community": 6
+      "community": 5
     },
     {
       "label": "setupBluezGatt()",
@@ -6441,7 +6441,7 @@
       "source_file": "traps/toolkit/src/actors/wifi-provisioning/wifi_provisioning_actor.cpp",
       "source_location": "L162",
       "id": "wifi_provisioning_actor_setupbluezgatt",
-      "community": 6
+      "community": 5
     },
     {
       "label": "setupAdvertisement()",
@@ -6449,143 +6449,175 @@
       "source_file": "traps/toolkit/src/actors/wifi-provisioning/wifi_provisioning_actor.cpp",
       "source_location": "L214",
       "id": "wifi_provisioning_actor_setupadvertisement",
-      "community": 6
+      "community": 5
     },
     {
       "label": "teardownBluez()",
       "file_type": "code",
       "source_file": "traps/toolkit/src/actors/wifi-provisioning/wifi_provisioning_actor.cpp",
-      "source_location": "L229",
+      "source_location": "L347",
       "id": "wifi_provisioning_actor_teardownbluez",
-      "community": 6
+      "community": 5
     },
     {
       "label": "buildManufacturerData()",
       "file_type": "code",
       "source_file": "traps/toolkit/src/actors/wifi-provisioning/wifi_provisioning_actor.cpp",
-      "source_location": "L237",
+      "source_location": "L355",
       "id": "wifi_provisioning_actor_buildmanufacturerdata",
-      "community": 6
+      "community": 5
     },
     {
       "label": "encodeTrapIdentity()",
       "file_type": "code",
       "source_file": "traps/toolkit/src/actors/wifi-provisioning/wifi_provisioning_actor.cpp",
-      "source_location": "L276",
+      "source_location": "L393",
       "id": "wifi_provisioning_actor_encodetrapidentity",
-      "community": 6
+      "community": 5
     },
     {
       "label": "encodeWifiState()",
       "file_type": "code",
       "source_file": "traps/toolkit/src/actors/wifi-provisioning/wifi_provisioning_actor.cpp",
-      "source_location": "L284",
+      "source_location": "L401",
       "id": "wifi_provisioning_actor_encodewifistate",
-      "community": 6
+      "community": 5
     },
     {
       "label": "encodeCommandResponse()",
       "file_type": "code",
       "source_file": "traps/toolkit/src/actors/wifi-provisioning/wifi_provisioning_actor.cpp",
-      "source_location": "L288",
+      "source_location": "L405",
       "id": "wifi_provisioning_actor_encodecommandresponse",
-      "community": 6
+      "community": 5
     },
     {
       "label": "decodeProvisionValue()",
       "file_type": "code",
       "source_file": "traps/toolkit/src/actors/wifi-provisioning/wifi_provisioning_actor.cpp",
-      "source_location": "L304",
+      "source_location": "L421",
       "id": "wifi_provisioning_actor_decodeprovisionvalue",
-      "community": 6
+      "community": 5
     },
     {
       "label": "handleProvisionStation()",
       "file_type": "code",
       "source_file": "traps/toolkit/src/actors/wifi-provisioning/wifi_provisioning_actor.cpp",
-      "source_location": "L351",
+      "source_location": "L468",
       "id": "wifi_provisioning_actor_handleprovisionstation",
-      "community": 6
+      "community": 5
     },
     {
       "label": "handleProvisionAp()",
       "file_type": "code",
       "source_file": "traps/toolkit/src/actors/wifi-provisioning/wifi_provisioning_actor.cpp",
-      "source_location": "L357",
+      "source_location": "L474",
       "id": "wifi_provisioning_actor_handleprovisionap",
-      "community": 6
+      "community": 5
     },
     {
       "label": "processProvision()",
       "file_type": "code",
       "source_file": "traps/toolkit/src/actors/wifi-provisioning/wifi_provisioning_actor.cpp",
-      "source_location": "L363",
+      "source_location": "L480",
       "id": "wifi_provisioning_actor_processprovision",
-      "community": 6
+      "community": 5
     },
     {
       "label": "setWifiState()",
       "file_type": "code",
       "source_file": "traps/toolkit/src/actors/wifi-provisioning/wifi_provisioning_actor.cpp",
-      "source_location": "L417",
+      "source_location": "L534",
       "id": "wifi_provisioning_actor_setwifistate",
-      "community": 6
+      "community": 5
     },
     {
       "label": "sendCommandResponse()",
       "file_type": "code",
       "source_file": "traps/toolkit/src/actors/wifi-provisioning/wifi_provisioning_actor.cpp",
-      "source_location": "L432",
+      "source_location": "L549",
       "id": "wifi_provisioning_actor_sendcommandresponse",
-      "community": 6
+      "community": 5
     },
     {
       "label": "dbusEventLoop()",
       "file_type": "code",
       "source_file": "traps/toolkit/src/actors/wifi-provisioning/wifi_provisioning_actor.cpp",
-      "source_location": "L451",
+      "source_location": "L568",
       "id": "wifi_provisioning_actor_dbuseventloop",
-      "community": 6
+      "community": 5
     },
     {
       "label": "onReadValue()",
       "file_type": "code",
       "source_file": "traps/toolkit/src/actors/wifi-provisioning/wifi_provisioning_actor.cpp",
-      "source_location": "L482",
+      "source_location": "L599",
       "id": "wifi_provisioning_actor_onreadvalue",
-      "community": 6
+      "community": 5
     },
     {
       "label": "onWriteValue()",
       "file_type": "code",
       "source_file": "traps/toolkit/src/actors/wifi-provisioning/wifi_provisioning_actor.cpp",
-      "source_location": "L523",
+      "source_location": "L640",
       "id": "wifi_provisioning_actor_onwritevalue",
-      "community": 6
+      "community": 5
     },
     {
       "label": "onGetProperty()",
       "file_type": "code",
       "source_file": "traps/toolkit/src/actors/wifi-provisioning/wifi_provisioning_actor.cpp",
-      "source_location": "L579",
+      "source_location": "L696",
       "id": "wifi_provisioning_actor_ongetproperty",
-      "community": 6
+      "community": 5
     },
     {
       "label": "onGetAllProperties()",
       "file_type": "code",
       "source_file": "traps/toolkit/src/actors/wifi-provisioning/wifi_provisioning_actor.cpp",
-      "source_location": "L620",
+      "source_location": "L737",
       "id": "wifi_provisioning_actor_ongetallproperties",
-      "community": 6
+      "community": 5
+    },
+    {
+      "label": "onAdvGetType()",
+      "file_type": "code",
+      "source_file": "traps/toolkit/src/actors/wifi-provisioning/wifi_provisioning_actor.cpp",
+      "source_location": "L777",
+      "id": "wifi_provisioning_actor_onadvgettype",
+      "community": 5
+    },
+    {
+      "label": "onAdvGetServiceUUIDs()",
+      "file_type": "code",
+      "source_file": "traps/toolkit/src/actors/wifi-provisioning/wifi_provisioning_actor.cpp",
+      "source_location": "L786",
+      "id": "wifi_provisioning_actor_onadvgetserviceuuids",
+      "community": 5
+    },
+    {
+      "label": "onAdvGetManufacturerData()",
+      "file_type": "code",
+      "source_file": "traps/toolkit/src/actors/wifi-provisioning/wifi_provisioning_actor.cpp",
+      "source_location": "L796",
+      "id": "wifi_provisioning_actor_onadvgetmanufacturerdata",
+      "community": 5
+    },
+    {
+      "label": "onAdvGetLocalName()",
+      "file_type": "code",
+      "source_file": "traps/toolkit/src/actors/wifi-provisioning/wifi_provisioning_actor.cpp",
+      "source_location": "L890",
+      "id": "wifi_provisioning_actor_onadvgetlocalname",
+      "community": 5
     },
     {
       "label": "emitPropertiesChanged()",
       "file_type": "code",
       "source_file": "traps/toolkit/src/actors/wifi-provisioning/wifi_provisioning_actor.cpp",
-      "source_location": "L660",
+      "source_location": "L904",
       "id": "wifi_provisioning_actor_emitpropertieschanged",
-      "community": 6
+      "community": 5
     },
     {
       "label": "wifi_provisioning_actor.hpp",
@@ -6593,7 +6625,7 @@
       "source_file": "traps/toolkit/src/actors/wifi-provisioning/wifi_provisioning_actor.hpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_actors_wifi_provisioning_wifi_provisioning_actor_hpp",
-      "community": 112
+      "community": 111
     },
     {
       "label": "software_jpeg_encoder.hpp",
@@ -6601,7 +6633,7 @@
       "source_file": "traps/toolkit/src/actors/jpeg-encoder/software_jpeg_encoder.hpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_actors_jpeg_encoder_software_jpeg_encoder_hpp",
-      "community": 69
+      "community": 68
     },
     {
       "label": "SoftwareJpegEncoder",
@@ -6609,7 +6641,7 @@
       "source_file": "traps/toolkit/src/actors/jpeg-encoder/software_jpeg_encoder.hpp",
       "source_location": "L29",
       "id": "software_jpeg_encoder_softwarejpegencoder",
-      "community": 69
+      "community": 68
     },
     {
       "label": ".SoftwareJpegEncoder()",
@@ -6617,7 +6649,7 @@
       "source_file": "traps/toolkit/src/actors/jpeg-encoder/software_jpeg_encoder.hpp",
       "source_location": "L31",
       "id": "software_jpeg_encoder_softwarejpegencoder_softwarejpegencoder",
-      "community": 69
+      "community": 68
     },
     {
       "label": "hardware_jpeg_encoder.hpp",
@@ -6625,7 +6657,7 @@
       "source_file": "traps/toolkit/src/actors/jpeg-encoder/hardware_jpeg_encoder.hpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_actors_jpeg_encoder_hardware_jpeg_encoder_hpp",
-      "community": 31
+      "community": 30
     },
     {
       "label": "HardwareJpegEncoder()",
@@ -6633,7 +6665,7 @@
       "source_file": "traps/toolkit/src/actors/jpeg-encoder/hardware_jpeg_encoder.cpp",
       "source_location": "L29",
       "id": "hardware_jpeg_encoder_hardwarejpegencoder",
-      "community": 31
+      "community": 30
     },
     {
       "label": "software_jpeg_encoder.cpp",
@@ -6641,7 +6673,7 @@
       "source_file": "traps/toolkit/src/actors/jpeg-encoder/software_jpeg_encoder.cpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_actors_jpeg_encoder_software_jpeg_encoder_cpp",
-      "community": 44
+      "community": 43
     },
     {
       "label": "init()",
@@ -6649,7 +6681,7 @@
       "source_file": "traps/toolkit/src/actors/jpeg-encoder/software_jpeg_encoder.cpp",
       "source_location": "L24",
       "id": "software_jpeg_encoder_init",
-      "community": 44
+      "community": 43
     },
     {
       "label": "clamp_uint8()",
@@ -6657,7 +6689,7 @@
       "source_file": "traps/toolkit/src/actors/jpeg-encoder/software_jpeg_encoder.cpp",
       "source_location": "L62",
       "id": "software_jpeg_encoder_clamp_uint8",
-      "community": 44
+      "community": 43
     },
     {
       "label": "nv12_to_rgb_row()",
@@ -6665,7 +6697,7 @@
       "source_file": "traps/toolkit/src/actors/jpeg-encoder/software_jpeg_encoder.cpp",
       "source_location": "L68",
       "id": "software_jpeg_encoder_nv12_to_rgb_row",
-      "community": 44
+      "community": 43
     },
     {
       "label": "encode()",
@@ -6673,7 +6705,7 @@
       "source_file": "traps/toolkit/src/actors/jpeg-encoder/software_jpeg_encoder.cpp",
       "source_location": "L93",
       "id": "software_jpeg_encoder_encode",
-      "community": 44
+      "community": 43
     },
     {
       "label": "hardware_jpeg_encoder.cpp",
@@ -6681,7 +6713,7 @@
       "source_file": "traps/toolkit/src/actors/jpeg-encoder/hardware_jpeg_encoder.cpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_actors_jpeg_encoder_hardware_jpeg_encoder_cpp",
-      "community": 31
+      "community": 30
     },
     {
       "label": "init()",
@@ -6689,7 +6721,7 @@
       "source_file": "traps/toolkit/src/actors/jpeg-encoder/hardware_jpeg_encoder.cpp",
       "source_location": "L35",
       "id": "hardware_jpeg_encoder_init",
-      "community": 31
+      "community": 30
     },
     {
       "label": "shutdown()",
@@ -6697,7 +6729,7 @@
       "source_file": "traps/toolkit/src/actors/jpeg-encoder/hardware_jpeg_encoder.cpp",
       "source_location": "L78",
       "id": "hardware_jpeg_encoder_shutdown",
-      "community": 31
+      "community": 30
     },
     {
       "label": "create_mpp_encoder()",
@@ -6705,7 +6737,7 @@
       "source_file": "traps/toolkit/src/actors/jpeg-encoder/hardware_jpeg_encoder.cpp",
       "source_location": "L92",
       "id": "hardware_jpeg_encoder_create_mpp_encoder",
-      "community": 31
+      "community": 30
     },
     {
       "label": "configure_encoder()",
@@ -6713,7 +6745,7 @@
       "source_file": "traps/toolkit/src/actors/jpeg-encoder/hardware_jpeg_encoder.cpp",
       "source_location": "L126",
       "id": "hardware_jpeg_encoder_configure_encoder",
-      "community": 31
+      "community": 30
     },
     {
       "label": "encode()",
@@ -6721,7 +6753,7 @@
       "source_file": "traps/toolkit/src/actors/jpeg-encoder/hardware_jpeg_encoder.cpp",
       "source_location": "L160",
       "id": "hardware_jpeg_encoder_encode",
-      "community": 31
+      "community": 30
     },
     {
       "label": "cleanup()",
@@ -6729,7 +6761,7 @@
       "source_file": "traps/toolkit/src/actors/jpeg-encoder/hardware_jpeg_encoder.cpp",
       "source_location": "L254",
       "id": "hardware_jpeg_encoder_cleanup",
-      "community": 31
+      "community": 30
     },
     {
       "label": "base_http_handler.cpp",
@@ -6905,7 +6937,7 @@
       "source_file": "traps/toolkit/src/actors/base-http-handler/base_http_handler.h",
       "source_location": "L1",
       "id": "traps_toolkit_src_actors_base_http_handler_base_http_handler_h",
-      "community": 89
+      "community": 88
     },
     {
       "label": "ct()",
@@ -6913,7 +6945,7 @@
       "source_file": "traps/toolkit/src/actors/base-http-handler/base_http_handler.h",
       "source_location": "L29",
       "id": "base_http_handler_ct",
-      "community": 89
+      "community": 88
     },
     {
       "label": "scene_camera_actor.hpp",
@@ -6921,7 +6953,7 @@
       "source_file": "traps/toolkit/src/actors/camera/scene_camera_actor.hpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_actors_camera_scene_camera_actor_hpp",
-      "community": 113
+      "community": 112
     },
     {
       "label": "camera_hal_actor.cpp",
@@ -6929,7 +6961,7 @@
       "source_file": "traps/toolkit/src/actors/camera/camera_hal_actor.cpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_actors_camera_camera_hal_actor_cpp",
-      "community": 45
+      "community": 44
     },
     {
       "label": "CameraHalActor()",
@@ -6937,7 +6969,7 @@
       "source_file": "traps/toolkit/src/actors/camera/camera_hal_actor.cpp",
       "source_location": "L22",
       "id": "camera_hal_actor_camerahalactor",
-      "community": 45
+      "community": 44
     },
     {
       "label": "init()",
@@ -6945,7 +6977,7 @@
       "source_file": "traps/toolkit/src/actors/camera/camera_hal_actor.cpp",
       "source_location": "L27",
       "id": "camera_hal_actor_init",
-      "community": 45
+      "community": 44
     },
     {
       "label": "shutdown()",
@@ -6953,7 +6985,7 @@
       "source_file": "traps/toolkit/src/actors/camera/camera_hal_actor.cpp",
       "source_location": "L42",
       "id": "camera_hal_actor_shutdown",
-      "community": 45
+      "community": 44
     },
     {
       "label": "tick()",
@@ -6961,7 +6993,7 @@
       "source_file": "traps/toolkit/src/actors/camera/camera_hal_actor.cpp",
       "source_location": "L47",
       "id": "camera_hal_actor_tick",
-      "community": 45
+      "community": 44
     },
     {
       "label": "camera_factory.cpp",
@@ -6969,7 +7001,7 @@
       "source_file": "traps/toolkit/src/actors/camera/camera_factory.cpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_actors_camera_camera_factory_cpp",
-      "community": 90
+      "community": 89
     },
     {
       "label": "create()",
@@ -6977,7 +7009,7 @@
       "source_file": "traps/toolkit/src/actors/camera/camera_factory.cpp",
       "source_location": "L39",
       "id": "camera_factory_create",
-      "community": 90
+      "community": 89
     },
     {
       "label": "camera_hal_actor.hpp",
@@ -6985,7 +7017,7 @@
       "source_file": "traps/toolkit/src/actors/camera/camera_hal_actor.hpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_actors_camera_camera_hal_actor_hpp",
-      "community": 114
+      "community": 113
     },
     {
       "label": "scene_camera_actor.cpp",
@@ -6993,7 +7025,7 @@
       "source_file": "traps/toolkit/src/actors/camera/scene_camera_actor.cpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_actors_camera_scene_camera_actor_cpp",
-      "community": 23
+      "community": 22
     },
     {
       "label": "now_ms()",
@@ -7001,7 +7033,7 @@
       "source_file": "traps/toolkit/src/actors/camera/scene_camera_actor.cpp",
       "source_location": "L31",
       "id": "scene_camera_actor_now_ms",
-      "community": 23
+      "community": 22
     },
     {
       "label": "decode_png_to_rgba()",
@@ -7009,7 +7041,7 @@
       "source_file": "traps/toolkit/src/actors/camera/scene_camera_actor.cpp",
       "source_location": "L39",
       "id": "scene_camera_actor_decode_png_to_rgba",
-      "community": 23
+      "community": 22
     },
     {
       "label": "rgba_to_nv12()",
@@ -7017,7 +7049,7 @@
       "source_file": "traps/toolkit/src/actors/camera/scene_camera_actor.cpp",
       "source_location": "L123",
       "id": "scene_camera_actor_rgba_to_nv12",
-      "community": 23
+      "community": 22
     },
     {
       "label": "nv12_letterbox()",
@@ -7025,7 +7057,7 @@
       "source_file": "traps/toolkit/src/actors/camera/scene_camera_actor.cpp",
       "source_location": "L167",
       "id": "scene_camera_actor_nv12_letterbox",
-      "community": 23
+      "community": 22
     },
     {
       "label": "nv12_scale_nearest()",
@@ -7033,7 +7065,7 @@
       "source_file": "traps/toolkit/src/actors/camera/scene_camera_actor.cpp",
       "source_location": "L225",
       "id": "scene_camera_actor_nv12_scale_nearest",
-      "community": 23
+      "community": 22
     },
     {
       "label": "load_frame_file()",
@@ -7041,7 +7073,7 @@
       "source_file": "traps/toolkit/src/actors/camera/scene_camera_actor.cpp",
       "source_location": "L258",
       "id": "scene_camera_actor_load_frame_file",
-      "community": 23
+      "community": 22
     },
     {
       "label": "load_scene()",
@@ -7049,7 +7081,7 @@
       "source_file": "traps/toolkit/src/actors/camera/scene_camera_actor.cpp",
       "source_location": "L314",
       "id": "scene_camera_actor_load_scene",
-      "community": 23
+      "community": 22
     },
     {
       "label": "init()",
@@ -7057,7 +7089,7 @@
       "source_file": "traps/toolkit/src/actors/camera/scene_camera_actor.cpp",
       "source_location": "L370",
       "id": "scene_camera_actor_init",
-      "community": 23
+      "community": 22
     },
     {
       "label": "tick()",
@@ -7065,7 +7097,7 @@
       "source_file": "traps/toolkit/src/actors/camera/scene_camera_actor.cpp",
       "source_location": "L432",
       "id": "scene_camera_actor_tick",
-      "community": 23
+      "community": 22
     },
     {
       "label": "shutdown()",
@@ -7073,7 +7105,7 @@
       "source_file": "traps/toolkit/src/actors/camera/scene_camera_actor.cpp",
       "source_location": "L474",
       "id": "scene_camera_actor_shutdown",
-      "community": 23
+      "community": 22
     },
     {
       "label": "camera_actor.hpp",
@@ -7081,7 +7113,7 @@
       "source_file": "traps/toolkit/src/actors/camera/camera_actor.hpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_actors_camera_camera_actor_hpp",
-      "community": 91
+      "community": 90
     },
     {
       "label": "CameraActor()",
@@ -7089,7 +7121,7 @@
       "source_file": "traps/toolkit/src/actors/camera/camera_actor.hpp",
       "source_location": "L47",
       "id": "camera_actor_cameraactor",
-      "community": 91
+      "community": 90
     },
     {
       "label": "crop_encoder_actor.hpp",
@@ -7097,7 +7129,7 @@
       "source_file": "traps/toolkit/src/actors/crop-encoder/crop_encoder_actor.hpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_actors_crop_encoder_crop_encoder_actor_hpp",
-      "community": 115
+      "community": 114
     },
     {
       "label": "cropper_actor.cpp",
@@ -7105,7 +7137,7 @@
       "source_file": "traps/toolkit/src/actors/cropper/cropper_actor.cpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_actors_cropper_cropper_actor_cpp",
-      "community": 53
+      "community": 52
     },
     {
       "label": "extract_nv12_roi()",
@@ -7113,7 +7145,7 @@
       "source_file": "traps/toolkit/src/actors/cropper/cropper_actor.cpp",
       "source_location": "L32",
       "id": "cropper_actor_extract_nv12_roi",
-      "community": 53
+      "community": 52
     },
     {
       "label": "nv12_to_jpeg()",
@@ -7121,7 +7153,7 @@
       "source_file": "traps/toolkit/src/actors/cropper/cropper_actor.cpp",
       "source_location": "L70",
       "id": "cropper_actor_nv12_to_jpeg",
-      "community": 53
+      "community": 52
     },
     {
       "label": "encode_crop()",
@@ -7129,7 +7161,7 @@
       "source_file": "traps/toolkit/src/actors/cropper/cropper_actor.cpp",
       "source_location": "L143",
       "id": "cropper_actor_encode_crop",
-      "community": 53
+      "community": 52
     },
     {
       "label": "cropper_actor.hpp",
@@ -7137,7 +7169,7 @@
       "source_file": "traps/toolkit/src/actors/cropper/cropper_actor.hpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_actors_cropper_cropper_actor_hpp",
-      "community": 116
+      "community": 115
     },
     {
       "label": "best_shot_keeper_actor.hpp",
@@ -7145,7 +7177,7 @@
       "source_file": "traps/toolkit/src/actors/best-shot/best_shot_keeper_actor.hpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_actors_best_shot_best_shot_keeper_actor_hpp",
-      "community": 117
+      "community": 116
     },
     {
       "label": "tracker_actor.cpp",
@@ -7153,7 +7185,7 @@
       "source_file": "traps/toolkit/src/actors/tracker/tracker_actor.cpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_actors_tracker_tracker_actor_cpp",
-      "community": 41
+      "community": 40
     },
     {
       "label": "init()",
@@ -7161,7 +7193,7 @@
       "source_file": "traps/toolkit/src/actors/tracker/tracker_actor.cpp",
       "source_location": "L25",
       "id": "tracker_actor_init",
-      "community": 41
+      "community": 40
     },
     {
       "label": "iou()",
@@ -7169,7 +7201,7 @@
       "source_file": "traps/toolkit/src/actors/tracker/tracker_actor.cpp",
       "source_location": "L74",
       "id": "tracker_actor_iou",
-      "community": 41
+      "community": 40
     },
     {
       "label": "centroid_dist()",
@@ -7177,7 +7209,7 @@
       "source_file": "traps/toolkit/src/actors/tracker/tracker_actor.cpp",
       "source_location": "L87",
       "id": "tracker_actor_centroid_dist",
-      "community": 41
+      "community": 40
     },
     {
       "label": "lores_to_full()",
@@ -7185,7 +7217,7 @@
       "source_file": "traps/toolkit/src/actors/tracker/tracker_actor.cpp",
       "source_location": "L97",
       "id": "tracker_actor_lores_to_full",
-      "community": 41
+      "community": 40
     },
     {
       "label": "update()",
@@ -7193,7 +7225,7 @@
       "source_file": "traps/toolkit/src/actors/tracker/tracker_actor.cpp",
       "source_location": "L142",
       "id": "tracker_actor_update",
-      "community": 41
+      "community": 40
     },
     {
       "label": "tracker_actor.hpp",
@@ -7201,7 +7233,7 @@
       "source_file": "traps/toolkit/src/actors/tracker/tracker_actor.hpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_actors_tracker_tracker_actor_hpp",
-      "community": 118
+      "community": 117
     },
     {
       "label": "base_storage.hpp",
@@ -7209,7 +7241,7 @@
       "source_file": "traps/toolkit/src/actors/base-storage/base_storage.hpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_actors_base_storage_base_storage_hpp",
-      "community": 70
+      "community": 69
     },
     {
       "label": "BaseStorage",
@@ -7217,7 +7249,7 @@
       "source_file": "traps/toolkit/src/actors/base-storage/base_storage.hpp",
       "source_location": "L38",
       "id": "base_storage_basestorage",
-      "community": 70
+      "community": 69
     },
     {
       "label": ".BaseStorage()",
@@ -7225,7 +7257,7 @@
       "source_file": "traps/toolkit/src/actors/base-storage/base_storage.hpp",
       "source_location": "L40",
       "id": "base_storage_basestorage_basestorage",
-      "community": 70
+      "community": 69
     },
     {
       "label": "base_trap_handler.hpp",
@@ -7233,7 +7265,7 @@
       "source_file": "traps/toolkit/src/actors/base-trap-handler/base_trap_handler.hpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_actors_base_trap_handler_base_trap_handler_hpp",
-      "community": 92
+      "community": 91
     },
     {
       "label": "BaseTrapHandler",
@@ -7241,7 +7273,7 @@
       "source_file": "traps/toolkit/src/actors/base-trap-handler/base_trap_handler.hpp",
       "source_location": "L30",
       "id": "base_trap_handler_basetraphandler",
-      "community": 92
+      "community": 91
     },
     {
       "label": "event_publisher_actor.hpp",
@@ -7249,7 +7281,7 @@
       "source_file": "traps/toolkit/src/actors/event-publisher/event_publisher_actor.hpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_actors_event_publisher_event_publisher_actor_hpp",
-      "community": 26
+      "community": 25
     },
     {
       "label": "EventPublisherActor()",
@@ -7257,7 +7289,7 @@
       "source_file": "traps/toolkit/src/actors/event-publisher/event_publisher_actor.cpp",
       "source_location": "L29",
       "id": "event_publisher_actor_eventpublisheractor",
-      "community": 26
+      "community": 25
     },
     {
       "label": "event_publisher_actor.cpp",
@@ -7265,7 +7297,7 @@
       "source_file": "traps/toolkit/src/actors/event-publisher/event_publisher_actor.cpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_actors_event_publisher_event_publisher_actor_cpp",
-      "community": 26
+      "community": 25
     },
     {
       "label": "onStart()",
@@ -7273,7 +7305,7 @@
       "source_file": "traps/toolkit/src/actors/event-publisher/event_publisher_actor.cpp",
       "source_location": "L37",
       "id": "event_publisher_actor_onstart",
-      "community": 26
+      "community": 25
     },
     {
       "label": "onStop()",
@@ -7281,7 +7313,7 @@
       "source_file": "traps/toolkit/src/actors/event-publisher/event_publisher_actor.cpp",
       "source_location": "L47",
       "id": "event_publisher_actor_onstop",
-      "community": 26
+      "community": 25
     },
     {
       "label": "onMessageAny()",
@@ -7289,7 +7321,7 @@
       "source_file": "traps/toolkit/src/actors/event-publisher/event_publisher_actor.cpp",
       "source_location": "L59",
       "id": "event_publisher_actor_onmessageany",
-      "community": 26
+      "community": 25
     },
     {
       "label": "getPublisherName()",
@@ -7297,7 +7329,7 @@
       "source_file": "traps/toolkit/src/actors/event-publisher/event_publisher_actor.cpp",
       "source_location": "L69",
       "id": "event_publisher_actor_getpublishername",
-      "community": 26
+      "community": 25
     },
     {
       "label": "setSseActor()",
@@ -7305,7 +7337,7 @@
       "source_file": "traps/toolkit/src/actors/event-publisher/event_publisher_actor.cpp",
       "source_location": "L77",
       "id": "event_publisher_actor_setsseactor",
-      "community": 26
+      "community": 25
     },
     {
       "label": "publishEvent()",
@@ -7313,7 +7345,7 @@
       "source_file": "traps/toolkit/src/actors/event-publisher/event_publisher_actor.cpp",
       "source_location": "L86",
       "id": "event_publisher_actor_publishevent",
-      "community": 26
+      "community": 25
     },
     {
       "label": "nowMs()",
@@ -7321,7 +7353,7 @@
       "source_file": "traps/toolkit/src/actors/event-publisher/event_publisher_actor.cpp",
       "source_location": "L114",
       "id": "event_publisher_actor_nowms",
-      "community": 26
+      "community": 25
     },
     {
       "label": "classifier_actor.hpp",
@@ -7329,7 +7361,7 @@
       "source_file": "traps/toolkit/src/actors/classifier/classifier_actor.hpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_actors_classifier_classifier_actor_hpp",
-      "community": 119
+      "community": 118
     },
     {
       "label": "actuator_actor.cpp",
@@ -7337,7 +7369,7 @@
       "source_file": "traps/toolkit/src/actors/actuator/actuator_actor.cpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_actors_actuator_actuator_actor_cpp",
-      "community": 20
+      "community": 19
     },
     {
       "label": "gpio_export()",
@@ -7345,7 +7377,7 @@
       "source_file": "traps/toolkit/src/actors/actuator/actuator_actor.cpp",
       "source_location": "L31",
       "id": "actuator_actor_gpio_export",
-      "community": 20
+      "community": 19
     },
     {
       "label": "gpio_unexport()",
@@ -7353,7 +7385,7 @@
       "source_file": "traps/toolkit/src/actors/actuator/actuator_actor.cpp",
       "source_location": "L38",
       "id": "actuator_actor_gpio_unexport",
-      "community": 20
+      "community": 19
     },
     {
       "label": "gpio_set_dir()",
@@ -7361,7 +7393,7 @@
       "source_file": "traps/toolkit/src/actors/actuator/actuator_actor.cpp",
       "source_location": "L45",
       "id": "actuator_actor_gpio_set_dir",
-      "community": 20
+      "community": 19
     },
     {
       "label": "gpio_write()",
@@ -7369,7 +7401,7 @@
       "source_file": "traps/toolkit/src/actors/actuator/actuator_actor.cpp",
       "source_location": "L54",
       "id": "actuator_actor_gpio_write",
-      "community": 20
+      "community": 19
     },
     {
       "label": "setup_gpio()",
@@ -7377,7 +7409,7 @@
       "source_file": "traps/toolkit/src/actors/actuator/actuator_actor.cpp",
       "source_location": "L65",
       "id": "actuator_actor_setup_gpio",
-      "community": 20
+      "community": 19
     },
     {
       "label": "cleanup_gpio()",
@@ -7385,7 +7417,7 @@
       "source_file": "traps/toolkit/src/actors/actuator/actuator_actor.cpp",
       "source_location": "L84",
       "id": "actuator_actor_cleanup_gpio",
-      "community": 20
+      "community": 19
     },
     {
       "label": "init()",
@@ -7393,7 +7425,7 @@
       "source_file": "traps/toolkit/src/actors/actuator/actuator_actor.cpp",
       "source_location": "L89",
       "id": "actuator_actor_init",
-      "community": 20
+      "community": 19
     },
     {
       "label": "shutdown()",
@@ -7401,7 +7433,7 @@
       "source_file": "traps/toolkit/src/actors/actuator/actuator_actor.cpp",
       "source_location": "L131",
       "id": "actuator_actor_shutdown",
-      "community": 20
+      "community": 19
     },
     {
       "label": "activate()",
@@ -7409,7 +7441,7 @@
       "source_file": "traps/toolkit/src/actors/actuator/actuator_actor.cpp",
       "source_location": "L145",
       "id": "actuator_actor_activate",
-      "community": 20
+      "community": 19
     },
     {
       "label": "deactivate()",
@@ -7417,7 +7449,7 @@
       "source_file": "traps/toolkit/src/actors/actuator/actuator_actor.cpp",
       "source_location": "L176",
       "id": "actuator_actor_deactivate",
-      "community": 20
+      "community": 19
     },
     {
       "label": "activation_timer()",
@@ -7425,7 +7457,7 @@
       "source_file": "traps/toolkit/src/actors/actuator/actuator_actor.cpp",
       "source_location": "L192",
       "id": "actuator_actor_activation_timer",
-      "community": 20
+      "community": 19
     },
     {
       "label": "actuator_actor.hpp",
@@ -7433,7 +7465,7 @@
       "source_file": "traps/toolkit/src/actors/actuator/actuator_actor.hpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_actors_actuator_actuator_actor_hpp",
-      "community": 93
+      "community": 92
     },
     {
       "label": "ActuatorActor()",
@@ -7441,7 +7473,7 @@
       "source_file": "traps/toolkit/src/actors/actuator/actuator_actor.hpp",
       "source_location": "L58",
       "id": "actuator_actor_actuatoractor",
-      "community": 93
+      "community": 92
     },
     {
       "label": "inference_actor.hpp",
@@ -7449,7 +7481,7 @@
       "source_file": "traps/toolkit/src/actors/inference/inference_actor.hpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_actors_inference_inference_actor_hpp",
-      "community": 120
+      "community": 119
     },
     {
       "label": "inference_actor.cpp",
@@ -7457,7 +7489,7 @@
       "source_file": "traps/toolkit/src/actors/inference/inference_actor.cpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_actors_inference_inference_actor_cpp",
-      "community": 46
+      "community": 45
     },
     {
       "label": "InferenceActor()",
@@ -7465,7 +7497,7 @@
       "source_file": "traps/toolkit/src/actors/inference/inference_actor.cpp",
       "source_location": "L22",
       "id": "inference_actor_inferenceactor",
-      "community": 46
+      "community": 45
     },
     {
       "label": "init()",
@@ -7473,7 +7505,7 @@
       "source_file": "traps/toolkit/src/actors/inference/inference_actor.cpp",
       "source_location": "L27",
       "id": "inference_actor_init",
-      "community": 46
+      "community": 45
     },
     {
       "label": "shutdown()",
@@ -7481,7 +7513,7 @@
       "source_file": "traps/toolkit/src/actors/inference/inference_actor.cpp",
       "source_location": "L46",
       "id": "inference_actor_shutdown",
-      "community": 46
+      "community": 45
     },
     {
       "label": "last_inference_us()",
@@ -7489,7 +7521,7 @@
       "source_file": "traps/toolkit/src/actors/inference/inference_actor.cpp",
       "source_location": "L53",
       "id": "inference_actor_last_inference_us",
-      "community": 46
+      "community": 45
     },
     {
       "label": "decision_actor.hpp",
@@ -7497,7 +7529,7 @@
       "source_file": "traps/toolkit/src/actors/decision/decision_actor.hpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_actors_decision_decision_actor_hpp",
-      "community": 121
+      "community": 120
     },
     {
       "label": "decision_actor.cpp",
@@ -7505,7 +7537,7 @@
       "source_file": "traps/toolkit/src/actors/decision/decision_actor.cpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_actors_decision_decision_actor_cpp",
-      "community": 54
+      "community": 53
     },
     {
       "label": "should_trigger()",
@@ -7513,7 +7545,7 @@
       "source_file": "traps/toolkit/src/actors/decision/decision_actor.cpp",
       "source_location": "L24",
       "id": "decision_actor_should_trigger",
-      "community": 54
+      "community": 53
     },
     {
       "label": "evaluate_tracked()",
@@ -7521,7 +7553,7 @@
       "source_file": "traps/toolkit/src/actors/decision/decision_actor.cpp",
       "source_location": "L50",
       "id": "decision_actor_evaluate_tracked",
-      "community": 54
+      "community": 53
     },
     {
       "label": "evaluate_detections()",
@@ -7529,7 +7561,7 @@
       "source_file": "traps/toolkit/src/actors/decision/decision_actor.cpp",
       "source_location": "L64",
       "id": "decision_actor_evaluate_detections",
-      "community": 54
+      "community": 53
     },
     {
       "label": "overlay_actor.hpp",
@@ -7537,7 +7569,7 @@
       "source_file": "traps/toolkit/src/actors/overlay/overlay_actor.hpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_actors_overlay_overlay_actor_hpp",
-      "community": 122
+      "community": 121
     },
     {
       "label": "overlay_actor.cpp",
@@ -7545,7 +7577,7 @@
       "source_file": "traps/toolkit/src/actors/overlay/overlay_actor.cpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_actors_overlay_overlay_actor_cpp",
-      "community": 47
+      "community": 46
     },
     {
       "label": "rgb_to_yuv()",
@@ -7553,7 +7585,7 @@
       "source_file": "traps/toolkit/src/actors/overlay/overlay_actor.cpp",
       "source_location": "L51",
       "id": "overlay_actor_rgb_to_yuv",
-      "community": 47
+      "community": 46
     },
     {
       "label": "draw_overlays()",
@@ -7561,7 +7593,7 @@
       "source_file": "traps/toolkit/src/actors/overlay/overlay_actor.cpp",
       "source_location": "L60",
       "id": "overlay_actor_draw_overlays",
-      "community": 47
+      "community": 46
     },
     {
       "label": "draw_rect()",
@@ -7569,7 +7601,7 @@
       "source_file": "traps/toolkit/src/actors/overlay/overlay_actor.cpp",
       "source_location": "L110",
       "id": "overlay_actor_draw_rect",
-      "community": 47
+      "community": 46
     },
     {
       "label": "draw_text()",
@@ -7577,7 +7609,7 @@
       "source_file": "traps/toolkit/src/actors/overlay/overlay_actor.cpp",
       "source_location": "L191",
       "id": "overlay_actor_draw_text",
-      "community": 47
+      "community": 46
     },
     {
       "label": "civetweb.h",
@@ -7585,7 +7617,7 @@
       "source_file": "traps/toolkit/src/actors/http-sse/civetweb.h",
       "source_location": "L1",
       "id": "traps_toolkit_src_actors_http_sse_civetweb_h",
-      "community": 123
+      "community": 122
     },
     {
       "label": "http_sse_actor.h",
@@ -10633,7 +10665,7 @@
       "source_file": "traps/toolkit/src/actors/mjpeg-bridge/hires_mjpeg_bridge.hpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_actors_mjpeg_bridge_hires_mjpeg_bridge_hpp",
-      "community": 124
+      "community": 123
     },
     {
       "label": "mjpeg_bridge_actor.hpp",
@@ -10641,7 +10673,7 @@
       "source_file": "traps/toolkit/src/actors/mjpeg-bridge/mjpeg_bridge_actor.hpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_actors_mjpeg_bridge_mjpeg_bridge_actor_hpp",
-      "community": 24
+      "community": 23
     },
     {
       "label": "MjpegBridgeActor()",
@@ -10649,7 +10681,7 @@
       "source_file": "traps/toolkit/src/actors/mjpeg-bridge/mjpeg_bridge_actor.cpp",
       "source_location": "L32",
       "id": "mjpeg_bridge_actor_mjpegbridgeactor",
-      "community": 24
+      "community": 23
     },
     {
       "label": ".MjpegBridgeActor()",
@@ -10657,7 +10689,7 @@
       "source_file": "traps/toolkit/src/actors/mjpeg-bridge/mjpeg_bridge_actor.hpp",
       "source_location": "L62",
       "id": "mjpeg_bridge_actor_mjpegbridgeactor_mjpegbridgeactor",
-      "community": 24
+      "community": 23
     },
     {
       "label": "mjpeg_bridge_actor.cpp",
@@ -10665,7 +10697,7 @@
       "source_file": "traps/toolkit/src/actors/mjpeg-bridge/mjpeg_bridge_actor.cpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_actors_mjpeg_bridge_mjpeg_bridge_actor_cpp",
-      "community": 24
+      "community": 23
     },
     {
       "label": "onStart()",
@@ -10673,7 +10705,7 @@
       "source_file": "traps/toolkit/src/actors/mjpeg-bridge/mjpeg_bridge_actor.cpp",
       "source_location": "L66",
       "id": "mjpeg_bridge_actor_onstart",
-      "community": 24
+      "community": 23
     },
     {
       "label": "onStop()",
@@ -10681,7 +10713,7 @@
       "source_file": "traps/toolkit/src/actors/mjpeg-bridge/mjpeg_bridge_actor.cpp",
       "source_location": "L70",
       "id": "mjpeg_bridge_actor_onstop",
-      "community": 24
+      "community": 23
     },
     {
       "label": "onMessageAny()",
@@ -10689,7 +10721,7 @@
       "source_file": "traps/toolkit/src/actors/mjpeg-bridge/mjpeg_bridge_actor.cpp",
       "source_location": "L76",
       "id": "mjpeg_bridge_actor_onmessageany",
-      "community": 24
+      "community": 23
     },
     {
       "label": "push_frame()",
@@ -10697,7 +10729,7 @@
       "source_file": "traps/toolkit/src/actors/mjpeg-bridge/mjpeg_bridge_actor.cpp",
       "source_location": "L91",
       "id": "mjpeg_bridge_actor_push_frame",
-      "community": 24
+      "community": 23
     },
     {
       "label": "pop_newest()",
@@ -10705,7 +10737,7 @@
       "source_file": "traps/toolkit/src/actors/mjpeg-bridge/mjpeg_bridge_actor.cpp",
       "source_location": "L115",
       "id": "mjpeg_bridge_actor_pop_newest",
-      "community": 24
+      "community": 23
     },
     {
       "label": "try_get()",
@@ -10713,7 +10745,7 @@
       "source_file": "traps/toolkit/src/actors/mjpeg-bridge/mjpeg_bridge_actor.cpp",
       "source_location": "L136",
       "id": "mjpeg_bridge_actor_try_get",
-      "community": 24
+      "community": 23
     },
     {
       "label": "encode_jpeg()",
@@ -10721,7 +10753,7 @@
       "source_file": "traps/toolkit/src/actors/mjpeg-bridge/mjpeg_bridge_actor.cpp",
       "source_location": "L142",
       "id": "mjpeg_bridge_actor_encode_jpeg",
-      "community": 24
+      "community": 23
     },
     {
       "label": "motion_sensor_actor.hpp",
@@ -10729,7 +10761,7 @@
       "source_file": "traps/toolkit/src/actors/motion-sensor/motion_sensor_actor.hpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_actors_motion_sensor_motion_sensor_actor_hpp",
-      "community": 125
+      "community": 124
     },
     {
       "label": "motion_sensor_actor.cpp",
@@ -10737,7 +10769,7 @@
       "source_file": "traps/toolkit/src/actors/motion-sensor/motion_sensor_actor.cpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_actors_motion_sensor_motion_sensor_actor_cpp",
-      "community": 21
+      "community": 20
     },
     {
       "label": "gpio_export()",
@@ -10745,7 +10777,7 @@
       "source_file": "traps/toolkit/src/actors/motion-sensor/motion_sensor_actor.cpp",
       "source_location": "L35",
       "id": "motion_sensor_actor_gpio_export",
-      "community": 21
+      "community": 20
     },
     {
       "label": "gpio_unexport()",
@@ -10753,7 +10785,7 @@
       "source_file": "traps/toolkit/src/actors/motion-sensor/motion_sensor_actor.cpp",
       "source_location": "L42",
       "id": "motion_sensor_actor_gpio_unexport",
-      "community": 21
+      "community": 20
     },
     {
       "label": "gpio_set_dir()",
@@ -10761,7 +10793,7 @@
       "source_file": "traps/toolkit/src/actors/motion-sensor/motion_sensor_actor.cpp",
       "source_location": "L49",
       "id": "motion_sensor_actor_gpio_set_dir",
-      "community": 21
+      "community": 20
     },
     {
       "label": "gpio_set_edge()",
@@ -10769,7 +10801,7 @@
       "source_file": "traps/toolkit/src/actors/motion-sensor/motion_sensor_actor.cpp",
       "source_location": "L58",
       "id": "motion_sensor_actor_gpio_set_edge",
-      "community": 21
+      "community": 20
     },
     {
       "label": "gpio_read()",
@@ -10777,7 +10809,7 @@
       "source_file": "traps/toolkit/src/actors/motion-sensor/motion_sensor_actor.cpp",
       "source_location": "L67",
       "id": "motion_sensor_actor_gpio_read",
-      "community": 21
+      "community": 20
     },
     {
       "label": "setup_gpio()",
@@ -10785,7 +10817,7 @@
       "source_file": "traps/toolkit/src/actors/motion-sensor/motion_sensor_actor.cpp",
       "source_location": "L79",
       "id": "motion_sensor_actor_setup_gpio",
-      "community": 21
+      "community": 20
     },
     {
       "label": "read_gpio()",
@@ -10793,7 +10825,7 @@
       "source_file": "traps/toolkit/src/actors/motion-sensor/motion_sensor_actor.cpp",
       "source_location": "L105",
       "id": "motion_sensor_actor_read_gpio",
-      "community": 21
+      "community": 20
     },
     {
       "label": "cleanup_gpio()",
@@ -10801,7 +10833,7 @@
       "source_file": "traps/toolkit/src/actors/motion-sensor/motion_sensor_actor.cpp",
       "source_location": "L110",
       "id": "motion_sensor_actor_cleanup_gpio",
-      "community": 21
+      "community": 20
     },
     {
       "label": "init()",
@@ -10809,7 +10841,7 @@
       "source_file": "traps/toolkit/src/actors/motion-sensor/motion_sensor_actor.cpp",
       "source_location": "L114",
       "id": "motion_sensor_actor_init",
-      "community": 21
+      "community": 20
     },
     {
       "label": "shutdown()",
@@ -10817,7 +10849,7 @@
       "source_file": "traps/toolkit/src/actors/motion-sensor/motion_sensor_actor.cpp",
       "source_location": "L147",
       "id": "motion_sensor_actor_shutdown",
-      "community": 21
+      "community": 20
     },
     {
       "label": "poll_loop()",
@@ -10825,7 +10857,7 @@
       "source_file": "traps/toolkit/src/actors/motion-sensor/motion_sensor_actor.cpp",
       "source_location": "L161",
       "id": "motion_sensor_actor_poll_loop",
-      "community": 21
+      "community": 20
     },
     {
       "label": "train_yolo26n.py",
@@ -10833,7 +10865,7 @@
       "source_file": "models/detection/insects/yolo26n/train_yolo26n.py",
       "source_location": "L1",
       "id": "models_detection_insects_yolo26n_train_yolo26n_py",
-      "community": 55
+      "community": 54
     },
     {
       "label": "resolve_data_yaml()",
@@ -10841,7 +10873,7 @@
       "source_file": "models/detection/insects/yolo26n/train_yolo26n.py",
       "source_location": "L46",
       "id": "train_yolo26n_resolve_data_yaml",
-      "community": 55
+      "community": 54
     },
     {
       "label": "main()",
@@ -10849,14 +10881,14 @@
       "source_file": "models/detection/insects/yolo26n/train_yolo26n.py",
       "source_location": "L97",
       "id": "train_yolo26n_main",
-      "community": 55
+      "community": 54
     },
     {
       "label": "Resolve the data.yaml path and rewrite its train/val/test paths to absolute.",
       "file_type": "rationale",
       "source_file": "models/detection/insects/yolo26n/train_yolo26n.py",
       "source_location": "L47",
-      "community": 55,
+      "community": 54,
       "id": "train_yolo26n_rationale_47"
     },
     {
@@ -10865,7 +10897,7 @@
       "source_file": "models/detection/insects/yolo26n/nbg_output/generated/vnn_post_process.c",
       "source_location": "L1",
       "id": "models_detection_insects_yolo26n_nbg_output_generated_vnn_post_process_c",
-      "community": 37
+      "community": 36
     },
     {
       "label": "save_output_data()",
@@ -10873,7 +10905,7 @@
       "source_file": "models/detection/insects/yolo26n/nbg_output/generated/vnn_post_process.c",
       "source_location": "L32",
       "id": "vnn_post_process_save_output_data",
-      "community": 37
+      "community": 36
     },
     {
       "label": "get_top()",
@@ -10881,7 +10913,7 @@
       "source_file": "models/detection/insects/yolo26n/nbg_output/generated/vnn_post_process.c",
       "source_location": "L51",
       "id": "vnn_post_process_get_top",
-      "community": 37
+      "community": 36
     },
     {
       "label": "show_top5()",
@@ -10889,7 +10921,7 @@
       "source_file": "models/detection/insects/yolo26n/nbg_output/generated/vnn_post_process.c",
       "source_location": "L92",
       "id": "vnn_post_process_show_top5",
-      "community": 37
+      "community": 36
     },
     {
       "label": "vnn_PostProcessNbgOutput()",
@@ -10897,7 +10929,7 @@
       "source_file": "models/detection/insects/yolo26n/nbg_output/generated/vnn_post_process.c",
       "source_location": "L147",
       "id": "vnn_post_process_vnn_postprocessnbgoutput",
-      "community": 37
+      "community": 36
     },
     {
       "label": "vnn_GetPostProcessMap()",
@@ -10905,7 +10937,7 @@
       "source_file": "models/detection/insects/yolo26n/nbg_output/generated/vnn_post_process.c",
       "source_location": "L162",
       "id": "vnn_post_process_vnn_getpostprocessmap",
-      "community": 37
+      "community": 36
     },
     {
       "label": "vnn_GetPostProcessMapCount()",
@@ -10913,7 +10945,7 @@
       "source_file": "models/detection/insects/yolo26n/nbg_output/generated/vnn_post_process.c",
       "source_location": "L167",
       "id": "vnn_post_process_vnn_getpostprocessmapcount",
-      "community": 37
+      "community": 36
     },
     {
       "label": "vnn_nbgoutput.c",
@@ -10921,7 +10953,7 @@
       "source_file": "models/detection/insects/yolo26n/nbg_output/generated/vnn_nbgoutput.c",
       "source_location": "L1",
       "id": "models_detection_insects_yolo26n_nbg_output_generated_vnn_nbgoutput_c",
-      "community": 56
+      "community": 55
     },
     {
       "label": "load_data()",
@@ -10929,7 +10961,7 @@
       "source_file": "models/detection/insects/yolo26n/nbg_output/generated/vnn_nbgoutput.c",
       "source_location": "L105",
       "id": "vnn_nbgoutput_load_data",
-      "community": 56
+      "community": 55
     },
     {
       "label": "vnn_CreateNbgOutput()",
@@ -10937,7 +10969,7 @@
       "source_file": "models/detection/insects/yolo26n/nbg_output/generated/vnn_nbgoutput.c",
       "source_location": "L144",
       "id": "vnn_nbgoutput_vnn_createnbgoutput",
-      "community": 56
+      "community": 55
     },
     {
       "label": "vnn_ReleaseNbgOutput()",
@@ -10945,7 +10977,7 @@
       "source_file": "models/detection/insects/yolo26n/nbg_output/generated/vnn_nbgoutput.c",
       "source_location": "L10161",
       "id": "vnn_nbgoutput_vnn_releasenbgoutput",
-      "community": 56
+      "community": 55
     },
     {
       "label": "vnn_pre_process.c",
@@ -11137,7 +11169,7 @@
       "source_file": "models/detection/insects/yolo26n/nbg_output/generated/vnn_nbgoutput.h",
       "source_location": "L1",
       "id": "models_detection_insects_yolo26n_nbg_output_generated_vnn_nbgoutput_h",
-      "community": 126
+      "community": 125
     },
     {
       "label": "main.c",
@@ -11209,7 +11241,7 @@
       "source_file": "models/detection/insects/yolo26n/nbg_output/generated/vnn_post_process.h",
       "source_location": "L1",
       "id": "models_detection_insects_yolo26n_nbg_output_generated_vnn_post_process_h",
-      "community": 127
+      "community": 126
     },
     {
       "label": "vnn_global.h",
@@ -11217,7 +11249,7 @@
       "source_file": "models/detection/insects/yolo26n/nbg_output/generated/vnn_global.h",
       "source_location": "L1",
       "id": "models_detection_insects_yolo26n_nbg_output_generated_vnn_global_h",
-      "community": 128
+      "community": 127
     },
     {
       "label": "vnn_pre_process.h",
@@ -11225,7 +11257,7 @@
       "source_file": "models/detection/insects/yolo26n/nbg_output/generated/vnn_pre_process.h",
       "source_location": "L1",
       "id": "models_detection_insects_yolo26n_nbg_output_generated_vnn_pre_process_h",
-      "community": 129
+      "community": 128
     },
     {
       "label": "convert_rknn.py",
@@ -11233,7 +11265,7 @@
       "source_file": "models/detection/insects/yolo26n/convert/convert_rknn.py",
       "source_location": "L1",
       "id": "models_detection_insects_yolo26n_convert_convert_rknn_py",
-      "community": 94
+      "community": 93
     },
     {
       "label": "main()",
@@ -11241,7 +11273,7 @@
       "source_file": "models/detection/insects/yolo26n/convert/convert_rknn.py",
       "source_location": "L45",
       "id": "convert_rknn_main",
-      "community": 94
+      "community": 93
     },
     {
       "label": "convert_nbg.py",
@@ -11249,7 +11281,7 @@
       "source_file": "models/detection/insects/yolo26n/convert/convert_nbg.py",
       "source_location": "L1",
       "id": "models_detection_insects_yolo26n_convert_convert_nbg_py",
-      "community": 95
+      "community": 94
     },
     {
       "label": "main()",
@@ -11257,7 +11289,7 @@
       "source_file": "models/detection/insects/yolo26n/convert/convert_nbg.py",
       "source_location": "L46",
       "id": "convert_nbg_main",
-      "community": 95
+      "community": 94
     },
     {
       "label": "RunnerTests.swift",
@@ -11265,7 +11297,7 @@
       "source_file": "apps/ai_trap_manager/macos/RunnerTests/RunnerTests.swift",
       "source_location": "L1",
       "id": "apps_ai_trap_manager_macos_runnertests_runnertests_swift",
-      "community": 48
+      "community": 47
     },
     {
       "label": "RunnerTests",
@@ -11273,7 +11305,7 @@
       "source_file": "apps/ai_trap_manager/ios/RunnerTests/RunnerTests.swift",
       "source_location": "L5",
       "id": "runnertests_runnertests",
-      "community": 48
+      "community": 47
     },
     {
       "label": "XCTestCase",
@@ -11281,7 +11313,7 @@
       "source_file": "",
       "source_location": "",
       "id": "xctestcase",
-      "community": 48
+      "community": 47
     },
     {
       "label": ".testExample()",
@@ -11289,7 +11321,7 @@
       "source_file": "apps/ai_trap_manager/ios/RunnerTests/RunnerTests.swift",
       "source_location": "L7",
       "id": "runnertests_runnertests_testexample",
-      "community": 48
+      "community": 47
     },
     {
       "label": "MainFlutterWindow.swift",
@@ -11297,7 +11329,7 @@
       "source_file": "apps/ai_trap_manager/macos/Runner/MainFlutterWindow.swift",
       "source_location": "L1",
       "id": "apps_ai_trap_manager_macos_runner_mainflutterwindow_swift",
-      "community": 57
+      "community": 56
     },
     {
       "label": "MainFlutterWindow",
@@ -11305,7 +11337,7 @@
       "source_file": "apps/ai_trap_manager/macos/Runner/MainFlutterWindow.swift",
       "source_location": "L4",
       "id": "mainflutterwindow_mainflutterwindow",
-      "community": 57
+      "community": 56
     },
     {
       "label": "NSWindow",
@@ -11313,7 +11345,7 @@
       "source_file": "",
       "source_location": "",
       "id": "nswindow",
-      "community": 57
+      "community": 56
     },
     {
       "label": ".awakeFromNib()",
@@ -11321,7 +11353,7 @@
       "source_file": "apps/ai_trap_manager/macos/Runner/MainFlutterWindow.swift",
       "source_location": "L5",
       "id": "mainflutterwindow_mainflutterwindow_awakefromnib",
-      "community": 57
+      "community": 56
     },
     {
       "label": "AppDelegate.swift",
@@ -11329,7 +11361,7 @@
       "source_file": "apps/ai_trap_manager/macos/Runner/AppDelegate.swift",
       "source_location": "L1",
       "id": "apps_ai_trap_manager_macos_runner_appdelegate_swift",
-      "community": 32
+      "community": 31
     },
     {
       "label": "AppDelegate",
@@ -11337,7 +11369,7 @@
       "source_file": "apps/ai_trap_manager/ios/Runner/AppDelegate.swift",
       "source_location": "L4",
       "id": "appdelegate_appdelegate",
-      "community": 32
+      "community": 31
     },
     {
       "label": "FlutterAppDelegate",
@@ -11345,7 +11377,7 @@
       "source_file": "",
       "source_location": "",
       "id": "flutterappdelegate",
-      "community": 32
+      "community": 31
     },
     {
       "label": ".applicationShouldTerminateAfterLastWindowClosed()",
@@ -11353,7 +11385,7 @@
       "source_file": "apps/ai_trap_manager/macos/Runner/AppDelegate.swift",
       "source_location": "L6",
       "id": "appdelegate_appdelegate_applicationshouldterminateafterlastwindowclosed",
-      "community": 32
+      "community": 31
     },
     {
       "label": ".applicationSupportsSecureRestorableState()",
@@ -11361,7 +11393,7 @@
       "source_file": "apps/ai_trap_manager/macos/Runner/AppDelegate.swift",
       "source_location": "L10",
       "id": "appdelegate_appdelegate_applicationsupportssecurerestorablestate",
-      "community": 32
+      "community": 31
     },
     {
       "label": "GeneratedPluginRegistrant.swift",
@@ -11369,7 +11401,7 @@
       "source_file": "apps/ai_trap_manager/macos/Flutter/GeneratedPluginRegistrant.swift",
       "source_location": "L1",
       "id": "apps_ai_trap_manager_macos_flutter_generatedpluginregistrant_swift",
-      "community": 96
+      "community": 95
     },
     {
       "label": "RegisterGeneratedPlugins()",
@@ -11377,7 +11409,7 @@
       "source_file": "apps/ai_trap_manager/macos/Flutter/GeneratedPluginRegistrant.swift",
       "source_location": "L15",
       "id": "generatedpluginregistrant_registergeneratedplugins",
-      "community": 96
+      "community": 95
     },
     {
       "label": "sqflite_darwin-dummy.m",
@@ -11385,7 +11417,7 @@
       "source_file": "apps/ai_trap_manager/macos/Pods/Target Support Files/sqflite_darwin/sqflite_darwin-dummy.m",
       "source_location": "L1",
       "id": "apps_ai_trap_manager_macos_pods_target_support_files_sqflite_darwin_sqflite_darwin_dummy_m",
-      "community": 71
+      "community": 70
     },
     {
       "label": "PodsDummy_sqflite_darwin",
@@ -11393,7 +11425,7 @@
       "source_file": "apps/ai_trap_manager/ios/Pods/Target Support Files/sqflite_darwin/sqflite_darwin-dummy.m",
       "source_location": "L2",
       "id": "sqflite_darwin_dummy_podsdummy_sqflite_darwin",
-      "community": 71
+      "community": 70
     },
     {
       "label": "sqflite_darwin-umbrella.h",
@@ -11401,7 +11433,7 @@
       "source_file": "apps/ai_trap_manager/macos/Pods/Target Support Files/sqflite_darwin/sqflite_darwin-umbrella.h",
       "source_location": "L1",
       "id": "apps_ai_trap_manager_macos_pods_target_support_files_sqflite_darwin_sqflite_darwin_umbrella_h",
-      "community": 130
+      "community": 129
     },
     {
       "label": "package_info_plus-umbrella.h",
@@ -11409,7 +11441,7 @@
       "source_file": "apps/ai_trap_manager/macos/Pods/Target Support Files/package_info_plus/package_info_plus-umbrella.h",
       "source_location": "L1",
       "id": "apps_ai_trap_manager_macos_pods_target_support_files_package_info_plus_package_info_plus_umbrella_h",
-      "community": 131
+      "community": 130
     },
     {
       "label": "package_info_plus-dummy.m",
@@ -11417,7 +11449,7 @@
       "source_file": "apps/ai_trap_manager/macos/Pods/Target Support Files/package_info_plus/package_info_plus-dummy.m",
       "source_location": "L1",
       "id": "apps_ai_trap_manager_macos_pods_target_support_files_package_info_plus_package_info_plus_dummy_m",
-      "community": 72
+      "community": 71
     },
     {
       "label": "PodsDummy_package_info_plus",
@@ -11425,7 +11457,7 @@
       "source_file": "apps/ai_trap_manager/ios/Pods/Target Support Files/package_info_plus/package_info_plus-dummy.m",
       "source_location": "L2",
       "id": "package_info_plus_dummy_podsdummy_package_info_plus",
-      "community": 72
+      "community": 71
     },
     {
       "label": "flutter_blue_plus_darwin-umbrella.h",
@@ -11433,7 +11465,7 @@
       "source_file": "apps/ai_trap_manager/macos/Pods/Target Support Files/flutter_blue_plus_darwin/flutter_blue_plus_darwin-umbrella.h",
       "source_location": "L1",
       "id": "apps_ai_trap_manager_macos_pods_target_support_files_flutter_blue_plus_darwin_flutter_blue_plus_darwin_umbrella_h",
-      "community": 132
+      "community": 131
     },
     {
       "label": "flutter_blue_plus_darwin-dummy.m",
@@ -11441,7 +11473,7 @@
       "source_file": "apps/ai_trap_manager/macos/Pods/Target Support Files/flutter_blue_plus_darwin/flutter_blue_plus_darwin-dummy.m",
       "source_location": "L1",
       "id": "apps_ai_trap_manager_macos_pods_target_support_files_flutter_blue_plus_darwin_flutter_blue_plus_darwin_dummy_m",
-      "community": 73
+      "community": 72
     },
     {
       "label": "PodsDummy_flutter_blue_plus_darwin",
@@ -11449,7 +11481,7 @@
       "source_file": "apps/ai_trap_manager/ios/Pods/Target Support Files/flutter_blue_plus_darwin/flutter_blue_plus_darwin-dummy.m",
       "source_location": "L2",
       "id": "flutter_blue_plus_darwin_dummy_podsdummy_flutter_blue_plus_darwin",
-      "community": 73
+      "community": 72
     },
     {
       "label": "Pods-Runner-umbrella.h",
@@ -11457,7 +11489,7 @@
       "source_file": "apps/ai_trap_manager/macos/Pods/Target Support Files/Pods-Runner/Pods-Runner-umbrella.h",
       "source_location": "L1",
       "id": "apps_ai_trap_manager_macos_pods_target_support_files_pods_runner_pods_runner_umbrella_h",
-      "community": 133
+      "community": 132
     },
     {
       "label": "Pods-Runner-dummy.m",
@@ -11465,7 +11497,7 @@
       "source_file": "apps/ai_trap_manager/macos/Pods/Target Support Files/Pods-Runner/Pods-Runner-dummy.m",
       "source_location": "L1",
       "id": "apps_ai_trap_manager_macos_pods_target_support_files_pods_runner_pods_runner_dummy_m",
-      "community": 74
+      "community": 73
     },
     {
       "label": "PodsDummy_Pods_Runner",
@@ -11473,7 +11505,7 @@
       "source_file": "apps/ai_trap_manager/ios/Pods/Target Support Files/Pods-Runner/Pods-Runner-dummy.m",
       "source_location": "L2",
       "id": "pods_runner_dummy_podsdummy_pods_runner",
-      "community": 74
+      "community": 73
     },
     {
       "label": "shared_preferences_foundation-dummy.m",
@@ -11481,7 +11513,7 @@
       "source_file": "apps/ai_trap_manager/macos/Pods/Target Support Files/shared_preferences_foundation/shared_preferences_foundation-dummy.m",
       "source_location": "L1",
       "id": "apps_ai_trap_manager_macos_pods_target_support_files_shared_preferences_foundation_shared_preferences_foundation_dummy_m",
-      "community": 75
+      "community": 74
     },
     {
       "label": "PodsDummy_shared_preferences_foundation",
@@ -11489,7 +11521,7 @@
       "source_file": "apps/ai_trap_manager/ios/Pods/Target Support Files/shared_preferences_foundation/shared_preferences_foundation-dummy.m",
       "source_location": "L2",
       "id": "shared_preferences_foundation_dummy_podsdummy_shared_preferences_foundation",
-      "community": 75
+      "community": 74
     },
     {
       "label": "shared_preferences_foundation-umbrella.h",
@@ -11497,7 +11529,7 @@
       "source_file": "apps/ai_trap_manager/macos/Pods/Target Support Files/shared_preferences_foundation/shared_preferences_foundation-umbrella.h",
       "source_location": "L1",
       "id": "apps_ai_trap_manager_macos_pods_target_support_files_shared_preferences_foundation_shared_preferences_foundation_umbrella_h",
-      "community": 134
+      "community": 133
     },
     {
       "label": "Pods-RunnerTests-dummy.m",
@@ -11505,7 +11537,7 @@
       "source_file": "apps/ai_trap_manager/macos/Pods/Target Support Files/Pods-RunnerTests/Pods-RunnerTests-dummy.m",
       "source_location": "L1",
       "id": "apps_ai_trap_manager_macos_pods_target_support_files_pods_runnertests_pods_runnertests_dummy_m",
-      "community": 76
+      "community": 75
     },
     {
       "label": "PodsDummy_Pods_RunnerTests",
@@ -11513,7 +11545,7 @@
       "source_file": "apps/ai_trap_manager/ios/Pods/Target Support Files/Pods-RunnerTests/Pods-RunnerTests-dummy.m",
       "source_location": "L2",
       "id": "pods_runnertests_dummy_podsdummy_pods_runnertests",
-      "community": 76
+      "community": 75
     },
     {
       "label": "Pods-RunnerTests-umbrella.h",
@@ -11521,7 +11553,7 @@
       "source_file": "apps/ai_trap_manager/macos/Pods/Target Support Files/Pods-RunnerTests/Pods-RunnerTests-umbrella.h",
       "source_location": "L1",
       "id": "apps_ai_trap_manager_macos_pods_target_support_files_pods_runnertests_pods_runnertests_umbrella_h",
-      "community": 135
+      "community": 134
     },
     {
       "label": "video_player_avfoundation-dummy.m",
@@ -11529,7 +11561,7 @@
       "source_file": "apps/ai_trap_manager/macos/Pods/Target Support Files/video_player_avfoundation/video_player_avfoundation-dummy.m",
       "source_location": "L1",
       "id": "apps_ai_trap_manager_macos_pods_target_support_files_video_player_avfoundation_video_player_avfoundation_dummy_m",
-      "community": 77
+      "community": 76
     },
     {
       "label": "PodsDummy_video_player_avfoundation",
@@ -11537,7 +11569,7 @@
       "source_file": "apps/ai_trap_manager/ios/Pods/Target Support Files/video_player_avfoundation/video_player_avfoundation-dummy.m",
       "source_location": "L2",
       "id": "video_player_avfoundation_dummy_podsdummy_video_player_avfoundation",
-      "community": 77
+      "community": 76
     },
     {
       "label": "video_player_avfoundation-umbrella.h",
@@ -11545,7 +11577,7 @@
       "source_file": "apps/ai_trap_manager/macos/Pods/Target Support Files/video_player_avfoundation/video_player_avfoundation-umbrella.h",
       "source_location": "L1",
       "id": "apps_ai_trap_manager_macos_pods_target_support_files_video_player_avfoundation_video_player_avfoundation_umbrella_h",
-      "community": 136
+      "community": 135
     },
     {
       "label": "wakelock_plus-dummy.m",
@@ -11553,7 +11585,7 @@
       "source_file": "apps/ai_trap_manager/macos/Pods/Target Support Files/wakelock_plus/wakelock_plus-dummy.m",
       "source_location": "L1",
       "id": "apps_ai_trap_manager_macos_pods_target_support_files_wakelock_plus_wakelock_plus_dummy_m",
-      "community": 78
+      "community": 77
     },
     {
       "label": "PodsDummy_wakelock_plus",
@@ -11561,7 +11593,7 @@
       "source_file": "apps/ai_trap_manager/ios/Pods/Target Support Files/wakelock_plus/wakelock_plus-dummy.m",
       "source_location": "L2",
       "id": "wakelock_plus_dummy_podsdummy_wakelock_plus",
-      "community": 78
+      "community": 77
     },
     {
       "label": "wakelock_plus-umbrella.h",
@@ -11569,7 +11601,7 @@
       "source_file": "apps/ai_trap_manager/macos/Pods/Target Support Files/wakelock_plus/wakelock_plus-umbrella.h",
       "source_location": "L1",
       "id": "apps_ai_trap_manager_macos_pods_target_support_files_wakelock_plus_wakelock_plus_umbrella_h",
-      "community": 137
+      "community": 136
     },
     {
       "label": "RunnerTests.swift",
@@ -11577,7 +11609,7 @@
       "source_file": "apps/ai_trap_manager/ios/RunnerTests/RunnerTests.swift",
       "source_location": "L1",
       "id": "apps_ai_trap_manager_ios_runnertests_runnertests_swift",
-      "community": 48
+      "community": 47
     },
     {
       "label": "Runner-Bridging-Header.h",
@@ -11585,7 +11617,7 @@
       "source_file": "apps/ai_trap_manager/ios/Runner/Runner-Bridging-Header.h",
       "source_location": "L1",
       "id": "apps_ai_trap_manager_ios_runner_runner_bridging_header_h",
-      "community": 138
+      "community": 137
     },
     {
       "label": "GeneratedPluginRegistrant.h",
@@ -11593,7 +11625,7 @@
       "source_file": "apps/ai_trap_manager/ios/Runner/GeneratedPluginRegistrant.h",
       "source_location": "L1",
       "id": "apps_ai_trap_manager_ios_runner_generatedpluginregistrant_h",
-      "community": 139
+      "community": 138
     },
     {
       "label": "AppDelegate.swift",
@@ -11601,7 +11633,7 @@
       "source_file": "apps/ai_trap_manager/ios/Runner/AppDelegate.swift",
       "source_location": "L1",
       "id": "apps_ai_trap_manager_ios_runner_appdelegate_swift",
-      "community": 32
+      "community": 31
     },
     {
       "label": "FlutterImplicitEngineDelegate",
@@ -11609,7 +11641,7 @@
       "source_file": "",
       "source_location": "",
       "id": "flutterimplicitenginedelegate",
-      "community": 32
+      "community": 31
     },
     {
       "label": ".application()",
@@ -11617,7 +11649,7 @@
       "source_file": "apps/ai_trap_manager/ios/Runner/AppDelegate.swift",
       "source_location": "L6",
       "id": "appdelegate_appdelegate_application",
-      "community": 32
+      "community": 31
     },
     {
       "label": ".didInitializeImplicitFlutterEngine()",
@@ -11625,7 +11657,7 @@
       "source_file": "apps/ai_trap_manager/ios/Runner/AppDelegate.swift",
       "source_location": "L13",
       "id": "appdelegate_appdelegate_didinitializeimplicitflutterengine",
-      "community": 32
+      "community": 31
     },
     {
       "label": "GeneratedPluginRegistrant.m",
@@ -11633,7 +11665,7 @@
       "source_file": "apps/ai_trap_manager/ios/Runner/GeneratedPluginRegistrant.m",
       "source_location": "L1",
       "id": "apps_ai_trap_manager_ios_runner_generatedpluginregistrant_m",
-      "community": 79
+      "community": 78
     },
     {
       "label": "GeneratedPluginRegistrant",
@@ -11641,7 +11673,7 @@
       "source_file": "apps/ai_trap_manager/ios/Runner/GeneratedPluginRegistrant.m",
       "source_location": "L45",
       "id": "generatedpluginregistrant_generatedpluginregistrant",
-      "community": 79
+      "community": 78
     },
     {
       "label": "-registerWithRegistry",
@@ -11649,7 +11681,7 @@
       "source_file": "apps/ai_trap_manager/ios/Runner/GeneratedPluginRegistrant.m",
       "source_location": "L47",
       "id": "generatedpluginregistrant_generatedpluginregistrant_registerwithregistry",
-      "community": 79
+      "community": 78
     },
     {
       "label": "SceneDelegate.swift",
@@ -11657,7 +11689,7 @@
       "source_file": "apps/ai_trap_manager/ios/Runner/SceneDelegate.swift",
       "source_location": "L1",
       "id": "apps_ai_trap_manager_ios_runner_scenedelegate_swift",
-      "community": 80
+      "community": 79
     },
     {
       "label": "SceneDelegate",
@@ -11665,7 +11697,7 @@
       "source_file": "apps/ai_trap_manager/ios/Runner/SceneDelegate.swift",
       "source_location": "L4",
       "id": "scenedelegate_scenedelegate",
-      "community": 80
+      "community": 79
     },
     {
       "label": "FlutterSceneDelegate",
@@ -11673,7 +11705,7 @@
       "source_file": "",
       "source_location": "",
       "id": "flutterscenedelegate",
-      "community": 80
+      "community": 79
     },
     {
       "label": "flutter_lldb_helper.py",
@@ -11681,7 +11713,7 @@
       "source_file": "apps/ai_trap_manager/ios/Flutter/ephemeral/flutter_lldb_helper.py",
       "source_location": "L1",
       "id": "apps_ai_trap_manager_ios_flutter_ephemeral_flutter_lldb_helper_py",
-      "community": 58
+      "community": 57
     },
     {
       "label": "handle_new_rx_page()",
@@ -11689,7 +11721,7 @@
       "source_file": "apps/ai_trap_manager/ios/Flutter/ephemeral/flutter_lldb_helper.py",
       "source_location": "L7",
       "id": "flutter_lldb_helper_handle_new_rx_page",
-      "community": 58
+      "community": 57
     },
     {
       "label": "__lldb_init_module()",
@@ -11697,14 +11729,14 @@
       "source_file": "apps/ai_trap_manager/ios/Flutter/ephemeral/flutter_lldb_helper.py",
       "source_location": "L24",
       "id": "flutter_lldb_helper_lldb_init_module",
-      "community": 58
+      "community": 57
     },
     {
       "label": "Intercept NOTIFY_DEBUGGER_ABOUT_RX_PAGES and touch the pages.",
       "file_type": "rationale",
       "source_file": "apps/ai_trap_manager/ios/Flutter/ephemeral/flutter_lldb_helper.py",
       "source_location": "L8",
-      "community": 58,
+      "community": 57,
       "id": "flutter_lldb_helper_rationale_8"
     },
     {
@@ -11713,7 +11745,7 @@
       "source_file": "apps/ai_trap_manager/ios/Pods/Target Support Files/sqflite_darwin/sqflite_darwin-dummy.m",
       "source_location": "L1",
       "id": "apps_ai_trap_manager_ios_pods_target_support_files_sqflite_darwin_sqflite_darwin_dummy_m",
-      "community": 71
+      "community": 70
     },
     {
       "label": "sqflite_darwin-umbrella.h",
@@ -11721,7 +11753,7 @@
       "source_file": "apps/ai_trap_manager/ios/Pods/Target Support Files/sqflite_darwin/sqflite_darwin-umbrella.h",
       "source_location": "L1",
       "id": "apps_ai_trap_manager_ios_pods_target_support_files_sqflite_darwin_sqflite_darwin_umbrella_h",
-      "community": 140
+      "community": 139
     },
     {
       "label": "package_info_plus-umbrella.h",
@@ -11729,7 +11761,7 @@
       "source_file": "apps/ai_trap_manager/ios/Pods/Target Support Files/package_info_plus/package_info_plus-umbrella.h",
       "source_location": "L1",
       "id": "apps_ai_trap_manager_ios_pods_target_support_files_package_info_plus_package_info_plus_umbrella_h",
-      "community": 141
+      "community": 140
     },
     {
       "label": "package_info_plus-dummy.m",
@@ -11737,7 +11769,7 @@
       "source_file": "apps/ai_trap_manager/ios/Pods/Target Support Files/package_info_plus/package_info_plus-dummy.m",
       "source_location": "L1",
       "id": "apps_ai_trap_manager_ios_pods_target_support_files_package_info_plus_package_info_plus_dummy_m",
-      "community": 72
+      "community": 71
     },
     {
       "label": "flutter_blue_plus_darwin-umbrella.h",
@@ -11745,7 +11777,7 @@
       "source_file": "apps/ai_trap_manager/ios/Pods/Target Support Files/flutter_blue_plus_darwin/flutter_blue_plus_darwin-umbrella.h",
       "source_location": "L1",
       "id": "apps_ai_trap_manager_ios_pods_target_support_files_flutter_blue_plus_darwin_flutter_blue_plus_darwin_umbrella_h",
-      "community": 142
+      "community": 141
     },
     {
       "label": "flutter_blue_plus_darwin-dummy.m",
@@ -11753,7 +11785,7 @@
       "source_file": "apps/ai_trap_manager/ios/Pods/Target Support Files/flutter_blue_plus_darwin/flutter_blue_plus_darwin-dummy.m",
       "source_location": "L1",
       "id": "apps_ai_trap_manager_ios_pods_target_support_files_flutter_blue_plus_darwin_flutter_blue_plus_darwin_dummy_m",
-      "community": 73
+      "community": 72
     },
     {
       "label": "Pods-Runner-umbrella.h",
@@ -11761,7 +11793,7 @@
       "source_file": "apps/ai_trap_manager/ios/Pods/Target Support Files/Pods-Runner/Pods-Runner-umbrella.h",
       "source_location": "L1",
       "id": "apps_ai_trap_manager_ios_pods_target_support_files_pods_runner_pods_runner_umbrella_h",
-      "community": 143
+      "community": 142
     },
     {
       "label": "Pods-Runner-dummy.m",
@@ -11769,7 +11801,7 @@
       "source_file": "apps/ai_trap_manager/ios/Pods/Target Support Files/Pods-Runner/Pods-Runner-dummy.m",
       "source_location": "L1",
       "id": "apps_ai_trap_manager_ios_pods_target_support_files_pods_runner_pods_runner_dummy_m",
-      "community": 74
+      "community": 73
     },
     {
       "label": "shared_preferences_foundation-dummy.m",
@@ -11777,7 +11809,7 @@
       "source_file": "apps/ai_trap_manager/ios/Pods/Target Support Files/shared_preferences_foundation/shared_preferences_foundation-dummy.m",
       "source_location": "L1",
       "id": "apps_ai_trap_manager_ios_pods_target_support_files_shared_preferences_foundation_shared_preferences_foundation_dummy_m",
-      "community": 75
+      "community": 74
     },
     {
       "label": "shared_preferences_foundation-umbrella.h",
@@ -11785,7 +11817,7 @@
       "source_file": "apps/ai_trap_manager/ios/Pods/Target Support Files/shared_preferences_foundation/shared_preferences_foundation-umbrella.h",
       "source_location": "L1",
       "id": "apps_ai_trap_manager_ios_pods_target_support_files_shared_preferences_foundation_shared_preferences_foundation_umbrella_h",
-      "community": 144
+      "community": 143
     },
     {
       "label": "Pods-RunnerTests-dummy.m",
@@ -11793,7 +11825,7 @@
       "source_file": "apps/ai_trap_manager/ios/Pods/Target Support Files/Pods-RunnerTests/Pods-RunnerTests-dummy.m",
       "source_location": "L1",
       "id": "apps_ai_trap_manager_ios_pods_target_support_files_pods_runnertests_pods_runnertests_dummy_m",
-      "community": 76
+      "community": 75
     },
     {
       "label": "Pods-RunnerTests-umbrella.h",
@@ -11801,7 +11833,7 @@
       "source_file": "apps/ai_trap_manager/ios/Pods/Target Support Files/Pods-RunnerTests/Pods-RunnerTests-umbrella.h",
       "source_location": "L1",
       "id": "apps_ai_trap_manager_ios_pods_target_support_files_pods_runnertests_pods_runnertests_umbrella_h",
-      "community": 145
+      "community": 144
     },
     {
       "label": "video_player_avfoundation-dummy.m",
@@ -11809,7 +11841,7 @@
       "source_file": "apps/ai_trap_manager/ios/Pods/Target Support Files/video_player_avfoundation/video_player_avfoundation-dummy.m",
       "source_location": "L1",
       "id": "apps_ai_trap_manager_ios_pods_target_support_files_video_player_avfoundation_video_player_avfoundation_dummy_m",
-      "community": 77
+      "community": 76
     },
     {
       "label": "video_player_avfoundation-umbrella.h",
@@ -11817,7 +11849,7 @@
       "source_file": "apps/ai_trap_manager/ios/Pods/Target Support Files/video_player_avfoundation/video_player_avfoundation-umbrella.h",
       "source_location": "L1",
       "id": "apps_ai_trap_manager_ios_pods_target_support_files_video_player_avfoundation_video_player_avfoundation_umbrella_h",
-      "community": 146
+      "community": 145
     },
     {
       "label": "wakelock_plus-dummy.m",
@@ -11825,7 +11857,7 @@
       "source_file": "apps/ai_trap_manager/ios/Pods/Target Support Files/wakelock_plus/wakelock_plus-dummy.m",
       "source_location": "L1",
       "id": "apps_ai_trap_manager_ios_pods_target_support_files_wakelock_plus_wakelock_plus_dummy_m",
-      "community": 78
+      "community": 77
     },
     {
       "label": "wakelock_plus-umbrella.h",
@@ -11833,7 +11865,7 @@
       "source_file": "apps/ai_trap_manager/ios/Pods/Target Support Files/wakelock_plus/wakelock_plus-umbrella.h",
       "source_location": "L1",
       "id": "apps_ai_trap_manager_ios_pods_target_support_files_wakelock_plus_wakelock_plus_umbrella_h",
-      "community": 147
+      "community": 146
     }
   ],
   "links": [
@@ -31269,7 +31301,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "traps/toolkit/src/actors/wifi-provisioning/wifi_provisioning_actor.cpp",
-      "source_location": "L229",
+      "source_location": "L347",
       "weight": 1.0,
       "_src": "traps_toolkit_src_actors_wifi_provisioning_wifi_provisioning_actor_cpp",
       "_tgt": "wifi_provisioning_actor_teardownbluez",
@@ -31281,7 +31313,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "traps/toolkit/src/actors/wifi-provisioning/wifi_provisioning_actor.cpp",
-      "source_location": "L237",
+      "source_location": "L355",
       "weight": 1.0,
       "_src": "traps_toolkit_src_actors_wifi_provisioning_wifi_provisioning_actor_cpp",
       "_tgt": "wifi_provisioning_actor_buildmanufacturerdata",
@@ -31293,7 +31325,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "traps/toolkit/src/actors/wifi-provisioning/wifi_provisioning_actor.cpp",
-      "source_location": "L276",
+      "source_location": "L393",
       "weight": 1.0,
       "_src": "traps_toolkit_src_actors_wifi_provisioning_wifi_provisioning_actor_cpp",
       "_tgt": "wifi_provisioning_actor_encodetrapidentity",
@@ -31305,7 +31337,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "traps/toolkit/src/actors/wifi-provisioning/wifi_provisioning_actor.cpp",
-      "source_location": "L284",
+      "source_location": "L401",
       "weight": 1.0,
       "_src": "traps_toolkit_src_actors_wifi_provisioning_wifi_provisioning_actor_cpp",
       "_tgt": "wifi_provisioning_actor_encodewifistate",
@@ -31317,7 +31349,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "traps/toolkit/src/actors/wifi-provisioning/wifi_provisioning_actor.cpp",
-      "source_location": "L288",
+      "source_location": "L405",
       "weight": 1.0,
       "_src": "traps_toolkit_src_actors_wifi_provisioning_wifi_provisioning_actor_cpp",
       "_tgt": "wifi_provisioning_actor_encodecommandresponse",
@@ -31329,7 +31361,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "traps/toolkit/src/actors/wifi-provisioning/wifi_provisioning_actor.cpp",
-      "source_location": "L304",
+      "source_location": "L421",
       "weight": 1.0,
       "_src": "traps_toolkit_src_actors_wifi_provisioning_wifi_provisioning_actor_cpp",
       "_tgt": "wifi_provisioning_actor_decodeprovisionvalue",
@@ -31341,7 +31373,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "traps/toolkit/src/actors/wifi-provisioning/wifi_provisioning_actor.cpp",
-      "source_location": "L351",
+      "source_location": "L468",
       "weight": 1.0,
       "_src": "traps_toolkit_src_actors_wifi_provisioning_wifi_provisioning_actor_cpp",
       "_tgt": "wifi_provisioning_actor_handleprovisionstation",
@@ -31353,7 +31385,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "traps/toolkit/src/actors/wifi-provisioning/wifi_provisioning_actor.cpp",
-      "source_location": "L357",
+      "source_location": "L474",
       "weight": 1.0,
       "_src": "traps_toolkit_src_actors_wifi_provisioning_wifi_provisioning_actor_cpp",
       "_tgt": "wifi_provisioning_actor_handleprovisionap",
@@ -31365,7 +31397,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "traps/toolkit/src/actors/wifi-provisioning/wifi_provisioning_actor.cpp",
-      "source_location": "L363",
+      "source_location": "L480",
       "weight": 1.0,
       "_src": "traps_toolkit_src_actors_wifi_provisioning_wifi_provisioning_actor_cpp",
       "_tgt": "wifi_provisioning_actor_processprovision",
@@ -31377,7 +31409,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "traps/toolkit/src/actors/wifi-provisioning/wifi_provisioning_actor.cpp",
-      "source_location": "L417",
+      "source_location": "L534",
       "weight": 1.0,
       "_src": "traps_toolkit_src_actors_wifi_provisioning_wifi_provisioning_actor_cpp",
       "_tgt": "wifi_provisioning_actor_setwifistate",
@@ -31389,7 +31421,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "traps/toolkit/src/actors/wifi-provisioning/wifi_provisioning_actor.cpp",
-      "source_location": "L432",
+      "source_location": "L549",
       "weight": 1.0,
       "_src": "traps_toolkit_src_actors_wifi_provisioning_wifi_provisioning_actor_cpp",
       "_tgt": "wifi_provisioning_actor_sendcommandresponse",
@@ -31401,7 +31433,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "traps/toolkit/src/actors/wifi-provisioning/wifi_provisioning_actor.cpp",
-      "source_location": "L451",
+      "source_location": "L568",
       "weight": 1.0,
       "_src": "traps_toolkit_src_actors_wifi_provisioning_wifi_provisioning_actor_cpp",
       "_tgt": "wifi_provisioning_actor_dbuseventloop",
@@ -31413,7 +31445,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "traps/toolkit/src/actors/wifi-provisioning/wifi_provisioning_actor.cpp",
-      "source_location": "L482",
+      "source_location": "L599",
       "weight": 1.0,
       "_src": "traps_toolkit_src_actors_wifi_provisioning_wifi_provisioning_actor_cpp",
       "_tgt": "wifi_provisioning_actor_onreadvalue",
@@ -31425,7 +31457,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "traps/toolkit/src/actors/wifi-provisioning/wifi_provisioning_actor.cpp",
-      "source_location": "L523",
+      "source_location": "L640",
       "weight": 1.0,
       "_src": "traps_toolkit_src_actors_wifi_provisioning_wifi_provisioning_actor_cpp",
       "_tgt": "wifi_provisioning_actor_onwritevalue",
@@ -31437,7 +31469,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "traps/toolkit/src/actors/wifi-provisioning/wifi_provisioning_actor.cpp",
-      "source_location": "L579",
+      "source_location": "L696",
       "weight": 1.0,
       "_src": "traps_toolkit_src_actors_wifi_provisioning_wifi_provisioning_actor_cpp",
       "_tgt": "wifi_provisioning_actor_ongetproperty",
@@ -31449,7 +31481,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "traps/toolkit/src/actors/wifi-provisioning/wifi_provisioning_actor.cpp",
-      "source_location": "L620",
+      "source_location": "L737",
       "weight": 1.0,
       "_src": "traps_toolkit_src_actors_wifi_provisioning_wifi_provisioning_actor_cpp",
       "_tgt": "wifi_provisioning_actor_ongetallproperties",
@@ -31461,7 +31493,55 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "traps/toolkit/src/actors/wifi-provisioning/wifi_provisioning_actor.cpp",
-      "source_location": "L660",
+      "source_location": "L777",
+      "weight": 1.0,
+      "_src": "traps_toolkit_src_actors_wifi_provisioning_wifi_provisioning_actor_cpp",
+      "_tgt": "wifi_provisioning_actor_onadvgettype",
+      "source": "traps_toolkit_src_actors_wifi_provisioning_wifi_provisioning_actor_cpp",
+      "target": "wifi_provisioning_actor_onadvgettype",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "traps/toolkit/src/actors/wifi-provisioning/wifi_provisioning_actor.cpp",
+      "source_location": "L786",
+      "weight": 1.0,
+      "_src": "traps_toolkit_src_actors_wifi_provisioning_wifi_provisioning_actor_cpp",
+      "_tgt": "wifi_provisioning_actor_onadvgetserviceuuids",
+      "source": "traps_toolkit_src_actors_wifi_provisioning_wifi_provisioning_actor_cpp",
+      "target": "wifi_provisioning_actor_onadvgetserviceuuids",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "traps/toolkit/src/actors/wifi-provisioning/wifi_provisioning_actor.cpp",
+      "source_location": "L796",
+      "weight": 1.0,
+      "_src": "traps_toolkit_src_actors_wifi_provisioning_wifi_provisioning_actor_cpp",
+      "_tgt": "wifi_provisioning_actor_onadvgetmanufacturerdata",
+      "source": "traps_toolkit_src_actors_wifi_provisioning_wifi_provisioning_actor_cpp",
+      "target": "wifi_provisioning_actor_onadvgetmanufacturerdata",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "traps/toolkit/src/actors/wifi-provisioning/wifi_provisioning_actor.cpp",
+      "source_location": "L890",
+      "weight": 1.0,
+      "_src": "traps_toolkit_src_actors_wifi_provisioning_wifi_provisioning_actor_cpp",
+      "_tgt": "wifi_provisioning_actor_onadvgetlocalname",
+      "source": "traps_toolkit_src_actors_wifi_provisioning_wifi_provisioning_actor_cpp",
+      "target": "wifi_provisioning_actor_onadvgetlocalname",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "traps/toolkit/src/actors/wifi-provisioning/wifi_provisioning_actor.cpp",
+      "source_location": "L904",
       "weight": 1.0,
       "_src": "traps_toolkit_src_actors_wifi_provisioning_wifi_provisioning_actor_cpp",
       "_tgt": "wifi_provisioning_actor_emitpropertieschanged",
@@ -31473,7 +31553,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "traps/toolkit/src/actors/wifi-provisioning/wifi_provisioning_actor.cpp",
-      "source_location": "L425",
+      "source_location": "L542",
       "weight": 1.0,
       "_src": "wifi_provisioning_actor_setwifistate",
       "_tgt": "wifi_provisioning_actor_makepath",
@@ -31485,7 +31565,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "traps/toolkit/src/actors/wifi-provisioning/wifi_provisioning_actor.cpp",
-      "source_location": "L442",
+      "source_location": "L559",
       "weight": 1.0,
       "_src": "wifi_provisioning_actor_sendcommandresponse",
       "_tgt": "wifi_provisioning_actor_makepath",
@@ -31509,7 +31589,19 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "traps/toolkit/src/actors/wifi-provisioning/wifi_provisioning_actor.cpp",
-      "source_location": "L459",
+      "source_location": "L274",
+      "weight": 1.0,
+      "_src": "wifi_provisioning_actor_setupadvertisement",
+      "_tgt": "wifi_provisioning_actor_logdbuserror",
+      "source": "wifi_provisioning_actor_logdbuserror",
+      "target": "wifi_provisioning_actor_setupadvertisement",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "traps/toolkit/src/actors/wifi-provisioning/wifi_provisioning_actor.cpp",
+      "source_location": "L576",
       "weight": 1.0,
       "_src": "wifi_provisioning_actor_dbuseventloop",
       "_tgt": "wifi_provisioning_actor_logdbuserror",
@@ -31521,7 +31613,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "traps/toolkit/src/actors/wifi-provisioning/wifi_provisioning_actor.cpp",
-      "source_location": "L517",
+      "source_location": "L634",
       "weight": 1.0,
       "_src": "wifi_provisioning_actor_onreadvalue",
       "_tgt": "wifi_provisioning_actor_logdbuserror",
@@ -31533,12 +31625,24 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "traps/toolkit/src/actors/wifi-provisioning/wifi_provisioning_actor.cpp",
-      "source_location": "L652",
+      "source_location": "L769",
       "weight": 1.0,
       "_src": "wifi_provisioning_actor_ongetallproperties",
       "_tgt": "wifi_provisioning_actor_logdbuserror",
       "source": "wifi_provisioning_actor_logdbuserror",
       "target": "wifi_provisioning_actor_ongetallproperties",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "traps/toolkit/src/actors/wifi-provisioning/wifi_provisioning_actor.cpp",
+      "source_location": "L819",
+      "weight": 1.0,
+      "_src": "wifi_provisioning_actor_onadvgetmanufacturerdata",
+      "_tgt": "wifi_provisioning_actor_logdbuserror",
+      "source": "wifi_provisioning_actor_logdbuserror",
+      "target": "wifi_provisioning_actor_onadvgetmanufacturerdata",
       "confidence_score": 1.0
     },
     {
@@ -31605,7 +31709,31 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "traps/toolkit/src/actors/wifi-provisioning/wifi_provisioning_actor.cpp",
-      "source_location": "L506",
+      "source_location": "L235",
+      "weight": 1.0,
+      "_src": "wifi_provisioning_actor_setupadvertisement",
+      "_tgt": "wifi_provisioning_actor_buildmanufacturerdata",
+      "source": "wifi_provisioning_actor_setupadvertisement",
+      "target": "wifi_provisioning_actor_buildmanufacturerdata",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "traps/toolkit/src/actors/wifi-provisioning/wifi_provisioning_actor.cpp",
+      "source_location": "L805",
+      "weight": 1.0,
+      "_src": "wifi_provisioning_actor_onadvgetmanufacturerdata",
+      "_tgt": "wifi_provisioning_actor_buildmanufacturerdata",
+      "source": "wifi_provisioning_actor_buildmanufacturerdata",
+      "target": "wifi_provisioning_actor_onadvgetmanufacturerdata",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "traps/toolkit/src/actors/wifi-provisioning/wifi_provisioning_actor.cpp",
+      "source_location": "L623",
       "weight": 1.0,
       "_src": "wifi_provisioning_actor_onreadvalue",
       "_tgt": "wifi_provisioning_actor_encodetrapidentity",
@@ -31617,7 +31745,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "traps/toolkit/src/actors/wifi-provisioning/wifi_provisioning_actor.cpp",
-      "source_location": "L428",
+      "source_location": "L545",
       "weight": 1.0,
       "_src": "wifi_provisioning_actor_setwifistate",
       "_tgt": "wifi_provisioning_actor_encodewifistate",
@@ -31629,7 +31757,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "traps/toolkit/src/actors/wifi-provisioning/wifi_provisioning_actor.cpp",
-      "source_location": "L508",
+      "source_location": "L625",
       "weight": 1.0,
       "_src": "wifi_provisioning_actor_onreadvalue",
       "_tgt": "wifi_provisioning_actor_encodewifistate",
@@ -31641,7 +31769,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "traps/toolkit/src/actors/wifi-provisioning/wifi_provisioning_actor.cpp",
-      "source_location": "L445",
+      "source_location": "L562",
       "weight": 1.0,
       "_src": "wifi_provisioning_actor_sendcommandresponse",
       "_tgt": "wifi_provisioning_actor_encodecommandresponse",
@@ -31653,7 +31781,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "traps/toolkit/src/actors/wifi-provisioning/wifi_provisioning_actor.cpp",
-      "source_location": "L558",
+      "source_location": "L675",
       "weight": 1.0,
       "_src": "wifi_provisioning_actor_onwritevalue",
       "_tgt": "wifi_provisioning_actor_decodeprovisionvalue",
@@ -31665,7 +31793,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "traps/toolkit/src/actors/wifi-provisioning/wifi_provisioning_actor.cpp",
-      "source_location": "L354",
+      "source_location": "L471",
       "weight": 1.0,
       "_src": "wifi_provisioning_actor_handleprovisionstation",
       "_tgt": "wifi_provisioning_actor_processprovision",
@@ -31677,7 +31805,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "traps/toolkit/src/actors/wifi-provisioning/wifi_provisioning_actor.cpp",
-      "source_location": "L567",
+      "source_location": "L684",
       "weight": 1.0,
       "_src": "wifi_provisioning_actor_onwritevalue",
       "_tgt": "wifi_provisioning_actor_handleprovisionstation",
@@ -31689,7 +31817,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "traps/toolkit/src/actors/wifi-provisioning/wifi_provisioning_actor.cpp",
-      "source_location": "L360",
+      "source_location": "L477",
       "weight": 1.0,
       "_src": "wifi_provisioning_actor_handleprovisionap",
       "_tgt": "wifi_provisioning_actor_processprovision",
@@ -31701,7 +31829,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "traps/toolkit/src/actors/wifi-provisioning/wifi_provisioning_actor.cpp",
-      "source_location": "L569",
+      "source_location": "L686",
       "weight": 1.0,
       "_src": "wifi_provisioning_actor_onwritevalue",
       "_tgt": "wifi_provisioning_actor_handleprovisionap",
@@ -31713,7 +31841,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "traps/toolkit/src/actors/wifi-provisioning/wifi_provisioning_actor.cpp",
-      "source_location": "L368",
+      "source_location": "L485",
       "weight": 1.0,
       "_src": "wifi_provisioning_actor_processprovision",
       "_tgt": "wifi_provisioning_actor_sendcommandresponse",
@@ -31725,7 +31853,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "traps/toolkit/src/actors/wifi-provisioning/wifi_provisioning_actor.cpp",
-      "source_location": "L401",
+      "source_location": "L518",
       "weight": 1.0,
       "_src": "wifi_provisioning_actor_processprovision",
       "_tgt": "wifi_provisioning_actor_setwifistate",
@@ -31737,7 +31865,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "traps/toolkit/src/actors/wifi-provisioning/wifi_provisioning_actor.cpp",
-      "source_location": "L424",
+      "source_location": "L541",
       "weight": 1.0,
       "_src": "wifi_provisioning_actor_setwifistate",
       "_tgt": "wifi_provisioning_actor_emitpropertieschanged",
@@ -31749,7 +31877,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "traps/toolkit/src/actors/wifi-provisioning/wifi_provisioning_actor.cpp",
-      "source_location": "L441",
+      "source_location": "L558",
       "weight": 1.0,
       "_src": "wifi_provisioning_actor_sendcommandresponse",
       "_tgt": "wifi_provisioning_actor_emitpropertieschanged",
@@ -31761,7 +31889,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "traps/toolkit/src/actors/wifi-provisioning/wifi_provisioning_actor.cpp",
-      "source_location": "L559",
+      "source_location": "L676",
       "weight": 1.0,
       "_src": "wifi_provisioning_actor_onwritevalue",
       "_tgt": "wifi_provisioning_actor_sendcommandresponse",

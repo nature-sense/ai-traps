@@ -491,9 +491,8 @@ int WifiProvisioningActor::onReadValue(
     // We skip parsing and just return the full value.
 
     // Determine which characteristic is being read from the object path
-    const char* object_path = nullptr;
-    int ret = sd_bus_message_get_path(msg, &object_path);
-    if (ret < 0 || object_path == nullptr) {
+    const char* object_path = sd_bus_message_get_path(msg);
+    if (object_path == nullptr) {
         return sd_bus_error_set_const(ret_error, bluez::SERVICE,
                                       "Cannot determine object path");
     }
@@ -544,9 +543,8 @@ int WifiProvisioningActor::onWriteValue(
     std::vector<uint8_t> value(value_data, value_data + value_len);
 
     // Determine which characteristic is being written to
-    const char* object_path = nullptr;
-    ret = sd_bus_message_get_path(msg, &object_path);
-    if (ret < 0 || object_path == nullptr) {
+    const char* object_path = sd_bus_message_get_path(msg);
+    if (object_path == nullptr) {
         return sd_bus_error_set_const(ret_error, bluez::SERVICE,
                                       "Cannot determine object path");
     }
@@ -598,9 +596,8 @@ int WifiProvisioningActor::onGetProperty(
     std::string prop(property_name ? property_name : "");
 
     // Determine which object this is for
-    const char* object_path = nullptr;
-    ret = sd_bus_message_get_path(msg, &object_path);
-    if (ret < 0 || object_path == nullptr) {
+    const char* object_path = sd_bus_message_get_path(msg);
+    if (object_path == nullptr) {
         return sd_bus_error_set_const(ret_error, bluez::SERVICE,
                                       "Cannot determine object path");
     }
@@ -638,9 +635,8 @@ int WifiProvisioningActor::onGetAllProperties(
     std::string iface(interface_name ? interface_name : "");
 
     // Determine which object this is for
-    const char* object_path = nullptr;
-    ret = sd_bus_message_get_path(msg, &object_path);
-    if (ret < 0 || object_path == nullptr) {
+    const char* object_path = sd_bus_message_get_path(msg);
+    if (object_path == nullptr) {
         return sd_bus_error_set_const(ret_error, bluez::SERVICE,
                                       "Cannot determine object path");
     }

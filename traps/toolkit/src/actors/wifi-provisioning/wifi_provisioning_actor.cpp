@@ -801,6 +801,16 @@ bool WifiProvisioningActor::setupAdvertisement() {
         if (ok) {
             std::cout << "[WifiProvisioningActor] adapter powered on\n";
         }
+
+        // Explicitly disable Discoverable to prevent legacy advertising mode.
+        // Legacy discoverable mode sends the controller name but NOT the
+        // manufacturer data from the LEAdvertisement. We rely on the registered
+        // LEAdvertisement (with Type=peripheral, LocalName, and ManufacturerData)
+        // to handle discoverability and include the manufacturer data.
+        ok = set_adapter_property("Discoverable", "b", 0);
+        if (ok) {
+            std::cout << "[WifiProvisioningActor] adapter discoverable disabled\n";
+        }
     }
 
     std::cout << "[WifiProvisioningActor] advertisement setup complete\n";

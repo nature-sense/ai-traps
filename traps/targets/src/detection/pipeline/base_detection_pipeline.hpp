@@ -73,10 +73,10 @@ public:
     // ── Lifecycle ──────────────────────────────────────────────────────────────
     // Initialise the pipeline: create actors, wire ports, start HTTP server.
     // Returns true on success.
-    bool init(const PipelineConfig& cfg);
+    virtual bool init(const PipelineConfig& cfg);
 
     // Shutdown the pipeline: stop actors, close connections, release resources.
-    void shutdown();
+    virtual void shutdown();
 
     // ── Main loop ──────────────────────────────────────────────────────────────
     // Runs the pipeline main loop. Blocks until stop() is called from another

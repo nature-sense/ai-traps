@@ -212,19 +212,137 @@ bool WifiProvisioningActor::setupBluezGatt() {
 }
 
 bool WifiProvisioningActor::setupAdvertisement() {
-    // TODO: Register LEAdvertisement1 object and call
-    // LEAdvertisingManager1.RegisterAdvertisement
+    if (bus_ == nullptr) {
+        std::cerr << "[WifiProvisioningActor] no D-Bus connection\n";
+        return false;
+    }
+
+    // ── 1. Register the LEAdvertisement1 D-Bus object ──────────────────────
     //
-    // For now, we log that advertisement setup is pending.
-    // The full implementation will:
-    //   1. Create a D-Bus object at adv_path_ with LEAdvertisement1 interface
-    //   2. Set properties: Type="peripheral", ServiceUUIDs=[our service UUID],
-    //      ManufacturerData=buildManufacturerData()
-    //   3. Call LEAdvertisingManager1.RegisterAdvertisement on the default adapter
+    // We add a D-Bus object at adv_path_ with the LEAdvertisement1 interface.
+    // BlueZ will query this object's properties when we call RegisterAdvertisement.
     //
-    std::cout << "[WifiProvisioningActor] advertisement setup pending\n";
+    // The LEAdvertisement1 interface has these properties:
+    //   Type: "peripheral" (connectable advertisement)
+    //   ServiceUUIDs: [our GATT service UUID]
+    //   ManufacturerData: dict<uint16, variant<array<uint8>>>
+    //   LocalName: trap ID
+    //
+    // We register the object with sd-bus by adding a vtable that handles
+    // org.freedesktop.DBus.Properties.Get and GetAll for our advertisement.
+
+    // Build manufacturer data
+    auto manu_data = buildManufacturerData();
+
+    // Register the advertisement object with a vtable that handles
+    // Properties.Get/GetAll for the LEAdvertisement1 interface.
+    //
+    // The vtable entries:
+    //   - Properties.Get("org.bluez.LEAdvertisement1", "Type") → "peripheral"
+    //   - Properties.Get("org.bluez.LEAdvertisement1", "ServiceUUIDs") → [service UUID]
+    //   - Properties.Get("org.bluez.LEAdvertisement1", "ManufacturerData") → {0xFFFF: manu_data}
+    //   - Properties.Get("org.bluez.LEAdvertisement1", "LocalName") → trap_id_
+    //
+    // We use sd_bus_add_object_vtable to register the object with a vtable
+    // that has SD_BUS_PROPERTY entries for each LEAdvertisement1 property.
+
+    // Build the service UUIDs array as a D-Bus message
+    // We'll store the service UUID string
+    std::string service_uuid = gatt_uuids::SERVICE;
+
+    // Build the vtable for the LEAdvertisement1 interface
+    // We use SD_BUS_PROPERTY entries so sd-bus handles Properties.Get/GetAll automatically
+    static const sd_bus_vtable adv_vtable[] = {
+        SD_BUS_VTABLE_START(0),
+        SD_BUS_PROPERTY("Type", "s", onAdvGetType, 0, SD_BUS_VTABLE_PROPERTY_EMITS_CHANGE),
+        SD_BUS_PROPERTY("ServiceUUIDs", "as", onAdvGetServiceUUIDs, 0, SD_BUS_VTABLE_PROPERTY_EMITS_CHANGE),
+        SD_BUS_PROPERTY("ManufacturerData", "a{sv}", onAdvGetManufacturerData, 0, SD_BUS_VTABLE_PROPERTY_EMITS_CHANGE),
+        SD_BUS_PROPERTY("LocalName", "s", onAdvGetLocalName, 0, SD_BUS_VTABLE_PROPERTY_EMITS_CHANGE),
+        SD_BUS_VTABLE_END
+    };
+
+    // Register the advertisement object
+    int ret = sd_bus_add_object_vtable(
+        bus_,
+        nullptr,           // slot (we don't need to track it)
+        adv_path_.c_str(), // object path
+        bluez::LE_ADVERTISEMENT, // interface name
+        adv_vtable,
+        this               // userdata
+    );
+    if (ret < 0) {
+        logDbusError("sd_bus_add_object_vtable (advertisement)", ret);
+        return false;
+    }
+
+    std::cout << "[WifiProvisioningActor] advertisement object registered at "
+              << adv_path_ << "\n";
+
+    // ── 2. Call LEAdvertisingManager1.RegisterAdvertisement ────────────────
+    //
+    // We call RegisterAdvertisement on the default adapter (/org/bluez/hci0)
+    // with our advertisement object path.
+    //
+    // The method signature:
+    //   void RegisterAdvertisement(object path advertisement, dict options)
+
+    sd_bus_error error = SD_BUS_ERROR_NULL;
+    sd_bus_message* call_msg = nullptr;
+
+    // Build the method call message
+    ret = sd_bus_message_new_method_call(
+        bus_, &call_msg,
+        bluez::SERVICE,                    // destination: org.bluez
+        bluez::DEFAULT_ADAPTER,            // object path: /org/bluez/hci0
+        bluez::LE_ADVERTISING_MGR,         // interface: org.bluez.LEAdvertisingManager1
+        "RegisterAdvertisement"            // method
+    );
+    if (ret < 0) {
+        logDbusError("sd_bus_message_new_method_call (RegisterAdvertisement)", ret);
+        return false;
+    }
+
+    // Append the advertisement object path
+    ret = sd_bus_message_append(call_msg, "o", adv_path_.c_str());
+    if (ret < 0) {
+        logDbusError("sd_bus_message_append (advertisement path)", ret);
+        sd_bus_message_unref(call_msg);
+        return false;
+    }
+
+    // Append empty options dict
+    ret = sd_bus_message_open_container(call_msg, 'a', "{sv}");
+    if (ret < 0) {
+        logDbusError("sd_bus_message_open_container (options)", ret);
+        sd_bus_message_unref(call_msg);
+        return false;
+    }
+    ret = sd_bus_message_close_container(call_msg);
+    if (ret < 0) {
+        logDbusError("sd_bus_message_close_container (options)", ret);
+        sd_bus_message_unref(call_msg);
+        return false;
+    }
+
+    // Call the method
+    ret = sd_bus_call(bus_, call_msg, 0, &error, nullptr);
+    sd_bus_message_unref(call_msg);
+
+    if (ret < 0) {
+        std::cerr << "[WifiProvisioningActor] RegisterAdvertisement failed: "
+                  << (error.name ? error.name : "unknown")
+                  << " — " << (error.message ? error.message : "no message") << "\n";
+        sd_bus_error_free(&error);
+        return false;
+    }
+
+    sd_bus_error_free(&error);
+
+    std::cout << "[WifiProvisioningActor] advertisement registered with BlueZ\n";
     return true;
 }
+
+
 
 void WifiProvisioningActor::teardownBluez() {
     if (bus_ != nullptr) {
@@ -235,21 +353,19 @@ void WifiProvisioningActor::teardownBluez() {
 }
 
 std::vector<uint8_t> WifiProvisioningActor::buildManufacturerData() const {
-    // Manufacturer data format (from docs/ble-gatt-service.md):
-    //   Bytes 0-1: Company ID (0xFFFF for development)
-    //   Byte  2:   Protocol Version (0x01)
-    //   Bytes 3-4: Service UUID (0x0001)
-    //   Bytes 5-20: Trap ID (16 bytes, null-padded)
-    //   Byte  21:  WiFi State
+    // Manufacturer data format (matching tools/scripts/ble_scan_traps.py):
+    //   Byte  0:   Protocol Version (0x01)
+    //   Bytes 1-2: Service UUID (0x0001, little-endian)
+    //   Bytes 3-18: Trap ID (16 bytes, null-padded)
+    //   Byte  19:  WiFi State
     //
-    // Total: 22 bytes
+    // Note: The BLE manufacturer data dict key is the company ID (0xFFFF),
+    // so the data payload starts with protocol version, not company ID.
+    //
+    // Total: 20 bytes
 
     std::vector<uint8_t> data;
-    data.reserve(22);
-
-    // Company ID: 0xFFFF (little-endian)
-    data.push_back(0xFF);
-    data.push_back(0xFF);
+    data.reserve(20);
 
     // Protocol version
     data.push_back(0x01);
@@ -270,6 +386,7 @@ std::vector<uint8_t> WifiProvisioningActor::buildManufacturerData() const {
 
     return data;
 }
+
 
 // ── GATT Characteristic Value Helpers ──────────────────────────────────────
 
@@ -655,9 +772,137 @@ int WifiProvisioningActor::onGetAllProperties(
     return ret;
 }
 
+// ── D-Bus LE Advertisement Property Getters ────────────────────────────────
+
+int WifiProvisioningActor::onAdvGetType(
+    sd_bus_message* msg, void* userdata, sd_bus_error* ret_error)
+{
+    (void)userdata;
+    (void)ret_error;
+    // Return "peripheral" — a connectable advertisement
+    return sd_bus_reply_method_return(msg, "v", "s", bluez::ADV_TYPE_PERIPHERAL);
+}
+
+int WifiProvisioningActor::onAdvGetServiceUUIDs(
+    sd_bus_message* msg, void* userdata, sd_bus_error* ret_error)
+{
+    (void)userdata;
+    (void)ret_error;
+    // Return an array containing our GATT service UUID
+    int ret = sd_bus_reply_method_return(msg, "v", "as", 1, gatt_uuids::SERVICE);
+    return ret;
+}
+
+int WifiProvisioningActor::onAdvGetManufacturerData(
+    sd_bus_message* msg, void* userdata, sd_bus_error* ret_error)
+{
+    auto* self = static_cast<WifiProvisioningActor*>(userdata);
+    if (self == nullptr) {
+        return sd_bus_error_set_const(ret_error, bluez::SERVICE, "Internal error");
+    }
+
+    // Build manufacturer data
+    auto manu_data = self->buildManufacturerData();
+
+    // The return format is a variant containing a dict<uint16, variant<array<uint8>>>:
+    //   v  a{sv}
+    //     where key = uint16 (company ID 0xFFFF)
+    //     and value = variant containing array of bytes (ay)
+    //
+    // We need to build this manually using sd_bus_message_open_container.
+
+    int ret;
+
+    // Open the outer variant
+    ret = sd_bus_message_open_container(msg, 'v', "a{sv}");
+    if (ret < 0) {
+        logDbusError("onAdvGetManufacturerData: open variant", ret);
+        return ret;
+    }
+
+    // Open the dict container: a{sv}
+    ret = sd_bus_message_open_container(msg, SD_BUS_TYPE_ARRAY, "{sv}");
+    if (ret < 0) {
+        logDbusError("onAdvGetManufacturerData: open array", ret);
+        return ret;
+    }
+
+    // Open a dict entry: {
+    ret = sd_bus_message_open_container(msg, SD_BUS_TYPE_DICT_ENTRY, "sv");
+    if (ret < 0) {
+        logDbusError("onAdvGetManufacturerData: open dict entry", ret);
+        return ret;
+    }
+
+    // Key: company ID as uint16 (0xFFFF)
+    uint16_t company_id = 0xFFFF;
+    ret = sd_bus_message_append(msg, "q", company_id);
+    if (ret < 0) {
+        logDbusError("onAdvGetManufacturerData: append key", ret);
+        return ret;
+    }
+
+    // Value: variant containing array of bytes (ay)
+    ret = sd_bus_message_open_container(msg, 'v', "ay");
+    if (ret < 0) {
+        logDbusError("onAdvGetManufacturerData: open value variant", ret);
+        return ret;
+    }
+
+    ret = sd_bus_message_append_array(msg, 'y', manu_data.data(), manu_data.size());
+    if (ret < 0) {
+        logDbusError("onAdvGetManufacturerData: append array", ret);
+        return ret;
+    }
+
+    // Close value variant
+    ret = sd_bus_message_close_container(msg);
+    if (ret < 0) {
+        logDbusError("onAdvGetManufacturerData: close value variant", ret);
+        return ret;
+    }
+
+    // Close dict entry
+    ret = sd_bus_message_close_container(msg);
+    if (ret < 0) {
+        logDbusError("onAdvGetManufacturerData: close dict entry", ret);
+        return ret;
+    }
+
+    // Close dict array
+    ret = sd_bus_message_close_container(msg);
+    if (ret < 0) {
+        logDbusError("onAdvGetManufacturerData: close array", ret);
+        return ret;
+    }
+
+    // Close outer variant
+    ret = sd_bus_message_close_container(msg);
+    if (ret < 0) {
+        logDbusError("onAdvGetManufacturerData: close outer variant", ret);
+        return ret;
+    }
+
+    return 0;
+}
+
+
+int WifiProvisioningActor::onAdvGetLocalName(
+    sd_bus_message* msg, void* userdata, sd_bus_error* ret_error)
+{
+    auto* self = static_cast<WifiProvisioningActor*>(userdata);
+    if (self == nullptr) {
+        return sd_bus_error_set_const(ret_error, bluez::SERVICE, "Internal error");
+    }
+
+    // Return the trap ID as the local name
+    return sd_bus_reply_method_return(msg, "v", "s", self->trap_id_.c_str());
+}
+
 // ── Helpers ────────────────────────────────────────────────────────────────
 
 bool WifiProvisioningActor::emitPropertiesChanged(
+
     const std::string& object_path,
     const std::string& interface,
     const std::string& property_name,

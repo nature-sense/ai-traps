@@ -76,7 +76,122 @@ static void logDbusError(const char* context, int ret) {
 static void logDbusError(const char* context, const sd_bus_error& err) {
     std::cerr << "[WifiProvisioningActor] " << context
               << " failed: " << (err.name ? err.name : "unknown")
-              << " — " << (err.message ? err.message : "no message") << "\n";
+              << " \u2014 " << (err.message ? err.message : "no message") << "\n";
+}
+
+// ============================================================================
+// Static D-Bus property getter for GATT service UUID
+// ============================================================================
+
+static int _gatt_service_get_uuid(sd_bus* bus, const char* path,
+    const char* interface, const char* property,
+    sd_bus_message* reply, void* userdata,
+    sd_bus_error* ret_error)
+{
+    (void)bus; (void)path; (void)interface; (void)property;
+    (void)userdata; (void)ret_error;
+    return sd_bus_message_append(reply, "v", "s", ct::gatt_uuids::SERVICE);
+}
+
+// ============================================================================
+// Static D-Bus property getter for GATT characteristic UUID
+// ============================================================================
+
+static int _gatt_char_get_uuid(sd_bus* bus, const char* path,
+    const char* interface, const char* property,
+    sd_bus_message* reply, void* userdata,
+    sd_bus_error* ret_error)
+{
+    (void)bus; (void)interface; (void)property;
+    (void)userdata; (void)ret_error;
+
+    // Determine which characteristic based on the object path
+    std::string p(path ? path : "");
+    const char* uuid = nullptr;
+
+    if (p.find("char/trap_identity") != std::string::npos) {
+        uuid = ct::gatt_uuids::TRAP_IDENTITY;
+    } else if (p.find("char/wifi_state") != std::string::npos) {
+        uuid = ct::gatt_uuids::WIFI_STATE;
+    } else if (p.find("char/wifi_provision_station") != std::string::npos) {
+        uuid = ct::gatt_uuids::WIFI_PROV_STATION;
+    } else if (p.find("char/wifi_provision_ap") != std::string::npos) {
+        uuid = ct::gatt_uuids::WIFI_PROV_AP;
+    } else if (p.find("char/command_response") != std::string::npos) {
+        uuid = ct::gatt_uuids::CMD_RESPONSE;
+    } else {
+        return sd_bus_error_set_const(ret_error,
+            "org.bluez.Error.InvalidArguments", "Unknown characteristic");
+    }
+
+    return sd_bus_message_append(reply, "v", "s", uuid);
+}
+
+// ============================================================================
+// Static D-Bus property getter for GATT characteristic flags
+// ============================================================================
+
+static int _gatt_char_get_flags(sd_bus* bus, const char* path,
+    const char* interface, const char* property,
+    sd_bus_message* reply, void* userdata,
+    sd_bus_error* ret_error)
+{
+    (void)bus; (void)interface; (void)property;
+    (void)userdata; (void)ret_error;
+
+    std::string p(path ? path : "");
+
+    // Each characteristic has different flags
+    if (p.find("char/trap_identity") != std::string::npos) {
+        // Read-only
+        return sd_bus_message_append(reply, "v", "as", 1, "read");
+    } else if (p.find("char/wifi_state") != std::string::npos) {
+        // Read + Notify
+        const char* flags[] = {"read", "notify"};
+        return sd_bus_message_append(reply, "v", "as", 2, flags[0], flags[1]);
+    } else if (p.find("char/wifi_provision_station") != std::string::npos) {
+        // Write-only
+        return sd_bus_message_append(reply, "v", "as", 1, "write");
+    } else if (p.find("char/wifi_provision_ap") != std::string::npos) {
+        // Write-only
+        return sd_bus_message_append(reply, "v", "as", 1, "write");
+    } else if (p.find("char/command_response") != std::string::npos) {
+        // Notify-only
+        return sd_bus_message_append(reply, "v", "as", 1, "notify");
+    }
+
+    return sd_bus_error_set_const(ret_error,
+        "org.bluez.Error.InvalidArguments", "Unknown characteristic");
+}
+
+// ============================================================================
+// Static D-Bus property getter for GATT descriptor UUID
+// ============================================================================
+
+static int _gatt_desc_get_uuid(sd_bus* bus, const char* path,
+    const char* interface, const char* property,
+    sd_bus_message* reply, void* userdata,
+    sd_bus_error* ret_error)
+{
+    (void)bus; (void)path; (void)interface; (void)property;
+    (void)userdata; (void)ret_error;
+    // Client Characteristic Configuration UUID
+    return sd_bus_message_append(reply, "v", "s", "00002902-0000-1000-8000-00805f9b34fb");
+}
+
+// ============================================================================
+// Static D-Bus property getter for GATT descriptor flags
+// ============================================================================
+
+static int _gatt_desc_get_flags(sd_bus* bus, const char* path,
+    const char* interface, const char* property,
+    sd_bus_message* reply, void* userdata,
+    sd_bus_error* ret_error)
+{
+    (void)bus; (void)path; (void)interface; (void)property;
+    (void)userdata; (void)ret_error;
+    const char* flags[] = {"read", "write"};
+    return sd_bus_message_append(reply, "v", "as", 2, flags[0], flags[1]);
 }
 
 // ============================================================================
@@ -111,7 +226,7 @@ bool WifiProvisioningActor::init(const std::string& trap_id) {
     }
 
     running_.store(true);
-    std::cout << "[WifiProvisioningActor] ready — advertising as \""
+    std::cout << "[WifiProvisioningActor] ready \u2014 advertising as \""
               << trap_id_ << "\"\n";
     return true;
 }
@@ -170,7 +285,6 @@ bool WifiProvisioningActor::setupBluezGatt() {
     }
 
     // Generate unique object paths based on trap ID
-    // Replace non-alphanumeric characters for D-Bus path safety
     std::string safe_id = trap_id_;
     for (auto& c : safe_id) {
         if (!std::isalnum(c) && c != '_') c = '_';
@@ -180,132 +294,197 @@ bool WifiProvisioningActor::setupBluezGatt() {
     adv_path_     = app_path_ + "/advertisement";
 
     // ── Register GATT Application via GattManager1 ─────────────────────────
-    // We need to:
-    //   1. Create D-Bus objects for the GATT service and characteristics
-    //   2. Call GattManager1.RegisterApplication with our root path
     //
-    // The GATT object hierarchy:
+    // Object hierarchy:
     //   /com/naturesense/<trap_id>/
-    //     service/provisioning/          (GattService1)
-    //       char/trap_identity           (GattCharacteristic1 — read)
-    //       char/wifi_state              (GattCharacteristic1 — read, notify)
-    //       char/wifi_provision_station  (GattCharacteristic1 — write)
-    //       char/wifi_provision_ap       (GattCharacteristic1 — write)
-    //       char/command_response        (GattCharacteristic1 — notify)
-    //       desc/                        (ClientCharacteristicConfiguration)
+    //     service/provisioning/              (GattService1)
+    //       char/trap_identity               (GattCharacteristic1 — read)
+    //       char/wifi_state                  (GattCharacteristic1 — read, notify)
+    //       char/wifi_provision_station      (GattCharacteristic1 — write)
+    //       char/wifi_provision_ap           (GattCharacteristic1 — write)
+    //       char/command_response            (GattCharacteristic1 — notify)
+    //       desc/client_char_config          (GattDescriptor1 — read, write)
 
-    // For now, we'll use a simpler approach: register the GATT application
-    // via the ObjectManager interface and let BlueZ discover our objects.
-    //
-    // We register D-Bus object nodes with the appropriate interfaces.
-    // BlueZ's GattManager1.RegisterApplication will then enumerate our
-    // objects via ObjectManager.GetManagedObjects.
-
-    // Start the D-Bus event loop thread
-    dbus_thread_ = std::thread([this] { dbusEventLoop(); });
-
-    // Give the event loop a moment to start
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
-
-    std::cout << "[WifiProvisioningActor] BlueZ GATT setup complete\n";
-    return true;
-}
-
-bool WifiProvisioningActor::setupAdvertisement() {
-    if (bus_ == nullptr) {
-        std::cerr << "[WifiProvisioningActor] no D-Bus connection\n";
-        return false;
-    }
-
-    // ── 1. Register the LEAdvertisement1 D-Bus object ──────────────────────
-    //
-    // We add a D-Bus object at adv_path_ with the LEAdvertisement1 interface.
-    // BlueZ will query this object's properties when we call RegisterAdvertisement.
-    //
-    // The LEAdvertisement1 interface has these properties:
-    //   Type: "peripheral" (connectable advertisement)
-    //   ServiceUUIDs: [our GATT service UUID]
-    //   ManufacturerData: dict<uint16, variant<array<uint8>>>
-    //   LocalName: trap ID
-    //
-    // We register the object with sd-bus by adding a vtable that handles
-    // org.freedesktop.DBus.Properties.Get and GetAll for our advertisement.
-
-    // Build manufacturer data
-    auto manu_data = buildManufacturerData();
-
-    // Register the advertisement object with a vtable that handles
-    // Properties.Get/GetAll for the LEAdvertisement1 interface.
-    //
-    // The vtable entries:
-    //   - Properties.Get("org.bluez.LEAdvertisement1", "Type") → "peripheral"
-    //   - Properties.Get("org.bluez.LEAdvertisement1", "ServiceUUIDs") → [service UUID]
-    //   - Properties.Get("org.bluez.LEAdvertisement1", "ManufacturerData") → {0xFFFF: manu_data}
-    //   - Properties.Get("org.bluez.LEAdvertisement1", "LocalName") → trap_id_
-    //
-    // We use sd_bus_add_object_vtable to register the object with a vtable
-    // that has SD_BUS_PROPERTY entries for each LEAdvertisement1 property.
-
-    // Build the service UUIDs array as a D-Bus message
-    // We'll store the service UUID string
-    std::string service_uuid = gatt_uuids::SERVICE;
-
-    // Build the vtable for the LEAdvertisement1 interface
-    // We use SD_BUS_PROPERTY entries so sd-bus handles Properties.Get/GetAll automatically
-    static const sd_bus_vtable adv_vtable[] = {
+    // ── 1. Register GATT Service ───────────────────────────────────────────
+    // GattService1 has one property: UUID (string)
+    static const sd_bus_vtable gatt_service_vtable[] = {
         SD_BUS_VTABLE_START(0),
-        SD_BUS_PROPERTY("Type", "s", onAdvGetType, 0, SD_BUS_VTABLE_PROPERTY_EMITS_CHANGE),
-        SD_BUS_PROPERTY("ServiceUUIDs", "as", onAdvGetServiceUUIDs, 0, SD_BUS_VTABLE_PROPERTY_EMITS_CHANGE),
-        SD_BUS_PROPERTY("ManufacturerData", "a{sv}", onAdvGetManufacturerData, 0, SD_BUS_VTABLE_PROPERTY_EMITS_CHANGE),
-        SD_BUS_PROPERTY("LocalName", "s", onAdvGetLocalName, 0, SD_BUS_VTABLE_PROPERTY_EMITS_CHANGE),
+        SD_BUS_PROPERTY("UUID", "s", _gatt_service_get_uuid, 0,
+                        SD_BUS_VTABLE_PROPERTY_CONST),
         SD_BUS_VTABLE_END
     };
 
-    // Register the advertisement object
-    int ret = sd_bus_add_object_vtable(
-        bus_,
-        nullptr,           // slot (we don't need to track it)
-        adv_path_.c_str(), // object path
-        bluez::LE_ADVERTISEMENT, // interface name
-        adv_vtable,
-        this               // userdata
+    ret = sd_bus_add_object_vtable(
+        bus_, nullptr,
+        service_path_.c_str(),
+        bluez::GATT_SERVICE,
+        gatt_service_vtable,
+        this
     );
     if (ret < 0) {
-        logDbusError("sd_bus_add_object_vtable (advertisement)", ret);
+        logDbusError("sd_bus_add_object_vtable (GATT service)", ret);
         return false;
     }
+    std::cout << "[WifiProvisioningActor] GATT service registered at "
+              << service_path_ << "\n";
 
-    std::cout << "[WifiProvisioningActor] advertisement object registered at "
-              << adv_path_ << "\n";
+    // ── 2. Register GATT Characteristics ──────────────────────────────────
+    // GattCharacteristic1 has properties: UUID (string), Flags (array of strings),
+    // and Value (array of bytes — handled via ReadValue/WriteValue methods)
 
-    // ── 2. Call LEAdvertisingManager1.RegisterAdvertisement ────────────────
+    // Helper vtable for characteristics (UUID + Flags properties)
+    auto register_char = [&](const std::string& char_name,
+                             const sd_bus_vtable* vtable) -> bool {
+        std::string char_path = service_path_ + "/" + char_name;
+        ret = sd_bus_add_object_vtable(
+            bus_, nullptr,
+            char_path.c_str(),
+            bluez::GATT_CHARACTERISTIC,
+            vtable,
+            this
+        );
+        if (ret < 0) {
+            logDbusError(("sd_bus_add_object_vtable (" + char_name + ")").c_str(), ret);
+            return false;
+        }
+        std::cout << "[WifiProvisioningActor] characteristic registered: "
+                  << char_name << "\n";
+        return true;
+    };
+
+    // Characteristic vtable: UUID + Flags properties
+    // ReadValue and WriteValue are handled via method handlers registered
+    // separately using sd_bus_add_object_vtable's method support.
     //
-    // We call RegisterAdvertisement on the default adapter (/org/bluez/hci0)
-    // with our advertisement object path.
+    // BlueZ calls the GattCharacteristic1.ReadValue and WriteValue methods
+    // on our objects. We need to register method handlers for these.
     //
-    // The method signature:
-    //   void RegisterAdvertisement(object path advertisement, dict options)
+    // sd_bus_add_object_vtable supports both properties and methods.
+    // We use SD_BUS_METHOD entries for ReadValue and WriteValue.
 
+    // ── Characteristic: trap_identity (read) ───────────────────────────────
+    {
+        static const sd_bus_vtable char_trap_id_vtable[] = {
+            SD_BUS_VTABLE_START(0),
+            SD_BUS_PROPERTY("UUID", "s", _gatt_char_get_uuid, 0,
+                            SD_BUS_VTABLE_PROPERTY_CONST),
+            SD_BUS_PROPERTY("Flags", "as", _gatt_char_get_flags, 0,
+                            SD_BUS_VTABLE_PROPERTY_CONST),
+            SD_BUS_METHOD("ReadValue", "a{sv}", "ay", onReadValue, 0),
+            SD_BUS_VTABLE_END
+        };
+        if (!register_char("char/trap_identity", char_trap_id_vtable))
+            return false;
+    }
+
+    // ── Characteristic: wifi_state (read, notify) ─────────────────────────
+    {
+        static const sd_bus_vtable char_wifi_state_vtable[] = {
+            SD_BUS_VTABLE_START(0),
+            SD_BUS_PROPERTY("UUID", "s", _gatt_char_get_uuid, 0,
+                            SD_BUS_VTABLE_PROPERTY_CONST),
+            SD_BUS_PROPERTY("Flags", "as", _gatt_char_get_flags, 0,
+                            SD_BUS_VTABLE_PROPERTY_CONST),
+            SD_BUS_METHOD("ReadValue", "a{sv}", "ay", onReadValue, 0),
+            SD_BUS_VTABLE_END
+        };
+        if (!register_char("char/wifi_state", char_wifi_state_vtable))
+            return false;
+    }
+
+    // ── Characteristic: wifi_provision_station (write) ────────────────────
+    {
+        static const sd_bus_vtable char_prov_sta_vtable[] = {
+            SD_BUS_VTABLE_START(0),
+            SD_BUS_PROPERTY("UUID", "s", _gatt_char_get_uuid, 0,
+                            SD_BUS_VTABLE_PROPERTY_CONST),
+            SD_BUS_PROPERTY("Flags", "as", _gatt_char_get_flags, 0,
+                            SD_BUS_VTABLE_PROPERTY_CONST),
+            SD_BUS_METHOD("WriteValue", "aya{sv}", "", onWriteValue, 0),
+            SD_BUS_VTABLE_END
+        };
+        if (!register_char("char/wifi_provision_station", char_prov_sta_vtable))
+            return false;
+    }
+
+    // ── Characteristic: wifi_provision_ap (write) ─────────────────────────
+    {
+        static const sd_bus_vtable char_prov_ap_vtable[] = {
+            SD_BUS_VTABLE_START(0),
+            SD_BUS_PROPERTY("UUID", "s", _gatt_char_get_uuid, 0,
+                            SD_BUS_VTABLE_PROPERTY_CONST),
+            SD_BUS_PROPERTY("Flags", "as", _gatt_char_get_flags, 0,
+                            SD_BUS_VTABLE_PROPERTY_CONST),
+            SD_BUS_METHOD("WriteValue", "aya{sv}", "", onWriteValue, 0),
+            SD_BUS_VTABLE_END
+        };
+        if (!register_char("char/wifi_provision_ap", char_prov_ap_vtable))
+            return false;
+    }
+
+    // ── Characteristic: command_response (notify) ─────────────────────────
+    {
+        static const sd_bus_vtable char_cmd_resp_vtable[] = {
+            SD_BUS_VTABLE_START(0),
+            SD_BUS_PROPERTY("UUID", "s", _gatt_char_get_uuid, 0,
+                            SD_BUS_VTABLE_PROPERTY_CONST),
+            SD_BUS_PROPERTY("Flags", "as", _gatt_char_get_flags, 0,
+                            SD_BUS_VTABLE_PROPERTY_CONST),
+            SD_BUS_VTABLE_END
+        };
+        if (!register_char("char/command_response", char_cmd_resp_vtable))
+            return false;
+    }
+
+    // ── 3. Register GATT Descriptor: Client Characteristic Configuration ───
+    {
+        static const sd_bus_vtable desc_ccc_vtable[] = {
+            SD_BUS_VTABLE_START(0),
+            SD_BUS_PROPERTY("UUID", "s", _gatt_desc_get_uuid, 0,
+                            SD_BUS_VTABLE_PROPERTY_CONST),
+            SD_BUS_PROPERTY("Flags", "as", _gatt_desc_get_flags, 0,
+                            SD_BUS_VTABLE_PROPERTY_CONST),
+            SD_BUS_VTABLE_END
+        };
+
+        std::string desc_path = service_path_ + "/desc/client_char_config";
+        ret = sd_bus_add_object_vtable(
+            bus_, nullptr,
+            desc_path.c_str(),
+            bluez::GATT_DESCRIPTOR,
+            desc_ccc_vtable,
+            this
+        );
+        if (ret < 0) {
+            logDbusError("sd_bus_add_object_vtable (desc/client_char_config)", ret);
+            return false;
+        }
+        std::cout << "[WifiProvisioningActor] descriptor registered: "
+                  << "desc/client_char_config\n";
+    }
+
+    // ── 4. Call GattManager1.RegisterApplication ───────────────────────────
+    // This tells BlueZ to enumerate our objects via ObjectManager and
+    // register them as a GATT application.
     sd_bus_error error = SD_BUS_ERROR_NULL;
     sd_bus_message* call_msg = nullptr;
 
-    // Build the method call message
     ret = sd_bus_message_new_method_call(
         bus_, &call_msg,
-        bluez::SERVICE,                    // destination: org.bluez
-        bluez::DEFAULT_ADAPTER,            // object path: /org/bluez/hci0
-        bluez::LE_ADVERTISING_MGR,         // interface: org.bluez.LEAdvertisingManager1
-        "RegisterAdvertisement"            // method
+        bluez::SERVICE,                    // org.bluez
+        bluez::DEFAULT_ADAPTER,            // /org/bluez/hci0
+        bluez::GATT_MANAGER,               // org.bluez.GattManager1
+        "RegisterApplication"              // method
     );
     if (ret < 0) {
-        logDbusError("sd_bus_message_new_method_call (RegisterAdvertisement)", ret);
+        logDbusError("sd_bus_message_new_method_call (RegisterApplication)", ret);
         return false;
     }
 
-    // Append the advertisement object path
-    ret = sd_bus_message_append(call_msg, "o", adv_path_.c_str());
+    // Append application root object path
+    ret = sd_bus_message_append(call_msg, "o", app_path_.c_str());
     if (ret < 0) {
-        logDbusError("sd_bus_message_append (advertisement path)", ret);
+        logDbusError("sd_bus_message_append (app path)", ret);
         sd_bus_message_unref(call_msg);
         return false;
     }
@@ -329,9 +508,106 @@ bool WifiProvisioningActor::setupAdvertisement() {
     sd_bus_message_unref(call_msg);
 
     if (ret < 0) {
+        std::cerr << "[WifiProvisioningActor] RegisterApplication failed: "
+                  << (error.name ? error.name : "unknown")
+                  << " \u2014 " << (error.message ? error.message : "no message") << "\n";
+        sd_bus_error_free(&error);
+        return false;
+    }
+
+    sd_bus_error_free(&error);
+
+    std::cout << "[WifiProvisioningActor] GATT application registered with BlueZ\n";
+
+    // Start the D-Bus event loop thread
+    dbus_thread_ = std::thread([this] { dbusEventLoop(); });
+
+    // Give the event loop a moment to start
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
+    std::cout << "[WifiProvisioningActor] BlueZ GATT setup complete\n";
+    return true;
+}
+
+bool WifiProvisioningActor::setupAdvertisement() {
+    if (bus_ == nullptr) {
+        std::cerr << "[WifiProvisioningActor] no D-Bus connection\n";
+        return false;
+    }
+
+    // Build manufacturer data
+    auto manu_data = buildManufacturerData();
+
+    // Build the vtable for the LEAdvertisement1 interface
+    static const sd_bus_vtable adv_vtable[] = {
+        SD_BUS_VTABLE_START(0),
+        SD_BUS_PROPERTY("Type", "s", onAdvGetType, 0, SD_BUS_VTABLE_PROPERTY_EMITS_CHANGE),
+        SD_BUS_PROPERTY("ServiceUUIDs", "as", onAdvGetServiceUUIDs, 0, SD_BUS_VTABLE_PROPERTY_EMITS_CHANGE),
+        SD_BUS_PROPERTY("ManufacturerData", "a{sv}", onAdvGetManufacturerData, 0, SD_BUS_VTABLE_PROPERTY_EMITS_CHANGE),
+        SD_BUS_PROPERTY("LocalName", "s", onAdvGetLocalName, 0, SD_BUS_VTABLE_PROPERTY_EMITS_CHANGE),
+        SD_BUS_VTABLE_END
+    };
+
+    // Register the advertisement object
+    int ret = sd_bus_add_object_vtable(
+        bus_,
+        nullptr,
+        adv_path_.c_str(),
+        bluez::LE_ADVERTISEMENT,
+        adv_vtable,
+        this
+    );
+    if (ret < 0) {
+        logDbusError("sd_bus_add_object_vtable (advertisement)", ret);
+        return false;
+    }
+
+    std::cout << "[WifiProvisioningActor] advertisement object registered at "
+              << adv_path_ << "\n";
+
+    // ── Call LEAdvertisingManager1.RegisterAdvertisement ───────────────────
+    sd_bus_error error = SD_BUS_ERROR_NULL;
+    sd_bus_message* call_msg = nullptr;
+
+    ret = sd_bus_message_new_method_call(
+        bus_, &call_msg,
+        bluez::SERVICE,
+        bluez::DEFAULT_ADAPTER,
+        bluez::LE_ADVERTISING_MGR,
+        "RegisterAdvertisement"
+    );
+    if (ret < 0) {
+        logDbusError("sd_bus_message_new_method_call (RegisterAdvertisement)", ret);
+        return false;
+    }
+
+    ret = sd_bus_message_append(call_msg, "o", adv_path_.c_str());
+    if (ret < 0) {
+        logDbusError("sd_bus_message_append (advertisement path)", ret);
+        sd_bus_message_unref(call_msg);
+        return false;
+    }
+
+    ret = sd_bus_message_open_container(call_msg, 'a', "{sv}");
+    if (ret < 0) {
+        logDbusError("sd_bus_message_open_container (options)", ret);
+        sd_bus_message_unref(call_msg);
+        return false;
+    }
+    ret = sd_bus_message_close_container(call_msg);
+    if (ret < 0) {
+        logDbusError("sd_bus_message_close_container (options)", ret);
+        sd_bus_message_unref(call_msg);
+        return false;
+    }
+
+    ret = sd_bus_call(bus_, call_msg, 0, &error, nullptr);
+    sd_bus_message_unref(call_msg);
+
+    if (ret < 0) {
         std::cerr << "[WifiProvisioningActor] RegisterAdvertisement failed: "
                   << (error.name ? error.name : "unknown")
-                  << " — " << (error.message ? error.message : "no message") << "\n";
+                  << " \u2014 " << (error.message ? error.message : "no message") << "\n";
         sd_bus_error_free(&error);
         return false;
     }
@@ -341,8 +617,6 @@ bool WifiProvisioningActor::setupAdvertisement() {
     std::cout << "[WifiProvisioningActor] advertisement registered with BlueZ\n";
     return true;
 }
-
-
 
 void WifiProvisioningActor::teardownBluez() {
     if (bus_ != nullptr) {
@@ -358,9 +632,6 @@ std::vector<uint8_t> WifiProvisioningActor::buildManufacturerData() const {
     //   Bytes 1-2: Service UUID (0x0001, little-endian)
     //   Bytes 3-18: Trap ID (16 bytes, null-padded)
     //   Byte  19:  WiFi State
-    //
-    // Note: The BLE manufacturer data dict key is the company ID (0xFFFF),
-    // so the data payload starts with protocol version, not company ID.
     //
     // Total: 20 bytes
 
@@ -387,7 +658,6 @@ std::vector<uint8_t> WifiProvisioningActor::buildManufacturerData() const {
     return data;
 }
 
-
 // ── GATT Characteristic Value Helpers ──────────────────────────────────────
 
 std::vector<uint8_t> WifiProvisioningActor::encodeTrapIdentity() const {
@@ -408,7 +678,7 @@ std::vector<uint8_t> WifiProvisioningActor::encodeCommandResponse(
     std::vector<uint8_t> data;
     data.push_back(resp.status);
 
-    // Append message (max 19 bytes to keep total ≤ 20)
+    // Append message (max 19 bytes to keep total <= 20)
     size_t msg_len = resp.message.size();
     if (msg_len > 19) msg_len = 19;
     for (size_t i = 0; i < msg_len; ++i) {
@@ -495,7 +765,6 @@ void WifiProvisioningActor::processProvision(
     }
 
     if (is_ap && cmd.password.size() > 0 && cmd.password.size() < 8) {
-        // AP mode typically requires minimum 8 chars for password
         sendCommandResponse(CommandResponse::INVALID_FORMAT,
                             "AP password must be 0 or 8-32 chars");
         return;
@@ -569,7 +838,6 @@ void WifiProvisioningActor::dbusEventLoop() {
     std::cout << "[WifiProvisioningActor] D-Bus event loop started\n";
 
     while (running_.load() && bus_ != nullptr) {
-        // Process D-Bus events with a timeout so we can check running_ flag
         sd_bus_message* msg = nullptr;
         int ret = sd_bus_process(bus_, &msg);
         if (ret < 0) {
@@ -578,13 +846,11 @@ void WifiProvisioningActor::dbusEventLoop() {
         }
 
         if (ret > 0) {
-            // We processed something, continue immediately
             sd_bus_message_unref(msg);
             continue;
         }
 
-        // Wait for more events (with timeout)
-        ret = sd_bus_wait(bus_, 1000); // 1 second timeout
+        ret = sd_bus_wait(bus_, 1000);
         if (ret < 0 && ret != -EINTR) {
             logDbusError("sd_bus_wait", ret);
             break;
@@ -600,23 +866,17 @@ int WifiProvisioningActor::onReadValue(
     sd_bus_message* msg, void* userdata, sd_bus_error* ret_error)
 {
     auto* self = static_cast<WifiProvisioningActor*>(userdata);
-    if (self == nullptr) {
-        return sd_bus_error_set_const(ret_error, bluez::SERVICE,
-                                      "Internal error");
+    if (!self || !self->bus_) {
+        return sd_bus_error_set_const(ret_error,
+            "org.bluez.Error.Failed", "Internal error");
     }
 
-    // Read the options dictionary (we ignore it for now)
-    // The options are a dict with key "offset" (uint16) for MTU-based reads
-    // We skip parsing and just return the full value.
+    // Read the options dict (we ignore it for now)
+    const char* object_path = nullptr;
+    sd_bus_message_get_path(msg, &object_path);
 
-    // Determine which characteristic is being read from the object path
-    const char* object_path = sd_bus_message_get_path(msg);
-    if (object_path == nullptr) {
-        return sd_bus_error_set_const(ret_error, bluez::SERVICE,
-                                      "Cannot determine object path");
-    }
-
-    std::string path(object_path);
+    // Determine which characteristic is being read
+    std::string path(object_path ? object_path : "");
     std::vector<uint8_t> value;
 
     if (path.find("char/trap_identity") != std::string::npos) {
@@ -624,169 +884,241 @@ int WifiProvisioningActor::onReadValue(
     } else if (path.find("char/wifi_state") != std::string::npos) {
         value = self->encodeWifiState();
     } else {
-        return sd_bus_error_set_const(ret_error, bluez::SERVICE,
-                                      "Unknown characteristic");
+        return sd_bus_error_set_const(ret_error,
+            "org.bluez.Error.InvalidArguments",
+            "Characteristic does not support ReadValue");
     }
 
-    // Reply with the value as an array of bytes
-    int ret = sd_bus_reply_method_return(msg, "ay", value.data(), value.size());
+    // Append the value as a byte array
+    int ret = sd_bus_message_append(msg, "ay", value.size(), value.data());
     if (ret < 0) {
-        logDbusError("sd_bus_reply_method_return (ReadValue)", ret);
+        return sd_bus_error_set_const(ret_error,
+            "org.bluez.Error.Failed", "Failed to append value");
     }
 
-    return ret;
+    return 0;
 }
+
+// ── WriteValue Handler ─────────────────────────────────────────────────────
 
 int WifiProvisioningActor::onWriteValue(
     sd_bus_message* msg, void* userdata, sd_bus_error* ret_error)
 {
     auto* self = static_cast<WifiProvisioningActor*>(userdata);
-    if (self == nullptr) {
-        return sd_bus_error_set_const(ret_error, bluez::SERVICE,
-                                      "Internal error");
+    if (!self || !self->bus_) {
+        return sd_bus_error_set_const(ret_error,
+            "org.bluez.Error.Failed", "Internal error");
     }
 
-    // Read the value (array of bytes)
-    const uint8_t* value_data = nullptr;
-    size_t value_len = 0;
-    int ret = sd_bus_message_read_array(msg, 'y', reinterpret_cast<const void**>(&value_data), &value_len);
+    // Read the byte array value
+    const void* data = nullptr;
+    size_t data_len = 0;
+    int ret = sd_bus_message_read_array(msg, 'y', &data, &data_len);
     if (ret < 0) {
-        return sd_bus_error_set_const(ret_error, bluez::SERVICE,
-                                      "Failed to read value");
+        return sd_bus_error_set_const(ret_error,
+            "org.bluez.Error.InvalidArguments", "Failed to read value");
     }
 
-    // Read the options dictionary (we skip it)
-    // The options may contain "offset" (uint16) and "type" (string)
-    // For now, we ignore options and process the full value.
+    // Read the options dict (we ignore it for now)
+    // The options dict follows the byte array in the message
 
-    std::vector<uint8_t> value(value_data, value_data + value_len);
+    // Determine which characteristic is being written
+    const char* object_path = nullptr;
+    sd_bus_message_get_path(msg, &object_path);
+    std::string path(object_path ? object_path : "");
 
-    // Determine which characteristic is being written to
-    const char* object_path = sd_bus_message_get_path(msg);
-    if (object_path == nullptr) {
-        return sd_bus_error_set_const(ret_error, bluez::SERVICE,
-                                      "Cannot determine object path");
-    }
-
-    std::string path(object_path);
-
-    // Decode the provision value
-    std::string ssid, password;
-    if (!self->decodeProvisionValue(value, ssid, password)) {
-        self->sendCommandResponse(CommandResponse::INVALID_FORMAT,
-                                  "Invalid format");
-        return sd_bus_reply_method_return(msg, "");
-    }
-
-    WifiProvisionCommand cmd{ssid, password};
+    // Convert to vector
+    std::vector<uint8_t> value(
+        static_cast<const uint8_t*>(data),
+        static_cast<const uint8_t*>(data) + data_len
+    );
 
     if (path.find("char/wifi_provision_station") != std::string::npos) {
+        // Decode SSID + password and handle provisioning
+        std::string ssid, password;
+        if (!self->decodeProvisionValue(value, ssid, password)) {
+            self->sendCommandResponse(CommandResponse::INVALID_FORMAT,
+                                      "Invalid provision format");
+            return 0;
+        }
+        WifiProvisionCommand cmd{ssid, password};
         self->handleProvisionStation(cmd);
     } else if (path.find("char/wifi_provision_ap") != std::string::npos) {
+        // Decode SSID + password and handle AP provisioning
+        std::string ssid, password;
+        if (!self->decodeProvisionValue(value, ssid, password)) {
+            self->sendCommandResponse(CommandResponse::INVALID_FORMAT,
+                                      "Invalid provision format");
+            return 0;
+        }
+        WifiProvisionCommand cmd{ssid, password};
         self->handleProvisionAp(cmd);
     } else {
-        return sd_bus_error_set_const(ret_error, bluez::SERVICE,
-                                      "Unknown characteristic");
+        return sd_bus_error_set_const(ret_error,
+            "org.bluez.Error.InvalidArguments",
+            "Characteristic does not support WriteValue");
     }
 
-    // Reply with empty body (success)
-    return sd_bus_reply_method_return(msg, "");
+    return 0;
 }
+
+// ── Properties.Get Handler ─────────────────────────────────────────────────
 
 int WifiProvisioningActor::onGetProperty(
     sd_bus_message* msg, void* userdata, sd_bus_error* ret_error)
 {
     auto* self = static_cast<WifiProvisioningActor*>(userdata);
-    if (self == nullptr) {
-        return sd_bus_error_set_const(ret_error, bluez::SERVICE,
-                                      "Internal error");
+    if (!self) {
+        return sd_bus_error_set_const(ret_error,
+            "org.bluez.Error.Failed", "Internal error");
     }
 
-    // Read interface name and property name
     const char* interface_name = nullptr;
-    const char* property_name  = nullptr;
+    const char* property_name = nullptr;
+
     int ret = sd_bus_message_read(msg, "ss", &interface_name, &property_name);
     if (ret < 0) {
-        return sd_bus_error_set_const(ret_error, bluez::SERVICE,
-                                      "Failed to read property request");
+        return sd_bus_error_set_const(ret_error,
+            "org.bluez.Error.InvalidArguments", "Failed to read property request");
     }
 
-    std::string iface(interface_name ? interface_name : "");
-    std::string prop(property_name ? property_name : "");
+    const char* object_path = nullptr;
+    sd_bus_message_get_path(msg, &object_path);
+    std::string path(object_path ? object_path : "");
 
-    // Determine which object this is for
-    const char* object_path = sd_bus_message_get_path(msg);
-    if (object_path == nullptr) {
-        return sd_bus_error_set_const(ret_error, bluez::SERVICE,
-                                      "Cannot determine object path");
+    // Route to the appropriate property getter based on interface and object path
+    if (strcmp(interface_name, bluez::GATT_SERVICE) == 0) {
+        if (strcmp(property_name, "UUID") == 0) {
+            return _gatt_service_get_uuid(self->bus_, object_path,
+                interface_name, property_name, msg, self, ret_error);
+        }
+    } else if (strcmp(interface_name, bluez::GATT_CHARACTERISTIC) == 0) {
+        if (strcmp(property_name, "UUID") == 0) {
+            return _gatt_char_get_uuid(self->bus_, object_path,
+                interface_name, property_name, msg, self, ret_error);
+        }
+        if (strcmp(property_name, "Flags") == 0) {
+            return _gatt_char_get_flags(self->bus_, object_path,
+                interface_name, property_name, msg, self, ret_error);
+        }
+    } else if (strcmp(interface_name, bluez::GATT_DESCRIPTOR) == 0) {
+        if (strcmp(property_name, "UUID") == 0) {
+            return _gatt_desc_get_uuid(self->bus_, object_path,
+                interface_name, property_name, msg, self, ret_error);
+        }
+        if (strcmp(property_name, "Flags") == 0) {
+            return _gatt_desc_get_flags(self->bus_, object_path,
+                interface_name, property_name, msg, self, ret_error);
+        }
     }
 
-    std::string path(object_path);
-
-    // We'll build a reply message with the property value
-    // The reply format is: (variant) where variant contains the property value
-
-    // For now, return a simple acknowledgment
-    // Full implementation will return actual property values based on
-    // the interface and property name.
-
-    return sd_bus_error_set_const(ret_error, bluez::SERVICE,
-                                  "Property not implemented");
+    return sd_bus_error_set_const(ret_error,
+        "org.freedesktop.DBus.Error.UnknownProperty",
+        "Unknown property or interface");
 }
+
+// ── Properties.GetAll Handler ──────────────────────────────────────────────
 
 int WifiProvisioningActor::onGetAllProperties(
     sd_bus_message* msg, void* userdata, sd_bus_error* ret_error)
 {
     auto* self = static_cast<WifiProvisioningActor*>(userdata);
-    if (self == nullptr) {
-        return sd_bus_error_set_const(ret_error, bluez::SERVICE,
-                                      "Internal error");
+    if (!self) {
+        return sd_bus_error_set_const(ret_error,
+            "org.bluez.Error.Failed", "Internal error");
     }
 
-    // Read interface name
     const char* interface_name = nullptr;
     int ret = sd_bus_message_read(msg, "s", &interface_name);
     if (ret < 0) {
-        return sd_bus_error_set_const(ret_error, bluez::SERVICE,
-                                      "Failed to read interface name");
+        return sd_bus_error_set_const(ret_error,
+            "org.bluez.Error.InvalidArguments", "Failed to read interface name");
     }
 
-    std::string iface(interface_name ? interface_name : "");
+    const char* object_path = nullptr;
+    sd_bus_message_get_path(msg, &object_path);
+    std::string path(object_path ? object_path : "");
 
-    // Determine which object this is for
-    const char* object_path = sd_bus_message_get_path(msg);
-    if (object_path == nullptr) {
-        return sd_bus_error_set_const(ret_error, bluez::SERVICE,
-                                      "Cannot determine object path");
-    }
-
-    std::string path(object_path);
-
-    // Return an empty dict for now
-    // Full implementation will return all properties for the given interface.
-    ret = sd_bus_reply_method_return(msg, "a{sv}", 0);
+    // Open the array of property variants
+    ret = sd_bus_message_open_container(msg, 'a', "{sv}");
     if (ret < 0) {
-        logDbusError("sd_bus_reply_method_return (GetAll)", ret);
+        return sd_bus_error_set_const(ret_error,
+            "org.bluez.Error.Failed", "Failed to open container");
     }
 
-    return ret;
+    if (strcmp(interface_name, bluez::GATT_SERVICE) == 0) {
+        // Return UUID
+        ret = sd_bus_message_append(msg, "{sv}", "UUID", "s", ct::gatt_uuids::SERVICE);
+        if (ret < 0) goto fail;
+    } else if (strcmp(interface_name, bluez::GATT_CHARACTERISTIC) == 0) {
+        // Return UUID and Flags
+        const char* uuid = nullptr;
+        if (path.find("char/trap_identity") != std::string::npos) {
+            uuid = ct::gatt_uuids::TRAP_IDENTITY;
+        } else if (path.find("char/wifi_state") != std::string::npos) {
+            uuid = ct::gatt_uuids::WIFI_STATE;
+        } else if (path.find("char/wifi_provision_station") != std::string::npos) {
+            uuid = ct::gatt_uuids::WIFI_PROV_STATION;
+        } else if (path.find("char/wifi_provision_ap") != std::string::npos) {
+            uuid = ct::gatt_uuids::WIFI_PROV_AP;
+        } else if (path.find("char/command_response") != std::string::npos) {
+            uuid = ct::gatt_uuids::CMD_RESPONSE;
+        }
+
+        if (uuid) {
+            ret = sd_bus_message_append(msg, "{sv}", "UUID", "s", uuid);
+            if (ret < 0) goto fail;
+        }
+
+        // Return flags
+        if (path.find("char/trap_identity") != std::string::npos) {
+            const char* flags[] = {"read"};
+            ret = sd_bus_message_append(msg, "{sv}", "Flags", "as", 1, flags[0]);
+        } else if (path.find("char/wifi_state") != std::string::npos) {
+            const char* flags[] = {"read", "notify"};
+            ret = sd_bus_message_append(msg, "{sv}", "Flags", "as", 2, flags[0], flags[1]);
+        } else if (path.find("char/wifi_provision_station") != std::string::npos ||
+                   path.find("char/wifi_provision_ap") != std::string::npos) {
+            const char* flags[] = {"write"};
+            ret = sd_bus_message_append(msg, "{sv}", "Flags", "as", 1, flags[0]);
+        } else if (path.find("char/command_response") != std::string::npos) {
+            const char* flags[] = {"notify"};
+            ret = sd_bus_message_append(msg, "{sv}", "Flags", "as", 1, flags[0]);
+        }
+        if (ret < 0) goto fail;
+    } else if (strcmp(interface_name, bluez::GATT_DESCRIPTOR) == 0) {
+        // Return CCCD UUID and flags
+        ret = sd_bus_message_append(msg, "{sv}", "UUID", "s",
+            "00002902-0000-1000-8000-00805f9b34fb");
+        if (ret < 0) goto fail;
+        const char* flags[] = {"read", "write"};
+        ret = sd_bus_message_append(msg, "{sv}", "Flags", "as", 2, flags[0], flags[1]);
+        if (ret < 0) goto fail;
+    }
+
+    ret = sd_bus_message_close_container(msg);
+    if (ret < 0) {
+        return sd_bus_error_set_const(ret_error,
+            "org.bluez.Error.Failed", "Failed to close container");
+    }
+
+    return 0;
+
+fail:
+    return sd_bus_error_set_const(ret_error,
+        "org.bluez.Error.Failed", "Failed to append properties");
 }
 
-// ── D-Bus LE Advertisement Property Getters ────────────────────────────────
+// ── LE Advertisement Property Getters ──────────────────────────────────────
 
 int WifiProvisioningActor::onAdvGetType(
     sd_bus* bus, const char* path, const char* interface,
     const char* property, sd_bus_message* reply,
     void* userdata, sd_bus_error* ret_error)
 {
-    (void)bus;
-    (void)path;
-    (void)interface;
-    (void)property;
-    (void)userdata;
-    (void)ret_error;
-    // Return "peripheral" — a connectable advertisement
-    return sd_bus_reply_method_return(reply, "v", "s", bluez::ADV_TYPE_PERIPHERAL);
+    (void)bus; (void)path; (void)interface; (void)property;
+    (void)userdata; (void)ret_error;
+    return sd_bus_message_append(reply, "v", "s", bluez::ADV_TYPE_PERIPHERAL);
 }
 
 int WifiProvisioningActor::onAdvGetServiceUUIDs(
@@ -794,14 +1126,9 @@ int WifiProvisioningActor::onAdvGetServiceUUIDs(
     const char* property, sd_bus_message* reply,
     void* userdata, sd_bus_error* ret_error)
 {
-    (void)bus;
-    (void)path;
-    (void)interface;
-    (void)property;
-    (void)userdata;
-    (void)ret_error;
-    // Return an array containing our GATT service UUID
-    return sd_bus_reply_method_return(reply, "v", "as", 1, gatt_uuids::SERVICE);
+    (void)bus; (void)path; (void)interface; (void)property;
+    (void)userdata; (void)ret_error;
+    return sd_bus_message_append(reply, "v", "as", 1, ct::gatt_uuids::SERVICE);
 }
 
 int WifiProvisioningActor::onAdvGetManufacturerData(
@@ -809,143 +1136,121 @@ int WifiProvisioningActor::onAdvGetManufacturerData(
     const char* property, sd_bus_message* reply,
     void* userdata, sd_bus_error* ret_error)
 {
-    (void)bus;
-    (void)path;
-    (void)interface;
-    (void)property;
+    (void)bus; (void)path; (void)interface; (void)property;
+    (void)ret_error;
+
     auto* self = static_cast<WifiProvisioningActor*>(userdata);
-    if (self == nullptr) {
-        return sd_bus_error_set_const(ret_error, bluez::SERVICE, "Internal error");
+    if (!self) {
+        return sd_bus_error_set_const(ret_error,
+            "org.bluez.Error.Failed", "Internal error");
     }
 
-    // Build manufacturer data
     auto manu_data = self->buildManufacturerData();
 
-    // The return format is a variant containing a dict<uint16, variant<array<uint8>>>:
-    //   v  a{sv}
-    //     where key = uint16 (company ID 0xFFFF)
-    //     and value = variant containing array of bytes (ay)
-    //
-    // We need to build this manually using sd_bus_message_open_container.
+    // Manufacturer data is a dict of uint16 → byte array
+    // Nature Sense manufacturer ID: 0xFFFF (for testing) or use a real one
+    // For now, use 0xFFFF as a test manufacturer ID
+    int ret = sd_bus_message_open_container(reply, 'a', "{sv}");
+    if (ret < 0) return ret;
 
-    int ret;
+    // Append manufacturer data as a variant containing a byte array
+    ret = sd_bus_message_append(reply, "{sv}", "ay",
+        manu_data.size(), manu_data.data());
+    if (ret < 0) return ret;
 
-    // Open the outer variant
-    ret = sd_bus_message_open_container(reply, 'v', "a{sv}");
-    if (ret < 0) {
-        logDbusError("onAdvGetManufacturerData: open variant", ret);
-        return ret;
-    }
-
-    // Open the dict container: a{sv}
-    ret = sd_bus_message_open_container(reply, SD_BUS_TYPE_ARRAY, "{sv}");
-    if (ret < 0) {
-        logDbusError("onAdvGetManufacturerData: open array", ret);
-        return ret;
-    }
-
-    // Open a dict entry: {
-    ret = sd_bus_message_open_container(reply, SD_BUS_TYPE_DICT_ENTRY, "sv");
-    if (ret < 0) {
-        logDbusError("onAdvGetManufacturerData: open dict entry", ret);
-        return ret;
-    }
-
-    // Key: company ID as uint16 (0xFFFF)
-    uint16_t company_id = 0xFFFF;
-    ret = sd_bus_message_append(reply, "q", company_id);
-    if (ret < 0) {
-        logDbusError("onAdvGetManufacturerData: append key", ret);
-        return ret;
-    }
-
-    // Value: variant containing array of bytes (ay)
-    ret = sd_bus_message_open_container(reply, 'v', "ay");
-    if (ret < 0) {
-        logDbusError("onAdvGetManufacturerData: open value variant", ret);
-        return ret;
-    }
-
-    ret = sd_bus_message_append_array(reply, 'y', manu_data.data(), manu_data.size());
-    if (ret < 0) {
-        logDbusError("onAdvGetManufacturerData: append array", ret);
-        return ret;
-    }
-
-    // Close value variant
-    ret = sd_bus_message_close_container(reply);
-    if (ret < 0) {
-        logDbusError("onAdvGetManufacturerData: close value variant", ret);
-        return ret;
-    }
-
-    // Close dict entry
-    ret = sd_bus_message_close_container(reply);
-    if (ret < 0) {
-        logDbusError("onAdvGetManufacturerData: close dict entry", ret);
-        return ret;
-    }
-
-    // Close dict array
-    ret = sd_bus_message_close_container(reply);
-    if (ret < 0) {
-        logDbusError("onAdvGetManufacturerData: close array", ret);
-        return ret;
-    }
-
-    // Close outer variant
-    ret = sd_bus_message_close_container(reply);
-    if (ret < 0) {
-        logDbusError("onAdvGetManufacturerData: close outer variant", ret);
-        return ret;
-    }
-
-    return 0;
+    return sd_bus_message_close_container(reply);
 }
-
 
 int WifiProvisioningActor::onAdvGetLocalName(
     sd_bus* bus, const char* path, const char* interface,
     const char* property, sd_bus_message* reply,
     void* userdata, sd_bus_error* ret_error)
 {
-    (void)bus;
-    (void)path;
-    (void)interface;
-    (void)property;
+    (void)bus; (void)path; (void)interface; (void)property;
+    (void)ret_error;
+
     auto* self = static_cast<WifiProvisioningActor*>(userdata);
-    if (self == nullptr) {
-        return sd_bus_error_set_const(ret_error, bluez::SERVICE, "Internal error");
+    if (!self) {
+        return sd_bus_error_set_const(ret_error,
+            "org.bluez.Error.Failed", "Internal error");
     }
 
-    // Return the trap ID as the local name
-    return sd_bus_reply_method_return(reply, "v", "s", self->trap_id_.c_str());
+    return sd_bus_message_append(reply, "v", "s", self->trap_id_.c_str());
 }
 
-
-// ── Helpers ────────────────────────────────────────────────────────────────
+// ── Emit PropertiesChanged Signal ──────────────────────────────────────────
 
 bool WifiProvisioningActor::emitPropertiesChanged(
-
     const std::string& object_path,
     const std::string& interface,
     const std::string& property_name,
     const std::vector<uint8_t>& value)
 {
-    if (bus_ == nullptr) {
+    if (!bus_) {
         return false;
     }
 
-    // TODO: Send org.freedesktop.DBus.Properties.PropertiesChanged signal
-    // This requires constructing a proper D-Bus signal message with:
-    //   - interface name
-    //   - changed properties dict: { "Value": <variant containing ay> }
-    //   - invalidated properties array (empty)
-    //
-    // For now, we log the intent.
-    std::cout << "[WifiProvisioningActor] PropertiesChanged: "
-              << object_path << " " << interface << "." << property_name
-              << " (" << value.size() << " bytes)\n";
+    sd_bus_error error = SD_BUS_ERROR_NULL;
+    sd_bus_message* msg = nullptr;
+
+    int ret = sd_bus_message_new_signal(
+        bus_, &msg,
+        object_path.c_str(),
+        bluez::PROPERTIES,
+        "PropertiesChanged"
+    );
+    if (ret < 0) {
+        logDbusError("sd_bus_message_new_signal (PropertiesChanged)", ret);
+        return false;
+    }
+
+    // Append interface name
+    ret = sd_bus_message_append(msg, "s", interface.c_str());
+    if (ret < 0) {
+        logDbusError("sd_bus_message_append (interface)", ret);
+        sd_bus_message_unref(msg);
+        return false;
+    }
+
+    // Append changed properties dict
+    ret = sd_bus_message_open_container(msg, 'a', "{sv}");
+    if (ret < 0) {
+        logDbusError("sd_bus_message_open_container (changed props)", ret);
+        sd_bus_message_unref(msg);
+        return false;
+    }
+
+    ret = sd_bus_message_append(msg, "{sv}", property_name.c_str(), "ay",
+        value.size(), value.data());
+    if (ret < 0) {
+        logDbusError("sd_bus_message_append (property value)", ret);
+        sd_bus_message_unref(msg);
+        return false;
+    }
+
+    ret = sd_bus_message_close_container(msg);
+    if (ret < 0) {
+        logDbusError("sd_bus_message_close_container (changed props)", ret);
+        sd_bus_message_unref(msg);
+        return false;
+    }
+
+    // Append invalidated properties array (empty)
+    ret = sd_bus_message_append(msg, "as", 0);
+    if (ret < 0) {
+        logDbusError("sd_bus_message_append (invalidated)", ret);
+        sd_bus_message_unref(msg);
+        return false;
+    }
+
+    ret = sd_bus_send(bus_, msg, nullptr);
+    sd_bus_message_unref(msg);
+
+    if (ret < 0) {
+        logDbusError("sd_bus_send (PropertiesChanged)", ret);
+        return false;
+    }
+
     return true;
 }
 

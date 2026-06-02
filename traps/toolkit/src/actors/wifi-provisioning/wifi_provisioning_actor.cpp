@@ -732,19 +732,35 @@ bool WifiProvisioningActor::setupAdvertisement() {
                 return false;
             }
 
-            va_list args;
-            va_start(args, type_sig);
-            r = sd_bus_message_appendv(msg, "ssv", 3,
-                SD_BUS_TYPE_STRING, &bluez::ADAPTER_INTERFACE,
-                SD_BUS_TYPE_STRING, &property,
-                SD_BUS_TYPE_VARIANT, type_sig, args);
-            va_end(args);
+            // Append interface name
+            r = sd_bus_message_append(msg, "s", bluez::ADAPTER_INTERFACE);
+            if (r < 0) { logDbusError("sd_bus_message_append (interface)", r); sd_bus_message_unref(msg); return false; }
+
+            // Append property name
+            r = sd_bus_message_append(msg, "s", property);
+            if (r < 0) { logDbusError("sd_bus_message_append (property)", r); sd_bus_message_unref(msg); return false; }
+
+            // Open variant container
+            r = sd_bus_message_open_container(msg, 'v', type_sig);
+            if (r < 0) { logDbusError("sd_bus_message_open_container (variant)", r); sd_bus_message_unref(msg); return false; }
+
+            // Append the variadic arguments inside the variant
+            {
+                va_list args;
+                va_start(args, type_sig);
+                r = sd_bus_message_appendv(msg, type_sig, args);
+                va_end(args);
+            }
 
             if (r < 0) {
-                logDbusError(("sd_bus_message_append (Set " + std::string(property) + ")").c_str(), r);
+                logDbusError(("sd_bus_message_appendv (Set " + std::string(property) + ")").c_str(), r);
                 sd_bus_message_unref(msg);
                 return false;
             }
+
+            // Close variant container
+            r = sd_bus_message_close_container(msg);
+            if (r < 0) { logDbusError("sd_bus_message_close_container (variant)", r); sd_bus_message_unref(msg); return false; }
 
             auto promise = std::make_shared<std::promise<bool>>();
             auto future = promise->get_future();

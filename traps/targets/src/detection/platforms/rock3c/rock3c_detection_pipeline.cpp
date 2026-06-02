@@ -20,9 +20,69 @@
 #include "hal/platforms/rock3c/camera_hal_imx415.hpp"
 #include "hal/platforms/rock3c/inference_hal_rknn.hpp"
 
+#include <iostream>
 #include <memory>
+#include <cstdlib>
 
 namespace ct {
+
+// ─── Destructor ───────────────────────────────────────────────────────────────
+
+Rock3cDetectionPipeline::~Rock3cDetectionPipeline() {
+    shutdown();
+}
+
+// ─── Init ─────────────────────────────────────────────────────────────────────
+
+bool Rock3cDetectionPipeline::init(const PipelineConfig& cfg) {
+    // 1. Initialise the base pipeline (camera, inference, actors, wiring)
+    if (!BaseDetectionPipeline::init(cfg)) {
+        return false;
+    }
+
+    // 2. Determine trap identity for BLE advertising
+    //    Use the hostname if available, otherwise fall back to a default.
+    const char* hostname = std::getenv("HOSTNAME");
+    if (hostname && hostname[0] != '\0') {
+        trap_id_ = hostname;
+    } else {
+        trap_id_ = "rock3c-trap";
+    }
+    std::cout << "[Rock3cDetectionPipeline] trap_id=" << trap_id_ << "\n";
+
+    // 3. Create and start the BLE WiFi provisioning actor
+    wifi_provisioning_ = std::make_unique<WifiProvisioningActor>();
+    if (!wifi_provisioning_->init(trap_id_)) {
+        std::cerr << "[Rock3cDetectionPipeline] WifiProvisioningActor init failed\n";
+        // Non-fatal: the pipeline can still run without BLE
+        std::cerr << "[Rock3cDetectionPipeline] continuing without BLE advertising\n";
+        wifi_provisioning_.reset();
+    } else {
+        std::cout << "[Rock3cDetectionPipeline] BLE advertising started (trap_id="
+                  << trap_id_ << ")\n";
+    }
+
+    return true;
+}
+
+// ─── Shutdown ─────────────────────────────────────────────────────────────────
+
+void Rock3cDetectionPipeline::shutdown() {
+    std::cout << "[Rock3cDetectionPipeline] shutdown\n";
+
+    // Stop the BLE provisioning actor first (before the base pipeline shuts
+    // down the HTTP server and other actors).
+    if (wifi_provisioning_) {
+        wifi_provisioning_->shutdown();
+        wifi_provisioning_.reset();
+        std::cout << "[Rock3cDetectionPipeline] BLE advertising stopped\n";
+    }
+
+    // Shut down the base pipeline
+    BaseDetectionPipeline::shutdown();
+}
+
+// ─── Factory methods ──────────────────────────────────────────────────────────
 
 std::unique_ptr<CameraActor> Rock3cDetectionPipeline::createCamera() {
     auto hal = std::make_unique<CameraHalImx415>();

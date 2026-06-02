@@ -872,8 +872,7 @@ int WifiProvisioningActor::onReadValue(
     }
 
     // Read the options dict (we ignore it for now)
-    const char* object_path = nullptr;
-    sd_bus_message_get_path(msg, &object_path);
+    const char* object_path = sd_bus_message_get_path(msg);
 
     // Determine which characteristic is being read
     std::string path(object_path ? object_path : "");
@@ -923,8 +922,7 @@ int WifiProvisioningActor::onWriteValue(
     // The options dict follows the byte array in the message
 
     // Determine which characteristic is being written
-    const char* object_path = nullptr;
-    sd_bus_message_get_path(msg, &object_path);
+    const char* object_path = sd_bus_message_get_path(msg);
     std::string path(object_path ? object_path : "");
 
     // Convert to vector
@@ -982,8 +980,7 @@ int WifiProvisioningActor::onGetProperty(
             "org.bluez.Error.InvalidArguments", "Failed to read property request");
     }
 
-    const char* object_path = nullptr;
-    sd_bus_message_get_path(msg, &object_path);
+    const char* object_path = sd_bus_message_get_path(msg);
     std::string path(object_path ? object_path : "");
 
     // Route to the appropriate property getter based on interface and object path
@@ -1035,8 +1032,7 @@ int WifiProvisioningActor::onGetAllProperties(
             "org.bluez.Error.InvalidArguments", "Failed to read interface name");
     }
 
-    const char* object_path = nullptr;
-    sd_bus_message_get_path(msg, &object_path);
+    const char* object_path = sd_bus_message_get_path(msg);
     std::string path(object_path ? object_path : "");
 
     // Open the array of property variants

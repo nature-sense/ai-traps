@@ -453,7 +453,8 @@ void WifiProvisioningActor::dbusEventLoop() {
 
     while (running_.load() && bus_ != nullptr) {
         // Process D-Bus events with a timeout so we can check running_ flag
-        int ret = sd_bus_process(bus_);
+        sd_bus_message* msg = nullptr;
+        int ret = sd_bus_process(bus_, &msg);
         if (ret < 0) {
             logDbusError("sd_bus_process", ret);
             break;
@@ -461,6 +462,7 @@ void WifiProvisioningActor::dbusEventLoop() {
 
         if (ret > 0) {
             // We processed something, continue immediately
+            sd_bus_message_unref(msg);
             continue;
         }
 

@@ -44,9 +44,10 @@ jpeg_dep      = dependency('libjpeg', required: false)
 turbojpeg_dep = dependency('libturbojpeg', required: false)
 png_dep       = dependency('libpng', required: false)
 yaml_cpp_dep  = dependency('yaml-cpp', required: false)
+systemd_dep   = dependency('libsystemd', required: false)
 
 platform_deps = []
-foreach dep : [sqlite3_dep, jpeg_dep, turbojpeg_dep, png_dep, yaml_cpp_dep]
+foreach dep : [sqlite3_dep, jpeg_dep, turbojpeg_dep, png_dep, yaml_cpp_dep, systemd_dep]
 
   if dep.found()
     platform_deps += dep

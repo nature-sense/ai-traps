@@ -599,7 +599,7 @@ bool WifiProvisioningActor::setupAdvertisement() {
         SD_BUS_VTABLE_START(0),
         SD_BUS_PROPERTY("Type", "s", onAdvGetType, 0, SD_BUS_VTABLE_PROPERTY_EMITS_CHANGE),
         SD_BUS_PROPERTY("ServiceUUIDs", "as", onAdvGetServiceUUIDs, 0, SD_BUS_VTABLE_PROPERTY_EMITS_CHANGE),
-        SD_BUS_PROPERTY("ManufacturerData", "a{sv}", onAdvGetManufacturerData, 0, SD_BUS_VTABLE_PROPERTY_EMITS_CHANGE),
+        SD_BUS_PROPERTY("ManufacturerData", "a{qay}", onAdvGetManufacturerData, 0, SD_BUS_VTABLE_PROPERTY_EMITS_CHANGE),
         SD_BUS_PROPERTY("LocalName", "s", onAdvGetLocalName, 0, SD_BUS_VTABLE_PROPERTY_EMITS_CHANGE),
         SD_BUS_VTABLE_END
     };
@@ -1238,14 +1238,13 @@ int WifiProvisioningActor::onAdvGetManufacturerData(
 
     auto manu_data = self->buildManufacturerData();
 
-    // Manufacturer data is a dict of uint16 → byte array
-    // Nature Sense manufacturer ID: 0xFFFF (for testing) or use a real one
-    // For now, use 0xFFFF as a test manufacturer ID
-    int ret = sd_bus_message_open_container(reply, 'a', "{sv}");
+    // ManufacturerData in BlueZ LEAdvertisement1 is a{qay} where the key is
+    // the manufacturer ID as a uint16 (q) and the value is a byte array (ay).
+    int ret = sd_bus_message_open_container(reply, 'a', "{qay}");
     if (ret < 0) return ret;
 
-    // Append manufacturer data as a variant containing a byte array
-    ret = sd_bus_message_append(reply, "{sv}", "ay",
+    // Append manufacturer data: key = 0xFFFF (65535), value = byte array
+    ret = sd_bus_message_append(reply, "{qay}", (uint16_t)0xFFFF,
         manu_data.size(), manu_data.data());
     if (ret < 0) return ret;
 

@@ -710,6 +710,71 @@ bool WifiProvisioningActor::setupAdvertisement() {
     }
 
     std::cout << "[WifiProvisioningActor] advertisement registered with BlueZ\n";
+
+    // ── Set adapter Discoverable to true ────────────────────────────────────
+    // Without this, the adapter won't be discoverable by BLE scanners even
+    // though the advertisement is registered with BlueZ.
+    sd_bus_message* disc_call_msg = nullptr;
+
+    ret = sd_bus_message_new_method_call(
+        bus_, &disc_call_msg,
+        bluez::SERVICE,                    // org.bluez
+        bluez::DEFAULT_ADAPTER,            // /org/bluez/hci0
+        bluez::PROPERTIES,                 // org.freedesktop.DBus.Properties
+        "Set"                              // method
+    );
+    if (ret < 0) {
+        logDbusError("sd_bus_message_new_method_call (Set Discoverable)", ret);
+        // Non-fatal: continue even if this fails
+    } else {
+        ret = sd_bus_message_append(disc_call_msg, "ssv",
+            bluez::ADAPTER_INTERFACE,      // "org.bluez.Adapter1"
+            "Discoverable",                // property name
+            "b", 1                         // variant: boolean true
+        );
+        if (ret < 0) {
+            logDbusError("sd_bus_message_append (Discoverable=true)", ret);
+            sd_bus_message_unref(disc_call_msg);
+        } else {
+            // Use async call to avoid race with event loop thread
+            auto disc_promise = std::make_shared<std::promise<bool>>();
+            auto disc_future = disc_promise->get_future();
+
+            auto disc_slot = [](sd_bus_message* reply, void* userdata, sd_bus_error* ret_error) -> int {
+                auto* promise = static_cast<std::promise<bool>*>(userdata);
+                if (ret_error && sd_bus_error_is_set(ret_error)) {
+                    std::cerr << "[WifiProvisioningActor] Set Discoverable failed: "
+                              << (ret_error->name ? ret_error->name : "unknown")
+                              << " \u2014 " << (ret_error->message ? ret_error->message : "no message") << "\n";
+                    promise->set_value(false);
+                } else {
+                    std::cout << "[WifiProvisioningActor] adapter set discoverable\n";
+                    promise->set_value(true);
+                }
+                return 0;
+            };
+
+            ret = sd_bus_call_async(
+                bus_, nullptr, disc_call_msg,
+                disc_slot, disc_promise.get(),
+                10000000  // 10 second timeout
+            );
+            sd_bus_message_unref(disc_call_msg);
+
+            if (ret < 0) {
+                logDbusError("sd_bus_call_async (Set Discoverable)", ret);
+            } else {
+                // Wait briefly for the async call to complete
+                if (disc_future.wait_for(std::chrono::seconds(15)) != std::future_status::ready) {
+                    std::cerr << "[WifiProvisioningActor] Set Discoverable timed out\n";
+                } else {
+                    disc_future.get(); // consume the result
+                }
+            }
+        }
+    }
+
+    std::cout << "[WifiProvisioningActor] advertisement setup complete\n";
     return true;
 }
 

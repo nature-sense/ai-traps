@@ -510,7 +510,7 @@ int WifiProvisioningActor::onReadValue(
     }
 
     // Reply with the value as an array of bytes
-    ret = sd_bus_reply_method_return(msg, "ay", value.data(), value.size());
+    int ret = sd_bus_reply_method_return(msg, "ay", value.data(), value.size());
     if (ret < 0) {
         logDbusError("sd_bus_reply_method_return (ReadValue)", ret);
     }

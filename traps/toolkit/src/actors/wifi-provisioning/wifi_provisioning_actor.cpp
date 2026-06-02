@@ -1335,12 +1335,19 @@ int WifiProvisioningActor::onAdvGetManufacturerData(
 
     // ManufacturerData in BlueZ LEAdvertisement1 is a{qay} where the key is
     // the manufacturer ID as a uint16 (q) and the value is a byte array (ay).
-    int ret = sd_bus_message_open_container(reply, 'a', "{qay}");
+    // The property getter must wrap the value in a variant container.
+    int ret = sd_bus_message_open_container(reply, 'v', "a{qay}");
+    if (ret < 0) return ret;
+
+    ret = sd_bus_message_open_container(reply, 'a', "{qay}");
     if (ret < 0) return ret;
 
     // Append manufacturer data: key = 0xFFFF (65535), value = byte array
     ret = sd_bus_message_append(reply, "{qay}", (uint16_t)0xFFFF,
         manu_data.size(), manu_data.data());
+    if (ret < 0) return ret;
+
+    ret = sd_bus_message_close_container(reply);
     if (ret < 0) return ret;
 
     return sd_bus_message_close_container(reply);

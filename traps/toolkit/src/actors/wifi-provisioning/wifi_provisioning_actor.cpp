@@ -225,10 +225,10 @@ bool WifiProvisioningActor::init(const std::string& trap_id) {
         return false;
     }
 
-    running_.store(true);
     std::cout << "[WifiProvisioningActor] ready \u2014 advertising as \""
               << trap_id_ << "\"\n";
     return true;
+
 }
 
 void WifiProvisioningActor::shutdown() {
@@ -463,7 +463,18 @@ bool WifiProvisioningActor::setupBluezGatt() {
                   << "desc/client_char_config\n";
     }
 
-    // ── 4. Call GattManager1.RegisterApplication ───────────────────────────
+    // ── 4. Start D-Bus event loop thread BEFORE calling RegisterApplication ─
+    // BlueZ's RegisterApplication internally calls ObjectManager.GetManagedObjects
+    // on our application to enumerate all GATT objects. If the event loop isn't
+    // running, this call can deadlock or timeout because BlueZ's response to our
+    // object enumeration can't be processed.
+    running_.store(true);
+    dbus_thread_ = std::thread([this] { dbusEventLoop(); });
+
+    // Give the event loop a moment to start processing
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
+    // ── 5. Call GattManager1.RegisterApplication ───────────────────────────
     // This tells BlueZ to enumerate our objects via ObjectManager and
     // register them as a GATT application.
     sd_bus_error error = SD_BUS_ERROR_NULL;
@@ -478,6 +489,8 @@ bool WifiProvisioningActor::setupBluezGatt() {
     );
     if (ret < 0) {
         logDbusError("sd_bus_message_new_method_call (RegisterApplication)", ret);
+        running_.store(false);
+        if (dbus_thread_.joinable()) dbus_thread_.join();
         return false;
     }
 
@@ -486,6 +499,8 @@ bool WifiProvisioningActor::setupBluezGatt() {
     if (ret < 0) {
         logDbusError("sd_bus_message_append (app path)", ret);
         sd_bus_message_unref(call_msg);
+        running_.store(false);
+        if (dbus_thread_.joinable()) dbus_thread_.join();
         return false;
     }
 
@@ -494,17 +509,23 @@ bool WifiProvisioningActor::setupBluezGatt() {
     if (ret < 0) {
         logDbusError("sd_bus_message_open_container (options)", ret);
         sd_bus_message_unref(call_msg);
+        running_.store(false);
+        if (dbus_thread_.joinable()) dbus_thread_.join();
         return false;
     }
     ret = sd_bus_message_close_container(call_msg);
     if (ret < 0) {
         logDbusError("sd_bus_message_close_container (options)", ret);
         sd_bus_message_unref(call_msg);
+        running_.store(false);
+        if (dbus_thread_.joinable()) dbus_thread_.join();
         return false;
     }
 
-    // Call the method
-    ret = sd_bus_call(bus_, call_msg, 0, &error, nullptr);
+    // Call the method with a generous timeout (30 seconds)
+    // Use a non-zero timeout to avoid the default 25s timeout which may be too
+    // short for BlueZ to enumerate all objects on slower boards.
+    ret = sd_bus_call(bus_, call_msg, 30000000, &error, nullptr);
     sd_bus_message_unref(call_msg);
 
     if (ret < 0) {
@@ -512,6 +533,8 @@ bool WifiProvisioningActor::setupBluezGatt() {
                   << (error.name ? error.name : "unknown")
                   << " \u2014 " << (error.message ? error.message : "no message") << "\n";
         sd_bus_error_free(&error);
+        running_.store(false);
+        if (dbus_thread_.joinable()) dbus_thread_.join();
         return false;
     }
 
@@ -519,14 +542,9 @@ bool WifiProvisioningActor::setupBluezGatt() {
 
     std::cout << "[WifiProvisioningActor] GATT application registered with BlueZ\n";
 
-    // Start the D-Bus event loop thread
-    dbus_thread_ = std::thread([this] { dbusEventLoop(); });
-
-    // Give the event loop a moment to start
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
-
     std::cout << "[WifiProvisioningActor] BlueZ GATT setup complete\n";
     return true;
+
 }
 
 bool WifiProvisioningActor::setupAdvertisement() {

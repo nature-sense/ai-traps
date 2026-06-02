@@ -711,6 +711,22 @@ bool WifiProvisioningActor::setupAdvertisement() {
 
     std::cout << "[WifiProvisioningActor] advertisement registered with BlueZ\n";
 
+    // ── Enable LE advertising at the MGMT level ─────────────────────────────
+    // On some platforms (e.g., Rockchip RK2410), BlueZ's LEAdvertisingManager1
+    // RegisterAdvertisement registers the advertisement object but does NOT
+    // send the HCI LE Set Advertising Enable command unless the MGMT
+    // "advertising" setting is explicitly enabled. We use btmgmt to ensure
+    // the controller is actually advertising.
+    {
+        int mgmt_ret = system("btmgmt advertising on 2>/dev/null");
+        if (mgmt_ret == 0) {
+            std::cout << "[WifiProvisioningActor] MGMT advertising enabled\n";
+        } else {
+            std::cerr << "[WifiProvisioningActor] btmgmt advertising on returned "
+                      << mgmt_ret << "\n";
+        }
+    }
+
     // ── Set adapter Powered to true (if not already) ────────────────────────
     // The adapter must be powered on for BLE advertising to work.
     // We do NOT set Discoverable=true because that enables legacy advertising

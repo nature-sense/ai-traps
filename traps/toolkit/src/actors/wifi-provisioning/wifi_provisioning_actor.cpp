@@ -468,13 +468,21 @@ bool WifiProvisioningActor::setupBluezGatt() {
     // on our application to enumerate all GATT objects. If the event loop isn't
     // running, this call can deadlock or timeout because BlueZ's response to our
     // object enumeration can't be processed.
+    //
+    // IMPORTANT: We use sd_bus_call_async instead of sd_bus_call to avoid a
+    // multi-threading race condition. sd_bus_call (synchronous) internally
+    // processes messages on the bus connection while waiting for the reply.
+    // If the event loop thread is also calling sd_bus_process on the same
+    // connection, they can interfere. sd_bus_call_async queues the method call
+    // and lets the event loop thread handle both the outgoing call and the
+    // incoming reply, avoiding the race.
     running_.store(true);
     dbus_thread_ = std::thread([this] { dbusEventLoop(); });
 
     // Give the event loop a moment to start processing
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
-    // ── 5. Call GattManager1.RegisterApplication ───────────────────────────
+    // ── 5. Call GattManager1.RegisterApplication (async) ───────────────────
     // This tells BlueZ to enumerate our objects via ObjectManager and
     // register them as a GATT application.
     sd_bus_error error = SD_BUS_ERROR_NULL;
@@ -522,25 +530,55 @@ bool WifiProvisioningActor::setupBluezGatt() {
         return false;
     }
 
-    // Call the method with a generous timeout (30 seconds)
-    // Use a non-zero timeout to avoid the default 25s timeout which may be too
-    // short for BlueZ to enumerate all objects on slower boards.
-    ret = sd_bus_call(bus_, call_msg, 30000000, &error, nullptr);
+    // Use a promise/future to synchronize the async result back to this thread
+    auto reg_promise = std::make_shared<std::promise<bool>>();
+    auto reg_future = reg_promise->get_future();
+
+    // Slot callback for the async call
+    auto slot = [](sd_bus_message* reply, void* userdata, sd_bus_error* ret_error) -> int {
+        auto* promise = static_cast<std::promise<bool>*>(userdata);
+        if (ret_error && sd_bus_error_is_set(ret_error)) {
+            std::cerr << "[WifiProvisioningActor] RegisterApplication failed: "
+                      << (ret_error->name ? ret_error->name : "unknown")
+                      << " \u2014 " << (ret_error->message ? ret_error->message : "no message") << "\n";
+            promise->set_value(false);
+        } else {
+            std::cout << "[WifiProvisioningActor] GATT application registered with BlueZ\n";
+            promise->set_value(true);
+        }
+        return 0;
+    };
+
+    // Send the method call asynchronously
+    ret = sd_bus_call_async(
+        bus_, nullptr, call_msg,
+        slot, reg_promise.get(),
+        30000000  // 30 second timeout
+    );
     sd_bus_message_unref(call_msg);
 
     if (ret < 0) {
-        std::cerr << "[WifiProvisioningActor] RegisterApplication failed: "
-                  << (error.name ? error.name : "unknown")
-                  << " \u2014 " << (error.message ? error.message : "no message") << "\n";
-        sd_bus_error_free(&error);
+        logDbusError("sd_bus_call_async (RegisterApplication)", ret);
         running_.store(false);
         if (dbus_thread_.joinable()) dbus_thread_.join();
         return false;
     }
 
-    sd_bus_error_free(&error);
+    // Wait for the async call to complete (with timeout)
+    if (reg_future.wait_for(std::chrono::seconds(35)) != std::future_status::ready) {
+        std::cerr << "[WifiProvisioningActor] RegisterApplication timed out (35s)\n";
+        running_.store(false);
+        if (dbus_thread_.joinable()) dbus_thread_.join();
+        return false;
+    }
 
-    std::cout << "[WifiProvisioningActor] GATT application registered with BlueZ\n";
+    // Get the result
+    bool reg_ok = reg_future.get();
+    if (!reg_ok) {
+        running_.store(false);
+        if (dbus_thread_.joinable()) dbus_thread_.join();
+        return false;
+    }
 
     std::cout << "[WifiProvisioningActor] BlueZ GATT setup complete\n";
     return true;

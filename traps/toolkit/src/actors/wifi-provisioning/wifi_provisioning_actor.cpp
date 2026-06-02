@@ -711,66 +711,80 @@ bool WifiProvisioningActor::setupAdvertisement() {
 
     std::cout << "[WifiProvisioningActor] advertisement registered with BlueZ\n";
 
-    // ── Set adapter Discoverable to true ────────────────────────────────────
+    // ── Set adapter Discoverable to true (with infinite timeout) ────────────
     // Without this, the adapter won't be discoverable by BLE scanners even
-    // though the advertisement is registered with BlueZ.
-    sd_bus_message* disc_call_msg = nullptr;
+    // though the advertisement is registered with BlueZ. We also set
+    // DiscoverableTimeout to 0 (infinite) so BlueZ doesn't automatically turn
+    // Discoverable back off after the default 180-second timeout.
+    {
+        // Helper lambda to set a property asynchronously
+        auto set_adapter_property = [&](const char* property, const char* type_sig, ...) -> bool {
+            sd_bus_message* msg = nullptr;
+            int r = sd_bus_message_new_method_call(
+                bus_, &msg,
+                bluez::SERVICE,
+                bluez::DEFAULT_ADAPTER,
+                bluez::PROPERTIES,
+                "Set"
+            );
+            if (r < 0) {
+                logDbusError(("sd_bus_message_new_method_call (Set " + std::string(property) + ")").c_str(), r);
+                return false;
+            }
 
-    ret = sd_bus_message_new_method_call(
-        bus_, &disc_call_msg,
-        bluez::SERVICE,                    // org.bluez
-        bluez::DEFAULT_ADAPTER,            // /org/bluez/hci0
-        bluez::PROPERTIES,                 // org.freedesktop.DBus.Properties
-        "Set"                              // method
-    );
-    if (ret < 0) {
-        logDbusError("sd_bus_message_new_method_call (Set Discoverable)", ret);
-        // Non-fatal: continue even if this fails
-    } else {
-        ret = sd_bus_message_append(disc_call_msg, "ssv",
-            bluez::ADAPTER_INTERFACE,      // "org.bluez.Adapter1"
-            "Discoverable",                // property name
-            "b", 1                         // variant: boolean true
-        );
-        if (ret < 0) {
-            logDbusError("sd_bus_message_append (Discoverable=true)", ret);
-            sd_bus_message_unref(disc_call_msg);
-        } else {
-            // Use async call to avoid race with event loop thread
-            auto disc_promise = std::make_shared<std::promise<bool>>();
-            auto disc_future = disc_promise->get_future();
+            va_list args;
+            va_start(args, type_sig);
+            r = sd_bus_message_appendv(msg, "ssv", 3,
+                SD_BUS_TYPE_STRING, &bluez::ADAPTER_INTERFACE,
+                SD_BUS_TYPE_STRING, &property,
+                SD_BUS_TYPE_VARIANT, type_sig, args);
+            va_end(args);
 
-            auto disc_slot = [](sd_bus_message* reply, void* userdata, sd_bus_error* ret_error) -> int {
-                auto* promise = static_cast<std::promise<bool>*>(userdata);
+            if (r < 0) {
+                logDbusError(("sd_bus_message_append (Set " + std::string(property) + ")").c_str(), r);
+                sd_bus_message_unref(msg);
+                return false;
+            }
+
+            auto promise = std::make_shared<std::promise<bool>>();
+            auto future = promise->get_future();
+
+            auto slot = [](sd_bus_message* reply, void* userdata, sd_bus_error* ret_error) -> int {
+                auto* p = static_cast<std::promise<bool>*>(userdata);
                 if (ret_error && sd_bus_error_is_set(ret_error)) {
-                    std::cerr << "[WifiProvisioningActor] Set Discoverable failed: "
+                    std::cerr << "[WifiProvisioningActor] Set property failed: "
                               << (ret_error->name ? ret_error->name : "unknown")
                               << " \u2014 " << (ret_error->message ? ret_error->message : "no message") << "\n";
-                    promise->set_value(false);
+                    p->set_value(false);
                 } else {
-                    std::cout << "[WifiProvisioningActor] adapter set discoverable\n";
-                    promise->set_value(true);
+                    p->set_value(true);
                 }
                 return 0;
             };
 
-            ret = sd_bus_call_async(
-                bus_, nullptr, disc_call_msg,
-                disc_slot, disc_promise.get(),
-                10000000  // 10 second timeout
-            );
-            sd_bus_message_unref(disc_call_msg);
+            r = sd_bus_call_async(bus_, nullptr, msg, slot, promise.get(), 10000000);
+            sd_bus_message_unref(msg);
 
-            if (ret < 0) {
-                logDbusError("sd_bus_call_async (Set Discoverable)", ret);
-            } else {
-                // Wait briefly for the async call to complete
-                if (disc_future.wait_for(std::chrono::seconds(15)) != std::future_status::ready) {
-                    std::cerr << "[WifiProvisioningActor] Set Discoverable timed out\n";
-                } else {
-                    disc_future.get(); // consume the result
-                }
+            if (r < 0) {
+                logDbusError(("sd_bus_call_async (Set " + std::string(property) + ")").c_str(), r);
+                return false;
             }
+
+            if (future.wait_for(std::chrono::seconds(15)) != std::future_status::ready) {
+                std::cerr << "[WifiProvisioningActor] Set " << property << " timed out\n";
+                return false;
+            }
+            return future.get();
+        };
+
+        // First set DiscoverableTimeout to 0 (infinite) so BlueZ doesn't
+        // automatically turn Discoverable off after the default timeout.
+        set_adapter_property("DiscoverableTimeout", "u", (uint32_t)0);
+
+        // Then set Discoverable to true
+        bool ok = set_adapter_property("Discoverable", "b", 1);
+        if (ok) {
+            std::cout << "[WifiProvisioningActor] adapter set discoverable (infinite timeout)\n";
         }
     }
 

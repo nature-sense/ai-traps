@@ -621,7 +621,15 @@ bool WifiProvisioningActor::setupAdvertisement() {
     std::cout << "[WifiProvisioningActor] advertisement object registered at "
               << adv_path_ << "\n";
 
-    // ── Call LEAdvertisingManager1.RegisterAdvertisement ───────────────────
+    // ── Call LEAdvertisingManager1.RegisterAdvertisement (async) ──────────
+    // IMPORTANT: We use sd_bus_call_async instead of sd_bus_call to avoid a
+    // multi-threading race condition with the D-Bus event loop thread that
+    // was started in setupBluezGatt(). sd_bus_call (synchronous) internally
+    // processes messages on the bus connection while waiting for the reply.
+    // If the event loop thread is also calling sd_bus_process on the same
+    // connection, they can interfere. sd_bus_call_async queues the method call
+    // and lets the event loop thread handle both the outgoing call and the
+    // incoming reply, avoiding the race.
     sd_bus_error error = SD_BUS_ERROR_NULL;
     sd_bus_message* call_msg = nullptr;
 
@@ -657,18 +665,49 @@ bool WifiProvisioningActor::setupAdvertisement() {
         return false;
     }
 
-    ret = sd_bus_call(bus_, call_msg, 0, &error, nullptr);
+    // Use a promise/future to synchronize the async result back to this thread
+    auto adv_promise = std::make_shared<std::promise<bool>>();
+    auto adv_future = adv_promise->get_future();
+
+    // Slot callback for the async call
+    auto slot = [](sd_bus_message* reply, void* userdata, sd_bus_error* ret_error) -> int {
+        auto* promise = static_cast<std::promise<bool>*>(userdata);
+        if (ret_error && sd_bus_error_is_set(ret_error)) {
+            std::cerr << "[WifiProvisioningActor] RegisterAdvertisement failed: "
+                      << (ret_error->name ? ret_error->name : "unknown")
+                      << " \u2014 " << (ret_error->message ? ret_error->message : "no message") << "\n";
+            promise->set_value(false);
+        } else {
+            std::cout << "[WifiProvisioningActor] advertisement registered with BlueZ\n";
+            promise->set_value(true);
+        }
+        return 0;
+    };
+
+    // Send the method call asynchronously
+    ret = sd_bus_call_async(
+        bus_, nullptr, call_msg,
+        slot, adv_promise.get(),
+        30000000  // 30 second timeout
+    );
     sd_bus_message_unref(call_msg);
 
     if (ret < 0) {
-        std::cerr << "[WifiProvisioningActor] RegisterAdvertisement failed: "
-                  << (error.name ? error.name : "unknown")
-                  << " \u2014 " << (error.message ? error.message : "no message") << "\n";
-        sd_bus_error_free(&error);
+        logDbusError("sd_bus_call_async (RegisterAdvertisement)", ret);
         return false;
     }
 
-    sd_bus_error_free(&error);
+    // Wait for the async call to complete (with timeout)
+    if (adv_future.wait_for(std::chrono::seconds(35)) != std::future_status::ready) {
+        std::cerr << "[WifiProvisioningActor] RegisterAdvertisement timed out (35s)\n";
+        return false;
+    }
+
+    // Get the result
+    bool adv_ok = adv_future.get();
+    if (!adv_ok) {
+        return false;
+    }
 
     std::cout << "[WifiProvisioningActor] advertisement registered with BlueZ\n";
     return true;

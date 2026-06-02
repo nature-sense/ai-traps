@@ -52,9 +52,18 @@ async def handle_call_tool(name: str, arguments: dict | None) -> list[TextConten
         elif name == "build":
             project_root = args.get("project_root", None)
             if not project_root:
-                # Auto-detect from the MCP server's working directory
+                # Auto-detect from the script location
+                # handler.py is at: tools/mcp/scripts/mcp_build/handler.py
+                # Project root is: ai-traps/ (3 levels up from scripts/)
                 import os
-                project_root = os.getcwd()
+                script_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+                # script_dir = tools/mcp/scripts/
+                project_root = os.path.abspath(os.path.join(script_dir, "..", "..", ".."))
+                # Verify it's a git repo
+                git_dir = os.path.join(project_root, ".git")
+                if not os.path.isdir(git_dir):
+                    # Fallback: try os.getcwd()
+                    project_root = os.getcwd()
 
             # Normalize boolean parameters that might come as strings
             rebuild = args.get("rebuild", False)

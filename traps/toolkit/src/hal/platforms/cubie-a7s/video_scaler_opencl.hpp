@@ -17,6 +17,7 @@
 #pragma once
 
 #include "hal/api/video_scaler.hpp"
+#include "hal/api/frame_buffer.hpp"
 
 #include <memory>
 #include <string>

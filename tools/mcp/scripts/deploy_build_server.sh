@@ -62,7 +62,9 @@ ssh "${USER}@${HOST}" "
 
 # Step 5: Install Python dependencies system-wide (service runs as root)
 echo "--- Installing Python dependencies ---"
-ssh "${USER}@${HOST}" "sudo pip3 install --break-system-packages fastapi uvicorn pydantic python-multipart 2>&1 | tail -5"
+# Try with --break-system-packages first (newer pip), fall back to without (older pip)
+ssh "${USER}@${HOST}" "sudo pip3 install --break-system-packages fastapi uvicorn pydantic python-multipart 2>&1 | tail -5" || \
+  ssh "${USER}@${HOST}" "sudo pip3 install fastapi uvicorn pydantic python-multipart 2>&1 | tail -5"
 
 # Step 6: Enable and start systemd service
 echo "--- Enabling and starting systemd service ---"

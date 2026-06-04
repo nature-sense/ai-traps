@@ -184,7 +184,7 @@ VideoScalerOpenCL::~VideoScalerOpenCL() {
 }
 
 // ─── Initialisation (lazy, on first use) ──────────────────────────────────────
-static bool init_opencl(VideoScalerOpenCL::OpenCLContext& ctx) {
+bool init_opencl(VideoScalerOpenCL::OpenCLContext& ctx) {
     if (ctx.context) return true;  // Already initialised
 
     cl_int err;

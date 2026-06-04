@@ -63,8 +63,10 @@ struct VideoScalerOpenCL : IVideoScaler {
     bool is_available() const { return available_; }
     std::string device_name() const;
 
-private:
     struct OpenCLContext;
+    friend bool init_opencl(OpenCLContext& ctx);
+
+private:
     std::unique_ptr<OpenCLContext> ctx_;
 
     // OpenCL kernel source for NV12 bilinear resize

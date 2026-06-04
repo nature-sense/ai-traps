@@ -5887,7 +5887,7 @@
       "label": "VideoScalerOpenCL()",
       "file_type": "code",
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/video_scaler_opencl.hpp",
-      "source_location": "L46",
+      "source_location": "L47",
       "id": "video_scaler_opencl_videoscaleropencl",
       "community": 29
     },
@@ -33985,7 +33985,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/video_scaler_opencl.hpp",
-      "source_location": "L46",
+      "source_location": "L47",
       "weight": 1.0,
       "_src": "traps_toolkit_src_hal_platforms_cubie_a7s_video_scaler_opencl_hpp",
       "_tgt": "video_scaler_opencl_videoscaleropencl",

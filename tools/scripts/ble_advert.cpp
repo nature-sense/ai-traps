@@ -1,301 +1,88 @@
 // ble_advert.cpp
-// Compile: g++ -std=c++11 ble_advert.cpp -o ble_advert `pkg-config --cflags --libs glib-2.0 gio-2.0`
+// BLE LE Advertisement using HCI commands (hcitool)
+// This approach directly sets advertising data via HCI, bypassing BlueZ D-Bus API
+// which has proven unreliable for custom manufacturer data.
+//
+// Compile: g++ -std=c++11 ble_advert.cpp -o ble_advert
+// Run: sudo ./ble_advert
 
-#include <gio/gio.h>
-#include <glib.h>
-#include <iostream>
-#include <string>
-#include <vector>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <thread>
+#include <chrono>
+#include <unistd.h>
+#include <signal.h>
 
-static GMainLoop *main_loop = nullptr;
-static GDBusConnection *system_bus = nullptr;
-static const char *adapter_path = "/org/bluez/hci0";
-static const char *advertisement_path = "/org/bluez/hci0/advertisement0";
+static volatile bool keep_running = true;
 
-// Structure to hold our advertisement data
-struct AdvertisementData {
-    std::vector<std::string> uuids;
-    std::vector<uint8_t> manufacturer_data;
-    std::string local_name;
-};
-
-// Callback when advertisement is registered
-static void on_advertisement_registered(GObject *source, GAsyncResult *res, gpointer user_data) {
-    GError *error = nullptr;
-    g_variant_unref(g_dbus_proxy_call_finish(G_DBUS_PROXY(source), res, &error));
-    
-    if (error) {
-        g_printerr("Failed to register advertisement: %s\n", error->message);
-        g_error_free(error);
-        g_main_loop_quit(main_loop);
-    } else {
-        g_print("✓ Advertisement registered successfully!\n");
-        g_print("  Broadcasting as 'Bee Device' on adapter %s\n", adapter_path);
-    }
+void signal_handler(int) {
+    keep_running = false;
 }
 
-// Method handler for org.bluez.LEAdvertisement1.Release
-static void handle_release(GDBusConnection *connection, const char *sender, const char *object_path,
-                          const char *interface_name, const char *method_name,
-                          GVariant *parameters, GDBusMethodInvocation *invocation, gpointer user_data) {
-    g_print("Advertisement released by BlueZ\n");
-    g_dbus_method_invocation_return_value(invocation, NULL);
-    g_main_loop_quit(main_loop);
-}
-
-// Method handler for org.bluez.LEAdvertisement1 (empty - just need to exist)
-static void handle_method_call(GDBusConnection *connection, const char *sender, const char *object_path,
-                              const char *interface_name, const char *method_name,
-                              GVariant *parameters, GDBusMethodInvocation *invocation, gpointer user_data) {
-    if (g_strcmp0(method_name, "Release") == 0) {
-        handle_release(connection, sender, object_path, interface_name, method_name, 
-                      parameters, invocation, user_data);
-    } else {
-        g_dbus_method_invocation_return_error(invocation, G_DBUS_ERROR, G_DBUS_ERROR_UNKNOWN_METHOD,
-                                             "Method %s not implemented", method_name);
+int main() {
+    signal(SIGINT, signal_handler);
+    signal(SIGTERM, signal_handler);
+    
+    printf("=== BLE Advertisement for Radxa Rock 3C ===\n");
+    printf("Using HCI commands for reliable advertising\n\n");
+    
+    // Step 1: Configure adapter
+    printf("--- Step 1: Configure adapter ---\n");
+    system("btmgmt power off 2>&1");
+    system("btmgmt le on 2>&1");
+    system("btmgmt bredr off 2>&1");
+    system("btmgmt power on 2>&1");
+    printf("  Adapter configured\n");
+    
+    // Step 2: Set advertising data via hcitool
+    // hcitool cmd <ogf> <ocf> <hex bytes...>
+    // OGF=0x08 (LE Controller), OCF=0x0008 (LE Set Advertising Data)
+    //
+    // Advertising data (max 31 bytes):
+    // 02 01 1a           - Flags: LE General Disc + BR/EDR not supported
+    // 0a 09 72 6f 63 6b 33 63 2d 74 65 73 74  - Name: "rock3c-test"
+    // 11 ff ff ff 01 01 00 52 4f 43 4b 33 43 2d 54 45 53 54 2d 30 01
+    //    ^type ^company  ^prt|serv_uuid |---trap_id "ROCK3C-TEST-0"--| |wifi|
+    //    |mfg(17)|
+    
+    printf("\n--- Step 2: Set advertising data ---\n");
+    int ret = system(
+        "hcitool -i hci0 cmd 0x08 0x0008 "
+        "1e "                    // length = 30 bytes
+        "02 01 1a "              // Flags
+        "0a 09 72 6f 63 6b 33 63 2d 74 65 73 74 "  // "rock3c-test"
+        "11 ff ff ff "           // Manufacturer data: len=17, type=0xFF, company=0xFFFF
+        "01 "                    // Protocol version = 1
+        "01 00 "                 // Service UUID = 0x0001
+        "52 4f 43 4b 33 43 2d 54 45 53 54 2d 30 "  // "ROCK3C-TEST-0"
+        "01 "                    // WiFi state: WIFI_STATION
+        "2>&1"
+    );
+    printf("  Set advertising data: %d\n", ret);
+    
+    // Step 3: Enable advertising
+    printf("\n--- Step 3: Enable advertising ---\n");
+    ret = system("hcitool -i hci0 cmd 0x08 0x000A 01 2>&1");
+    printf("  Enable advertising: %d\n", ret);
+    
+    printf("\n=== ADVERTISING AS 'rock3c-test' ===\n");
+    printf("  BD Address: 98:03:CF:D2:38:39\n");
+    printf("  Manufacturer ID: 0xFFFF\n");
+    printf("  Trap ID: ROCK3C-TEST-0\n");
+    printf("  WiFi State: WIFI_STATION\n");
+    printf("Press Ctrl+C to stop\n\n");
+    
+    // Keep running until Ctrl+C
+    while (keep_running) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
-}
-
-// Properties for the advertisement
-static GVariant *get_advertisement_properties() {
-    GVariantBuilder builder;
-    g_variant_builder_init(&builder, G_VARIANT_TYPE("a{sv}"));
-    
-    // Type: peripheral (broadcaster also works)
-    g_variant_builder_add(&builder, "{sv}", "Type", g_variant_new_string("peripheral"));
-    
-    // Service UUIDs to advertise
-    GVariantBuilder uuids_builder;
-    g_variant_builder_init(&uuids_builder, G_VARIANT_TYPE("as"));
-    g_variant_builder_add(&uuids_builder, "s", "180f");  // Battery Service
-    g_variant_builder_add(&uuids_builder, "s", "1822");  // Example custom service
-    g_variant_builder_add(&uuids_builder, "s", "feed");  // Bee-related custom UUID
-    g_variant_builder_add(&builder, "{sv}", "ServiceUUIDs", 
-                         g_variant_builder_end(&uuids_builder));
-    
-    // Manufacturer data (0x004C = Apple, 0x0000 = generic)
-    GVariantBuilder mfg_builder;
-    g_variant_builder_init(&mfg_builder, G_VARIANT_TYPE("ay"));
-    g_variant_builder_add(&mfg_builder, "y", 0x00);  // Company ID LSB
-    g_variant_builder_add(&mfg_builder, "y", 0x00);  // Company ID MSB
-    g_variant_builder_add(&mfg_builder, "y", 0x42);  // 'B' for Bee
-    g_variant_builder_add(&mfg_builder, "y", 0x45);  // 'E'
-    g_variant_builder_add(&mfg_builder, "y", 0x45);  // 'E'
-    g_variant_builder_add(&builder, "{sv}", "ManufacturerData", 
-                         g_variant_new_dict_entry(g_variant_new_uint16(0x0000),
-                                                  g_variant_builder_end(&mfg_builder)));
-    
-    // Include TX power
-    GVariantBuilder includes_builder;
-    g_variant_builder_init(&includes_builder, G_VARIANT_TYPE("as"));
-    g_variant_builder_add(&includes_builder, "s", "tx-power");
-    g_variant_builder_add(&includes_builder, "s", "appearance");
-    g_variant_builder_add(&builder, "{sv}", "Includes", 
-                         g_variant_builder_end(&includes_builder));
-    
-    return g_variant_builder_end(&builder);
-}
-
-// Export the advertisement object on D-Bus
-static void export_advertisement_object(GDBusConnection *connection) {
-    static const GDBusInterfaceVTable interface_vtable = {
-        handle_method_call,  // method_call
-        nullptr,             // get_property
-        nullptr              // set_property
-    };
-    
-    // Properties for the advertisement interface
-    GVariant *props = get_advertisement_properties();
-    
-    GError *error = nullptr;
-    g_dbus_connection_export_object(connection,
-                                   advertisement_path,
-                                   g_dbus_interface_info_lookup(G_DBUS_INTERFACE_INFO(g_dbus_node_info_lookup_interface(
-                                       g_dbus_node_info_new_for_xml(
-                                           "<node>"
-                                           "  <interface name='org.bluez.LEAdvertisement1'>"
-                                           "    <method name='Release'/>"
-                                           "  </interface>"
-                                           "</node>", nullptr), "org.bluez.LEAdvertisement1")),
-                                   props,
-                                   &interface_vtable,
-                                   nullptr, &error);
-    
-    if (error) {
-        g_printerr("Failed to export advertisement: %s\n", error->message);
-        g_error_free(error);
-        g_main_loop_quit(main_loop);
-    } else {
-        g_print("✓ Exported advertisement object at %s\n", advertisement_path);
-    }
-    
-    g_variant_unref(props);
-}
-
-// Get the LE Advertising Manager for the adapter
-static void register_advertisement() {
-    GError *error = nullptr;
-    
-    // Construct the advertising manager path
-    char *manager_path = g_strdup_printf("%s", adapter_path);
-    GDBusProxy *advertising_manager = g_dbus_proxy_new_for_bus_sync(
-        G_BUS_TYPE_SYSTEM,
-        G_DBUS_PROXY_FLAGS_NONE,
-        nullptr,
-        "org.bluez",
-        manager_path,
-        "org.bluez.LEAdvertisingManager1",
-        nullptr,
-        &error);
-    
-    if (error) {
-        g_printerr("Failed to create advertising manager proxy: %s\n", error->message);
-        g_error_free(error);
-        g_free(manager_path);
-        g_main_loop_quit(main_loop);
-        return;
-    }
-    
-    // Register the advertisement with options
-    GVariantBuilder options_builder;
-    g_variant_builder_init(&options_builder, G_VARIANT_TYPE("a{sv}"));
-    // Set timeout to 0 for indefinite advertising
-    g_variant_builder_add(&options_builder, "{sv}", "Discoverable", 
-                         g_variant_new_boolean(true));
-    
-    g_dbus_proxy_call(advertising_manager,
-                     "RegisterAdvertisement",
-                     g_variant_new("(o@a{sv})", advertisement_path, 
-                                  g_variant_builder_end(&options_builder)),
-                     G_DBUS_CALL_FLAGS_NONE,
-                     -1,
-                     nullptr,
-                     on_advertisement_registered,
-                     nullptr);
-    
-    g_free(manager_path);
-    g_object_unref(advertising_manager);
-}
-
-// Power on the Bluetooth adapter
-static void power_on_adapter() {
-    GError *error = nullptr;
-    GDBusProxy *adapter_proxy = g_dbus_proxy_new_for_bus_sync(
-        G_BUS_TYPE_SYSTEM,
-        G_DBUS_PROXY_FLAGS_NONE,
-        nullptr,
-        "org.bluez",
-        adapter_path,
-        "org.bluez.Adapter1",
-        nullptr,
-        &error);
-    
-    if (error) {
-        g_printerr("Failed to create adapter proxy: %s\n", error->message);
-        g_error_free(error);
-        g_main_loop_quit(main_loop);
-        return;
-    }
-    
-    // Set Powered property to true
-    g_dbus_proxy_call_sync(adapter_proxy,
-                          "org.freedesktop.DBus.Properties.Set",
-                          g_variant_new("(ssv)", "org.bluez.Adapter1", "Powered",
-                                       g_variant_new_boolean(true)),
-                          G_DBUS_CALL_FLAGS_NONE,
-                          -1,
-                          nullptr,
-                          &error);
-    
-    if (error) {
-        g_printerr("Failed to power on adapter: %s\n", error->message);
-        g_error_free(error);
-    } else {
-        g_print("✓ Bluetooth adapter powered on\n");
-    }
-    
-    // Set Discoverable property
-    g_dbus_proxy_call_sync(adapter_proxy,
-                          "org.freedesktop.DBus.Properties.Set",
-                          g_variant_new("(ssv)", "org.bluez.Adapter1", "Discoverable",
-                                       g_variant_new_boolean(true)),
-                          G_DBUS_CALL_FLAGS_NONE,
-                          -1,
-                          nullptr,
-                          &error);
-    
-    if (error) {
-        g_print("Note: Could not set discoverable (not critical): %s\n", error->message);
-        g_error_free(error);
-    }
-    
-    g_object_unref(adapter_proxy);
-}
-
-// Check if adapter exists
-static bool check_adapter() {
-    GError *error = nullptr;
-    GDBusProxy *adapter_proxy = g_dbus_proxy_new_for_bus_sync(
-        G_BUS_TYPE_SYSTEM,
-        G_DBUS_PROXY_FLAGS_NONE,
-        nullptr,
-        "org.bluez",
-        adapter_path,
-        "org.freedesktop.DBus.Properties",
-        nullptr,
-        &error);
-    
-    if (error) {
-        g_printerr("✗ Bluetooth adapter not found at %s\n", adapter_path);
-        g_printerr("  Make sure Bluetooth is enabled: sudo hciconfig hci0 up\n");
-        g_error_free(error);
-        return false;
-    }
-    
-    g_object_unref(adapter_proxy);
-    g_print("✓ Found Bluetooth adapter at %s\n", adapter_path);
-    return true;
-}
-
-int main(int argc, char *argv[]) {
-    g_print("\n=== BLE Advertisement for Radxa Rock 3C ===\n");
-    g_print("Advertising as 'Bee Device' with custom data\n\n");
-    
-    // Initialize GLib
-    main_loop = g_main_loop_new(nullptr, FALSE);
-    
-    // Connect to system D-Bus
-    system_bus = g_bus_get_sync(G_BUS_TYPE_SYSTEM, nullptr, nullptr);
-    if (!system_bus) {
-        g_printerr("Failed to connect to system bus\n");
-        return 1;
-    }
-    
-    // Check if adapter exists
-    if (!check_adapter()) {
-        return 1;
-    }
-    
-    // Power on the adapter
-    power_on_adapter();
-    
-    // Export advertisement object
-    export_advertisement_object(system_bus);
-    
-    // Small delay to ensure export completes
-    g_usleep(500000);
-    
-    // Register advertisement with BlueZ
-    register_advertisement();
-    
-    g_print("\nAdvertising... Press Ctrl+C to stop\n\n");
-    
-    // Run the main loop
-    g_main_loop_run(main_loop);
     
     // Cleanup
-    g_main_loop_unref(main_loop);
-    g_object_unref(system_bus);
+    printf("\n--- Stopping advertising ---\n");
+    system("hcitool -i hci0 cmd 0x08 0x000A 00 2>&1");
+    system("btmgmt power off 2>&1");
     
+    printf("Done.\n");
     return 0;
 }

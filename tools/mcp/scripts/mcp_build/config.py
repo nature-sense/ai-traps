@@ -30,7 +30,7 @@ PLATFORM_CONFIGS = {
     "cubie-a7s": {
         "build_dir": "build-cubie-a7s",
         "trap_path_template": "traps/targets/build/ai-trap-detection",
-        "default_host": "cubie-a7s.local",
+        "default_host": "radxa-a733.local",
         "default_user": "radxa",
         "default_trap": "cubie-a7s",
         "remote_dir": "~/ai-traps",

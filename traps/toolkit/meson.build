@@ -259,3 +259,18 @@ if rknn_lib.found() and test_inf_exists
              install : true,
              install_dir : '/usr/bin')
 endif
+
+# ble_advert.cpp — standalone BLE advertisement test tool
+ble_advert_src = '../tools/scripts/ble_advert.cpp'
+ble_advert_exists = run_command('sh', '-c', 'test -f ' + ble_advert_src + ' && echo yes || echo no', check: false).stdout().strip() == 'yes'
+if ble_advert_exists
+  glib_dep = dependency('glib-2.0', required: false)
+  gio_dep = dependency('gio-2.0', required: false)
+  if glib_dep.found() and gio_dep.found()
+    executable('ble_advert',
+               ble_advert_src,
+               dependencies: [glib_dep, gio_dep],
+               install : true,
+               install_dir : '/usr/bin')
+  endif
+endif

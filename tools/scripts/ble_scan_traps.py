@@ -36,10 +36,22 @@ def parse_manufacturer_data(manu_data: bytes) -> dict | None:
         "wifi_state_name": WIFI_STATE_NAMES.get(wifi_state, f"UNKNOWN_{wifi_state}"),
     }
 
-async def scan(scan_duration=10):
+async def scan(scan_duration=15):
     discovered_traps = []
+    all_manufacturer = []
 
     def detection_callback(device, advertisement_data):
+        # Log all manufacturer data for debugging
+        if advertisement_data.manufacturer_data:
+            for mid, mdata in advertisement_data.manufacturer_data.items():
+                all_manufacturer.append({
+                    "address": device.address,
+                    "name": device.name,
+                    "manufacturer_id": hex(mid),
+                    "data_hex": mdata.hex(),
+                    "data_len": len(mdata),
+                })
+        
         if MANUFACTURER_ID not in (advertisement_data.manufacturer_data or {}):
             return
         manu_data = advertisement_data.manufacturer_data[MANUFACTURER_ID]
@@ -47,9 +59,9 @@ async def scan(scan_duration=10):
         if parsed is None:
             return
         discovered_traps.append({
-            "ble_address": device.address,
+            "address": device.address,
             "name": device.name or "Unknown",
-            "rssi": advertisement_data.rssi,
+            "rssi": advertisement_data.rssi if hasattr(advertisement_data, 'rssi') else None,
             "trap_id": parsed["trap_id"],
             "wifi_state": parsed["wifi_state"],
             "wifi_state_name": parsed["wifi_state_name"],
@@ -65,6 +77,7 @@ async def scan(scan_duration=10):
         "scan_duration_seconds": scan_duration,
         "traps_found": len(discovered_traps),
         "discovered_traps": discovered_traps,
+        "all_manufacturer_data": all_manufacturer,
     }
     print(json.dumps(result, indent=2))
 

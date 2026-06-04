@@ -28,6 +28,7 @@
 #include <sys/ioctl.h>
 #include <sys/mman.h>
 #include <sys/stat.h>
+#include <poll.h>
 #include <linux/videodev2.h>
 #include <errno.h>
 

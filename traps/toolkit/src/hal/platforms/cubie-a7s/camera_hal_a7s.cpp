@@ -39,10 +39,13 @@
 #ifndef MEDIA_ENT_T_V4L2_SUBDEV_SENSOR
 #define MEDIA_ENT_T_V4L2_SUBDEV_SENSOR MEDIA_ENT_T_V4L2_SUBDEV
 #endif
+
+// The v4l2_subdev_capability struct on older BSP kernels (e.g. Allwinner A527
+// kernel 5.10) does NOT have a 'name' field. We use the media entity name
+// from the media controller API instead, which is more reliable anyway.
+// If VIDIOC_SUBDEV_QUERYCAP is not defined, we define a stub.
 #ifndef VIDIOC_SUBDEV_QUERYCAP
-// Fallback: if not defined, we'll skip the subdev capability query
 #define VIDIOC_SUBDEV_QUERYCAP 0
-struct v4l2_subdev_capability { char name[64]; };
 #endif
 
 namespace ct {
@@ -247,33 +250,47 @@ static bool configure_media_pipeline(int video_fd, int width, int height, int fp
 
         if (!found_sensor_dev) {
             // Fallback: try to find the subdev by scanning /sys/class/video4linux/
-            // The sensor subdev is typically v4l-subdev0 or v4l-subdev1
+            // The sensor subdev is typically v4l-subdev0 or v4l-subdev1.
+            // On older BSP kernels (e.g. Allwinner A527 kernel 5.10), the
+            // v4l2_subdev_capability struct does NOT have a 'name' field, so
+            // we use the media entity name (already printed above) instead.
             for (int sd = 0; sd <= 7; ++sd) {
                 char sd_path[32];
                 snprintf(sd_path, sizeof(sd_path), "/dev/v4l-subdev%d", sd);
                 sensor_subdev_fd = ::open(sd_path, O_RDWR, 0);
                 if (sensor_subdev_fd >= 0) {
-                    struct v4l2_subdev_capability sd_cap{};
-                    if (ioctl(sensor_subdev_fd, VIDIOC_SUBDEV_QUERYCAP, &sd_cap) == 0) {
-                        std::cout << "[CameraHalA7s]   Trying subdev " << sd_path
-                                  << ": " << sd_cap.name << "\n";
-                        if (strstr(reinterpret_cast<const char*>(sd_cap.name), "imx415") ||
-                            strstr(reinterpret_cast<const char*>(sd_cap.name), "sensor")) {
-                            strncpy(sensor_dev_path, sd_path, sizeof(sensor_dev_path) - 1);
-                            found_sensor_dev = true;
-                            std::cout << "[CameraHalA7s]   Found sensor subdev: "
-                                      << sensor_dev_path << "\n";
-                            ::close(sensor_subdev_fd);
-                            sensor_subdev_fd = -1;
-                            break;
+                    // Check if this subdev matches the sensor entity we found
+                    // by comparing major/minor device numbers
+                    struct stat sd_stat{};
+                    if (fstat(sensor_subdev_fd, &sd_stat) == 0) {
+                        // Re-enumerate media entities to find matching devnode
+                        struct media_entity_desc check_entity{};
+                        check_entity.id = MEDIA_ENT_ID_FLAG_NEXT;
+                        while (ioctl(media_fd, MEDIA_IOC_ENUM_ENTITIES, &check_entity) == 0) {
+                            if (check_entity.dev.major == major(sd_stat.st_rdev) &&
+                                check_entity.dev.minor == minor(sd_stat.st_rdev)) {
+                                std::cout << "[CameraHalA7s]   Subdev " << sd_path
+                                          << " matches entity: " << check_entity.name << "\n";
+                                if (strstr(check_entity.name, "imx415") ||
+                                    strstr(check_entity.name, "sensor")) {
+                                    strncpy(sensor_dev_path, sd_path, sizeof(sensor_dev_path) - 1);
+                                    found_sensor_dev = true;
+                                    std::cout << "[CameraHalA7s]   Found sensor subdev: "
+                                              << sensor_dev_path << "\n";
+                                    ::close(sensor_subdev_fd);
+                                    sensor_subdev_fd = -1;
+                                    break;
+                                }
+                            }
+                            check_entity.id |= MEDIA_ENT_ID_FLAG_NEXT;
                         }
                     }
+                    if (found_sensor_dev) break;
                     ::close(sensor_subdev_fd);
                     sensor_subdev_fd = -1;
                 }
             }
         }
-
         if (!found_sensor_dev) {
             std::cerr << "[CameraHalA7s]   Could not find sensor subdev device node\n";
             ::close(media_fd);
@@ -622,6 +639,7 @@ bool CameraHalA7s::init_v4l2() {
 
 // ─── init_v4l2_mmap ───────────────────────────────────────────────────────────
 bool CameraHalA7s::init_v4l2_mmap(uint32_t frame_size) {
+    (void)frame_size;  // Unused - buffer sizes are determined by the driver
     struct v4l2_requestbuffers req{};
     req.count  = 4;  // Double-buffered + 2 for safety
     req.type   = buf_type_;

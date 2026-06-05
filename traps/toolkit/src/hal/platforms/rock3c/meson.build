@@ -20,6 +20,7 @@
 platform_sources = files(
   'camera_hal_imx219.cpp',
   'camera_hal_imx415.cpp',
+  'camera_hal_ov5647.cpp',
   'inference_hal_rknn.cpp',
   'video_scaler_hal_rga.cpp',
 )

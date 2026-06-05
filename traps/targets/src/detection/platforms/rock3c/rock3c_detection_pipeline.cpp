@@ -19,6 +19,7 @@
 #include "camera/camera_hal_actor.hpp"
 #include "hal/platforms/rock3c/camera_hal_imx219.hpp"
 #include "hal/platforms/rock3c/camera_hal_imx415.hpp"
+#include "hal/platforms/rock3c/camera_hal_ov5647.hpp"
 #include "hal/platforms/rock3c/inference_hal_rknn.hpp"
 
 #include <iostream>
@@ -95,6 +96,8 @@ std::unique_ptr<CameraActor> Rock3cDetectionPipeline::createCamera() {
     std::unique_ptr<ICameraHAL> hal;
     if (model == "imx219") {
         hal = std::make_unique<CameraHalImx219>();
+    } else if (model == "ov5647") {
+        hal = std::make_unique<CameraHalOv5647>();
     } else {
         // Default to IMX415 (also handles "imx415" and unknown models gracefully)
         hal = std::make_unique<CameraHalImx415>();

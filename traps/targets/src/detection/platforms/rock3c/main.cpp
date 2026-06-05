@@ -68,7 +68,7 @@ int main(int argc, char* argv[]) {
         }
     } else {
         std::cout << "[main] using built-in default configuration\n";
-        cfg.camera.model               = "imx219";
+        cfg.camera.model               = "ov5647";
         cfg.camera.full_w              = 1920;
         cfg.camera.full_h              = 1080;
         cfg.camera.med_w               = 640;

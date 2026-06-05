@@ -1,12 +1,12 @@
 # Graph Report - .  (2026-06-05)
 
 ## Corpus Check
-- 186 files · ~433,918 words
+- 187 files · ~436,254 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 1545 nodes · 3484 edges · 150 communities detected
-- Extraction: 81% EXTRACTED · 19% INFERRED · 0% AMBIGUOUS · INFERRED: 646 edges (avg confidence: 0.5)
+- 1551 nodes · 3494 edges · 151 communities detected
+- Extraction: 82% EXTRACTED · 18% INFERRED · 0% AMBIGUOUS · INFERRED: 646 edges (avg confidence: 0.5)
 - Token cost: 0 input · 0 output
 
 ## Community Hubs (Navigation)
@@ -160,6 +160,7 @@
 - [[_COMMUNITY_Community 147|Community 147]]
 - [[_COMMUNITY_Community 148|Community 148]]
 - [[_COMMUNITY_Community 149|Community 149]]
+- [[_COMMUNITY_Community 150|Community 150]]
 
 ## God Nodes (most connected - your core abstractions)
 1. `PlatformType` - 82 edges
@@ -352,100 +353,100 @@ Cohesion: 0.33
 Nodes (5): compile_nbg_model(), compile_rknn_model(), Model compilation functions.  Supports compiling ONNX models to: - RKNN format f, Compile ONNX model to NBG format for Vivante VIPLite NPU (Cubie A7S), Compile ONNX model to RKNN format for Rockchip NPU (ROCK 3C)
 
 ### Community 41 - "Community 41"
+Cohesion: 0.67
+Nodes (5): capture_frame(), list_devices(), main(), print_caps(), v4l2_fmt_name()
+
+### Community 42 - "Community 42"
 Cohesion: 0.47
 Nodes (4): blit(), scale_nv12(), scale_nv12_to_bgr(), VideoScalerRGA
 
-### Community 42 - "Community 42"
+### Community 43 - "Community 43"
 Cohesion: 0.53
 Nodes (4): centroid_dist(), iou(), lores_to_full(), update()
 
-### Community 43 - "Community 43"
+### Community 44 - "Community 44"
 Cohesion: 0.4
 Nodes (0): 
 
-### Community 44 - "Community 44"
+### Community 45 - "Community 45"
 Cohesion: 0.4
 Nodes (1): VideoScalerVSE()
 
-### Community 45 - "Community 45"
+### Community 46 - "Community 46"
 Cohesion: 0.6
 Nodes (3): clamp_uint8(), encode(), nv12_to_rgb_row()
-
-### Community 46 - "Community 46"
-Cohesion: 0.4
-Nodes (0): 
 
 ### Community 47 - "Community 47"
 Cohesion: 0.4
 Nodes (0): 
 
 ### Community 48 - "Community 48"
+Cohesion: 0.4
+Nodes (0): 
+
+### Community 49 - "Community 49"
 Cohesion: 0.7
 Nodes (4): draw_overlays(), draw_rect(), draw_text(), rgb_to_yuv()
 
-### Community 49 - "Community 49"
+### Community 50 - "Community 50"
 Cohesion: 0.4
 Nodes (2): RunnerTests, XCTestCase
 
-### Community 50 - "Community 50"
+### Community 51 - "Community 51"
 Cohesion: 0.5
 Nodes (3): list_tools(), MCP tool definitions.  Defines the schemas for all tools exposed by the ai-trap-, Return the list of available tools
 
-### Community 51 - "Community 51"
+### Community 52 - "Community 52"
 Cohesion: 0.67
 Nodes (2): breakCCompiler, main()
 
-### Community 52 - "Community 52"
+### Community 53 - "Community 53"
 Cohesion: 0.5
 Nodes (0): 
 
-### Community 53 - "Community 53"
+### Community 54 - "Community 54"
 Cohesion: 0.67
 Nodes (2): get_or(), loadConfig()
 
-### Community 54 - "Community 54"
+### Community 55 - "Community 55"
 Cohesion: 0.83
 Nodes (3): encode_crop(), extract_nv12_roi(), nv12_to_jpeg()
 
-### Community 55 - "Community 55"
+### Community 56 - "Community 56"
 Cohesion: 0.83
 Nodes (3): evaluate_detections(), evaluate_tracked(), should_trigger()
 
-### Community 56 - "Community 56"
+### Community 57 - "Community 57"
 Cohesion: 0.67
 Nodes (3): main(), Resolve the data.yaml path and rewrite its train/val/test paths to absolute., resolve_data_yaml()
 
-### Community 57 - "Community 57"
+### Community 58 - "Community 58"
 Cohesion: 0.67
 Nodes (2): vnn_CreateNbgOutput(), vnn_ReleaseNbgOutput()
 
-### Community 58 - "Community 58"
+### Community 59 - "Community 59"
 Cohesion: 0.5
 Nodes (2): MainFlutterWindow, NSWindow
 
-### Community 59 - "Community 59"
+### Community 60 - "Community 60"
 Cohesion: 0.5
 Nodes (2): handle_new_rx_page(), Intercept NOTIFY_DEBUGGER_ABOUT_RX_PAGES and touch the pages.
 
-### Community 60 - "Community 60"
+### Community 61 - "Community 61"
 Cohesion: 0.67
 Nodes (2): main(), Run the MCP build server
 
-### Community 61 - "Community 61"
+### Community 62 - "Community 62"
 Cohesion: 0.67
 Nodes (2): get_port_position(), Get the (x, y) position of a port on an actor.
 
-### Community 62 - "Community 62"
+### Community 63 - "Community 63"
 Cohesion: 0.67
 Nodes (2): main(), Run the build server with uvicorn.
 
-### Community 63 - "Community 63"
-Cohesion: 0.67
-Nodes (1): Build Server Package - AI Camera Trap Build Server  A FastAPI-based build server
-
 ### Community 64 - "Community 64"
 Cohesion: 0.67
-Nodes (0): 
+Nodes (1): Build Server Package - AI Camera Trap Build Server  A FastAPI-based build server
 
 ### Community 65 - "Community 65"
 Cohesion: 0.67
@@ -453,11 +454,11 @@ Nodes (0):
 
 ### Community 66 - "Community 66"
 Cohesion: 0.67
-Nodes (1): main()
+Nodes (0): 
 
 ### Community 67 - "Community 67"
 Cohesion: 0.67
-Nodes (0): 
+Nodes (1): main()
 
 ### Community 68 - "Community 68"
 Cohesion: 0.67
@@ -465,71 +466,71 @@ Nodes (0):
 
 ### Community 69 - "Community 69"
 Cohesion: 0.67
-Nodes (1): ClassifierHalNative
+Nodes (0): 
 
 ### Community 70 - "Community 70"
 Cohesion: 0.67
-Nodes (0): 
+Nodes (1): ClassifierHalNative
 
 ### Community 71 - "Community 71"
 Cohesion: 0.67
-Nodes (1): SoftwareJpegEncoder
+Nodes (0): 
 
 ### Community 72 - "Community 72"
 Cohesion: 0.67
-Nodes (1): BaseStorage
+Nodes (1): SoftwareJpegEncoder
 
 ### Community 73 - "Community 73"
 Cohesion: 0.67
-Nodes (1): PodsDummy_sqflite_darwin
+Nodes (1): BaseStorage
 
 ### Community 74 - "Community 74"
 Cohesion: 0.67
-Nodes (1): PodsDummy_package_info_plus
+Nodes (1): PodsDummy_sqflite_darwin
 
 ### Community 75 - "Community 75"
 Cohesion: 0.67
-Nodes (1): PodsDummy_flutter_blue_plus_darwin
+Nodes (1): PodsDummy_package_info_plus
 
 ### Community 76 - "Community 76"
 Cohesion: 0.67
-Nodes (1): PodsDummy_Pods_Runner
+Nodes (1): PodsDummy_flutter_blue_plus_darwin
 
 ### Community 77 - "Community 77"
 Cohesion: 0.67
-Nodes (1): PodsDummy_shared_preferences_foundation
+Nodes (1): PodsDummy_Pods_Runner
 
 ### Community 78 - "Community 78"
 Cohesion: 0.67
-Nodes (1): PodsDummy_Pods_RunnerTests
+Nodes (1): PodsDummy_shared_preferences_foundation
 
 ### Community 79 - "Community 79"
 Cohesion: 0.67
-Nodes (1): PodsDummy_video_player_avfoundation
+Nodes (1): PodsDummy_Pods_RunnerTests
 
 ### Community 80 - "Community 80"
 Cohesion: 0.67
-Nodes (1): PodsDummy_wakelock_plus
+Nodes (1): PodsDummy_video_player_avfoundation
 
 ### Community 81 - "Community 81"
 Cohesion: 0.67
-Nodes (2): GeneratedPluginRegistrant, -registerWithRegistry
+Nodes (1): PodsDummy_wakelock_plus
 
 ### Community 82 - "Community 82"
 Cohesion: 0.67
-Nodes (2): FlutterSceneDelegate, SceneDelegate
+Nodes (2): GeneratedPluginRegistrant, -registerWithRegistry
 
 ### Community 83 - "Community 83"
-Cohesion: 1.0
-Nodes (1): NativeDetectionPipeline
+Cohesion: 0.67
+Nodes (2): FlutterSceneDelegate, SceneDelegate
 
 ### Community 84 - "Community 84"
 Cohesion: 1.0
-Nodes (1): CubieA7sDetectionPipeline
+Nodes (1): NativeDetectionPipeline
 
 ### Community 85 - "Community 85"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (1): CubieA7sDetectionPipeline
 
 ### Community 86 - "Community 86"
 Cohesion: 1.0
@@ -565,11 +566,11 @@ Nodes (0):
 
 ### Community 94 - "Community 94"
 Cohesion: 1.0
-Nodes (1): BaseTrapHandler
+Nodes (0): 
 
 ### Community 95 - "Community 95"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (1): BaseTrapHandler
 
 ### Community 96 - "Community 96"
 Cohesion: 1.0
@@ -585,19 +586,19 @@ Nodes (0):
 
 ### Community 99 - "Community 99"
 Cohesion: 1.0
-Nodes (1): Parse a single compiler output line
+Nodes (0): 
 
 ### Community 100 - "Community 100"
 Cohesion: 1.0
-Nodes (1): Parse full compiler/linker output
+Nodes (1): Parse a single compiler output line
 
 ### Community 101 - "Community 101"
 Cohesion: 1.0
-Nodes (1): Parse GDB output into structured crash data
+Nodes (1): Parse full compiler/linker output
 
 ### Community 102 - "Community 102"
 Cohesion: 1.0
-Nodes (0): 
+Nodes (1): Parse GDB output into structured crash data
 
 ### Community 103 - "Community 103"
 Cohesion: 1.0
@@ -787,142 +788,146 @@ Nodes (0):
 Cohesion: 1.0
 Nodes (0): 
 
+### Community 150 - "Community 150"
+Cohesion: 1.0
+Nodes (0): 
+
 ## Knowledge Gaps
 - **81 isolated node(s):** `Parse manufacturer-specific data from a BLE advertisement.     Format (from docs`, `Encode SSID + password for BLE provisioning write.     Format (from docs/ble-gat`, `Connect to a BLE device, read a characteristic, and disconnect.`, `Connect to a BLE device, write to a characteristic, optionally wait for     a no`, `Make HTTP request to a specific trap using its mDNS hostname.     trap_host exam` (+76 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **Thin community `Community 83`** (2 nodes): `NativeDetectionPipeline`, `native_detection_pipeline.hpp`
+- **Thin community `Community 84`** (2 nodes): `NativeDetectionPipeline`, `native_detection_pipeline.hpp`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 84`** (2 nodes): `CubieA7sDetectionPipeline`, `cubie_a7s_detection_pipeline.hpp`
+- **Thin community `Community 85`** (2 nodes): `CubieA7sDetectionPipeline`, `cubie_a7s_detection_pipeline.hpp`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 85`** (2 nodes): `main()`, `CMakeCCompilerId.c`
+- **Thin community `Community 86`** (2 nodes): `main()`, `CMakeCCompilerId.c`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 86`** (2 nodes): `main()`, `CMakeCXXCompilerId.cpp`
+- **Thin community `Community 87`** (2 nodes): `main()`, `CMakeCXXCompilerId.cpp`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 87`** (2 nodes): `video_scaler.hpp`, `IVideoScaler()`
+- **Thin community `Community 88`** (2 nodes): `video_scaler.hpp`, `IVideoScaler()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 88`** (2 nodes): `IClassifierHAL()`, `classifier_hal.hpp`
+- **Thin community `Community 89`** (2 nodes): `IClassifierHAL()`, `classifier_hal.hpp`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 89`** (2 nodes): `IInferenceHAL()`, `inference_hal.hpp`
+- **Thin community `Community 90`** (2 nodes): `IInferenceHAL()`, `inference_hal.hpp`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 90`** (2 nodes): `ICameraHAL()`, `camera_hal.hpp`
+- **Thin community `Community 91`** (2 nodes): `ICameraHAL()`, `camera_hal.hpp`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 91`** (2 nodes): `ct()`, `base_http_handler.h`
+- **Thin community `Community 92`** (2 nodes): `ct()`, `base_http_handler.h`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 92`** (2 nodes): `create()`, `camera_factory.cpp`
+- **Thin community `Community 93`** (2 nodes): `create()`, `camera_factory.cpp`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 93`** (2 nodes): `CameraActor()`, `camera_actor.hpp`
+- **Thin community `Community 94`** (2 nodes): `CameraActor()`, `camera_actor.hpp`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 94`** (2 nodes): `BaseTrapHandler`, `base_trap_handler.hpp`
+- **Thin community `Community 95`** (2 nodes): `BaseTrapHandler`, `base_trap_handler.hpp`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 95`** (2 nodes): `ActuatorActor()`, `actuator_actor.hpp`
+- **Thin community `Community 96`** (2 nodes): `ActuatorActor()`, `actuator_actor.hpp`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 96`** (2 nodes): `main()`, `convert_rknn.py`
+- **Thin community `Community 97`** (2 nodes): `main()`, `convert_rknn.py`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 97`** (2 nodes): `main()`, `convert_nbg.py`
+- **Thin community `Community 98`** (2 nodes): `main()`, `convert_nbg.py`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 98`** (2 nodes): `GeneratedPluginRegistrant.swift`, `RegisterGeneratedPlugins()`
+- **Thin community `Community 99`** (2 nodes): `GeneratedPluginRegistrant.swift`, `RegisterGeneratedPlugins()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 99`** (1 nodes): `Parse a single compiler output line`
+- **Thin community `Community 100`** (1 nodes): `Parse a single compiler output line`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 100`** (1 nodes): `Parse full compiler/linker output`
+- **Thin community `Community 101`** (1 nodes): `Parse full compiler/linker output`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 101`** (1 nodes): `Parse GDB output into structured crash data`
+- **Thin community `Community 102`** (1 nodes): `Parse GDB output into structured crash data`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 102`** (1 nodes): `types.hpp`
+- **Thin community `Community 103`** (1 nodes): `types.hpp`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 103`** (1 nodes): `session_actor.hpp`
+- **Thin community `Community 104`** (1 nodes): `session_actor.hpp`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 104`** (1 nodes): `apple-sdk.c`
+- **Thin community `Community 105`** (1 nodes): `apple-sdk.c`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 105`** (1 nodes): `apple-sdk.cpp`
+- **Thin community `Community 106`** (1 nodes): `apple-sdk.cpp`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 106`** (1 nodes): `camera_hal_imx415.hpp`
+- **Thin community `Community 107`** (1 nodes): `camera_hal_imx415.hpp`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 107`** (1 nodes): `camera_hal_imx219.hpp`
+- **Thin community `Community 108`** (1 nodes): `camera_hal_imx219.hpp`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 108`** (1 nodes): `camera_hal_native.hpp`
+- **Thin community `Community 109`** (1 nodes): `camera_hal_native.hpp`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 109`** (1 nodes): `video_scaler_native.hpp`
+- **Thin community `Community 110`** (1 nodes): `video_scaler_native.hpp`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 110`** (1 nodes): `inference_hal_native.hpp`
+- **Thin community `Community 111`** (1 nodes): `inference_hal_native.hpp`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 111`** (1 nodes): `frame_buffer.hpp`
+- **Thin community `Community 112`** (1 nodes): `frame_buffer.hpp`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 112`** (1 nodes): `config_loader.hpp`
+- **Thin community `Community 113`** (1 nodes): `config_loader.hpp`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 113`** (1 nodes): `types.hpp`
+- **Thin community `Community 114`** (1 nodes): `types.hpp`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 114`** (1 nodes): `wifi_provisioning_actor.hpp`
+- **Thin community `Community 115`** (1 nodes): `wifi_provisioning_actor.hpp`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 115`** (1 nodes): `scene_camera_actor.hpp`
+- **Thin community `Community 116`** (1 nodes): `scene_camera_actor.hpp`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 116`** (1 nodes): `camera_hal_actor.hpp`
+- **Thin community `Community 117`** (1 nodes): `camera_hal_actor.hpp`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 117`** (1 nodes): `crop_encoder_actor.hpp`
+- **Thin community `Community 118`** (1 nodes): `crop_encoder_actor.hpp`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 118`** (1 nodes): `cropper_actor.hpp`
+- **Thin community `Community 119`** (1 nodes): `cropper_actor.hpp`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 119`** (1 nodes): `best_shot_keeper_actor.hpp`
+- **Thin community `Community 120`** (1 nodes): `best_shot_keeper_actor.hpp`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 120`** (1 nodes): `tracker_actor.hpp`
+- **Thin community `Community 121`** (1 nodes): `tracker_actor.hpp`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 121`** (1 nodes): `classifier_actor.hpp`
+- **Thin community `Community 122`** (1 nodes): `classifier_actor.hpp`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 122`** (1 nodes): `inference_actor.hpp`
+- **Thin community `Community 123`** (1 nodes): `inference_actor.hpp`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 123`** (1 nodes): `decision_actor.hpp`
+- **Thin community `Community 124`** (1 nodes): `decision_actor.hpp`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 124`** (1 nodes): `overlay_actor.hpp`
+- **Thin community `Community 125`** (1 nodes): `overlay_actor.hpp`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 125`** (1 nodes): `civetweb.h`
+- **Thin community `Community 126`** (1 nodes): `civetweb.h`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 126`** (1 nodes): `hires_mjpeg_bridge.hpp`
+- **Thin community `Community 127`** (1 nodes): `hires_mjpeg_bridge.hpp`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 127`** (1 nodes): `motion_sensor_actor.hpp`
+- **Thin community `Community 128`** (1 nodes): `motion_sensor_actor.hpp`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 128`** (1 nodes): `vnn_nbgoutput.h`
+- **Thin community `Community 129`** (1 nodes): `vnn_nbgoutput.h`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 129`** (1 nodes): `vnn_post_process.h`
+- **Thin community `Community 130`** (1 nodes): `vnn_post_process.h`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 130`** (1 nodes): `vnn_global.h`
+- **Thin community `Community 131`** (1 nodes): `vnn_global.h`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 131`** (1 nodes): `vnn_pre_process.h`
+- **Thin community `Community 132`** (1 nodes): `vnn_pre_process.h`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 132`** (1 nodes): `sqflite_darwin-umbrella.h`
+- **Thin community `Community 133`** (1 nodes): `sqflite_darwin-umbrella.h`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 133`** (1 nodes): `package_info_plus-umbrella.h`
+- **Thin community `Community 134`** (1 nodes): `package_info_plus-umbrella.h`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 134`** (1 nodes): `flutter_blue_plus_darwin-umbrella.h`
+- **Thin community `Community 135`** (1 nodes): `flutter_blue_plus_darwin-umbrella.h`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 135`** (1 nodes): `Pods-Runner-umbrella.h`
+- **Thin community `Community 136`** (1 nodes): `Pods-Runner-umbrella.h`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 136`** (1 nodes): `shared_preferences_foundation-umbrella.h`
+- **Thin community `Community 137`** (1 nodes): `shared_preferences_foundation-umbrella.h`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 137`** (1 nodes): `Pods-RunnerTests-umbrella.h`
+- **Thin community `Community 138`** (1 nodes): `Pods-RunnerTests-umbrella.h`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 138`** (1 nodes): `video_player_avfoundation-umbrella.h`
+- **Thin community `Community 139`** (1 nodes): `video_player_avfoundation-umbrella.h`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 139`** (1 nodes): `wakelock_plus-umbrella.h`
+- **Thin community `Community 140`** (1 nodes): `wakelock_plus-umbrella.h`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 140`** (1 nodes): `Runner-Bridging-Header.h`
+- **Thin community `Community 141`** (1 nodes): `Runner-Bridging-Header.h`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 141`** (1 nodes): `GeneratedPluginRegistrant.h`
+- **Thin community `Community 142`** (1 nodes): `GeneratedPluginRegistrant.h`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 142`** (1 nodes): `sqflite_darwin-umbrella.h`
+- **Thin community `Community 143`** (1 nodes): `sqflite_darwin-umbrella.h`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 143`** (1 nodes): `package_info_plus-umbrella.h`
+- **Thin community `Community 144`** (1 nodes): `package_info_plus-umbrella.h`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 144`** (1 nodes): `flutter_blue_plus_darwin-umbrella.h`
+- **Thin community `Community 145`** (1 nodes): `flutter_blue_plus_darwin-umbrella.h`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 145`** (1 nodes): `Pods-Runner-umbrella.h`
+- **Thin community `Community 146`** (1 nodes): `Pods-Runner-umbrella.h`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 146`** (1 nodes): `shared_preferences_foundation-umbrella.h`
+- **Thin community `Community 147`** (1 nodes): `shared_preferences_foundation-umbrella.h`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 147`** (1 nodes): `Pods-RunnerTests-umbrella.h`
+- **Thin community `Community 148`** (1 nodes): `Pods-RunnerTests-umbrella.h`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 148`** (1 nodes): `video_player_avfoundation-umbrella.h`
+- **Thin community `Community 149`** (1 nodes): `video_player_avfoundation-umbrella.h`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 149`** (1 nodes): `wakelock_plus-umbrella.h`
+- **Thin community `Community 150`** (1 nodes): `wakelock_plus-umbrella.h`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 
 ## Suggested Questions

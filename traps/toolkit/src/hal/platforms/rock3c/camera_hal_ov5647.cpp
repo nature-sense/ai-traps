@@ -304,9 +304,16 @@ bool CameraHalOv5647::init_v4l2() {
         if (ioctl(v4l2_fd_, VIDIOC_QBUF, &qbuf) < 0) {
             std::cerr << "[CameraHalOv5647] VIDIOC_QBUF[" << slot.index
                       << "] failed: " << std::strerror(errno) << "\n";
+            // DMABUF QBUF failed - fall back to MMAP
+            std::cout << "[CameraHalOv5647] DMABUF QBUF failed, falling back to MMAP\n";
+            // Clean up DMABUF buffers before switching to MMAP
+            for (auto& s : v4l2_buf_pool_) {
+                unmap_dma_buf(s.mapped, s.length, s.dma_fd);
+            }
+            v4l2_buf_pool_.clear();
             close(v4l2_fd_);
             v4l2_fd_ = -1;
-            return false;
+            return init_v4l2_mmap(fmt, frame_size);
         }
         slot.queued = true;
     }

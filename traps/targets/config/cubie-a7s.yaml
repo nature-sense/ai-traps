@@ -12,7 +12,12 @@ camera:
   lores_w: 320
   lores_h: 320
   fps: 15
-  device: "/dev/video0"
+  # V4L2 camera device path.
+  # On Allwinner A527 (Cubie A7S), the ISP-processed video node is typically
+  # rkisp_mainpath at /dev/video11 or /dev/video21.
+  # The CameraHalA7s will auto-detect the correct device if this one fails,
+  # scanning /sys/class/video4linux/video*/name for "rkisp_mainpath".
+  device: "/dev/video11"
   scene_dir: ""
   iq_dir: "/usr/share/iqfiles"
 

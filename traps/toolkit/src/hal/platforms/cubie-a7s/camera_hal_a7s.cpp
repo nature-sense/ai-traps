@@ -131,13 +131,68 @@ bool CameraHalA7s::init_v4l2() {
     // Try the configured device path first, then common alternatives
     const char* device = cfg_.camera.device.c_str();
     v4l2_fd_ = try_open_v4l2(device);
-    if (v4l2_fd_ < 0) {
-        // Fallback: try /dev/video0 through /dev/video3
-        for (int i = 0; i <= 3; ++i) {
-            char alt_dev[32];
-            snprintf(alt_dev, sizeof(alt_dev), "/dev/video%d", i);
-            v4l2_fd_ = try_open_v4l2(alt_dev);
-            if (v4l2_fd_ >= 0) break;
+    if (v4l2_fd_ >= 0) {
+        std::cout << "[CameraHalA7s] Using configured device: " << device << "\n";
+    } else {
+        // ── Smart device discovery ─────────────────────────────────────────────
+        // On Allwinner A527 (Cubie A7S), the ISP-processed video node is typically
+        // rkisp_mainpath, which can be /dev/video11 or /dev/video21.
+        // We first try to find it by reading /sys/class/video4linux/video*/name,
+        // then fall back to scanning common device numbers.
+        //
+        // Reference: cat /sys/class/video4linux/video*/name
+        std::cout << "[CameraHalA7s] Scanning for ISP video devices...\n";
+
+        // Strategy 1: Read sysfs names to find rkisp_mainpath
+        bool found_by_name = false;
+        for (int i = 0; i <= 31; ++i) {
+            char sysfs_path[64];
+            snprintf(sysfs_path, sizeof(sysfs_path),
+                     "/sys/class/video4linux/video%d/name", i);
+            FILE* f = fopen(sysfs_path, "r");
+            if (f) {
+                char name[128] = {};
+                if (fgets(name, sizeof(name), f)) {
+                    // Trim trailing newline
+                    size_t len = strlen(name);
+                    if (len > 0 && name[len - 1] == '\n') name[len - 1] = '\0';
+                    std::cout << "[CameraHalA7s]   /dev/video" << i << ": " << name << "\n";
+
+                    // Look for ISP mainpath devices
+                    if (strstr(name, "rkisp_mainpath") ||
+                        strstr(name, "isp_mainpath") ||
+                        strstr(name, "isp") ||
+                        strstr(name, "stream")) {
+                        char dev_path[32];
+                        snprintf(dev_path, sizeof(dev_path), "/dev/video%d", i);
+                        v4l2_fd_ = try_open_v4l2(dev_path);
+                        if (v4l2_fd_ >= 0) {
+                            std::cout << "[CameraHalA7s] Found ISP device: "
+                                      << dev_path << " (" << name << ")\n";
+                            found_by_name = true;
+                            break;
+                        }
+                    }
+                }
+                fclose(f);
+            }
+        }
+
+        // Strategy 2: Try common ISP device numbers
+        if (!found_by_name) {
+            std::cout << "[CameraHalA7s] No ISP device found by name, "
+                      << "trying common device numbers...\n";
+            const int common_devices[] = {11, 21, 31, 0, 1, 2, 3, 4, 5};
+            for (int dev_num : common_devices) {
+                char alt_dev[32];
+                snprintf(alt_dev, sizeof(alt_dev), "/dev/video%d", dev_num);
+                v4l2_fd_ = try_open_v4l2(alt_dev);
+                if (v4l2_fd_ >= 0) {
+                    std::cout << "[CameraHalA7s] Found working device: "
+                              << alt_dev << "\n";
+                    break;
+                }
+            }
         }
     }
 

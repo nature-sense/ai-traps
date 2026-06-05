@@ -2383,7 +2383,7 @@
       "label": "._find_binary()",
       "file_type": "code",
       "source_file": "tools/mcp/scripts/build_server/build_manager.py",
-      "source_location": "L261",
+      "source_location": "L270",
       "id": "build_manager_buildmanager_find_binary",
       "community": 1
     },
@@ -2391,7 +2391,7 @@
       "label": ".create_runtime()",
       "file_type": "code",
       "source_file": "tools/mcp/scripts/build_server/build_manager.py",
-      "source_location": "L277",
+      "source_location": "L286",
       "id": "build_manager_buildmanager_create_runtime",
       "community": 1
     },
@@ -2447,17 +2447,17 @@
       "label": "Find the built trap binary in the build directory.",
       "file_type": "rationale",
       "source_file": "tools/mcp/scripts/build_server/build_manager.py",
-      "source_location": "L262",
-      "community": 1,
-      "id": "build_manager_rationale_262"
+      "source_location": "L271",
+      "id": "build_manager_rationale_271",
+      "community": 1
     },
     {
       "label": "Create a runtime from a completed build.",
       "file_type": "rationale",
       "source_file": "tools/mcp/scripts/build_server/build_manager.py",
-      "source_location": "L285",
-      "community": 1,
-      "id": "build_manager_rationale_285"
+      "source_location": "L294",
+      "id": "build_manager_rationale_294",
+      "community": 1
     },
     {
       "label": "base_platform.py",
@@ -12244,6 +12244,22 @@
       "community": 149
     },
     {
+      "label": "Find the built trap binary in the build directory.",
+      "file_type": "rationale",
+      "source_file": "tools/mcp/scripts/build_server/build_manager.py",
+      "source_location": "L262",
+      "community": 1,
+      "id": "build_manager_rationale_262"
+    },
+    {
+      "label": "Create a runtime from a completed build.",
+      "file_type": "rationale",
+      "source_file": "tools/mcp/scripts/build_server/build_manager.py",
+      "source_location": "L285",
+      "community": 1,
+      "id": "build_manager_rationale_285"
+    },
+    {
       "label": "Get or create a build manager for a platform.",
       "file_type": "rationale",
       "source_file": "tools/mcp/scripts/build_server/main.py",
@@ -16447,11 +16463,11 @@
       "source_file": "tools/mcp/scripts/build_server/build_manager.py",
       "source_location": "L26",
       "weight": 0.8,
-      "_src": "models_buildstatus",
-      "_tgt": "build_manager_rationale_262",
-      "confidence_score": 0.5,
+      "_src": "build_manager_rationale_271",
+      "_tgt": "models_buildstatus",
       "source": "models_buildstatus",
-      "target": "build_manager_rationale_262"
+      "target": "build_manager_rationale_271",
+      "confidence_score": 0.5
     },
     {
       "relation": "uses",
@@ -16459,11 +16475,11 @@
       "source_file": "tools/mcp/scripts/build_server/build_manager.py",
       "source_location": "L26",
       "weight": 0.8,
-      "_src": "models_buildstatus",
-      "_tgt": "build_manager_rationale_285",
-      "confidence_score": 0.5,
+      "_src": "build_manager_rationale_294",
+      "_tgt": "models_buildstatus",
       "source": "models_buildstatus",
-      "target": "build_manager_rationale_285"
+      "target": "build_manager_rationale_294",
+      "confidence_score": 0.5
     },
     {
       "relation": "uses",
@@ -16644,6 +16660,30 @@
       "confidence_score": 0.5,
       "source": "models_buildstatus",
       "target": "main_rationale_284"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "tools/mcp/scripts/build_server/build_manager.py",
+      "source_location": "L26",
+      "weight": 0.8,
+      "_src": "models_buildstatus",
+      "_tgt": "build_manager_rationale_262",
+      "confidence_score": 0.5,
+      "source": "models_buildstatus",
+      "target": "build_manager_rationale_262"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "tools/mcp/scripts/build_server/build_manager.py",
+      "source_location": "L26",
+      "weight": 0.8,
+      "_src": "models_buildstatus",
+      "_tgt": "build_manager_rationale_285",
+      "confidence_score": 0.5,
+      "source": "models_buildstatus",
+      "target": "build_manager_rationale_285"
     },
     {
       "relation": "uses",
@@ -23933,7 +23973,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tools/mcp/scripts/build_server/build_manager.py",
-      "source_location": "L261",
+      "source_location": "L270",
       "weight": 1.0,
       "_src": "build_manager_buildmanager",
       "_tgt": "build_manager_buildmanager_find_binary",
@@ -23945,7 +23985,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tools/mcp/scripts/build_server/build_manager.py",
-      "source_location": "L277",
+      "source_location": "L286",
       "weight": 1.0,
       "_src": "build_manager_buildmanager",
       "_tgt": "build_manager_buildmanager_create_runtime",
@@ -24353,7 +24393,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "tools/mcp/scripts/build_server/build_manager.py",
-      "source_location": "L235",
+      "source_location": "L244",
       "weight": 1.0,
       "_src": "build_manager_buildmanager_execute_build",
       "_tgt": "build_manager_buildmanager_find_binary",
@@ -24377,24 +24417,24 @@
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
       "source_file": "tools/mcp/scripts/build_server/build_manager.py",
-      "source_location": "L262",
+      "source_location": "L271",
       "weight": 1.0,
-      "_src": "build_manager_rationale_262",
+      "_src": "build_manager_rationale_271",
       "_tgt": "build_manager_buildmanager_find_binary",
       "source": "build_manager_buildmanager_find_binary",
-      "target": "build_manager_rationale_262",
+      "target": "build_manager_rationale_271",
       "confidence_score": 1.0
     },
     {
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
       "source_file": "tools/mcp/scripts/build_server/build_manager.py",
-      "source_location": "L285",
+      "source_location": "L294",
       "weight": 1.0,
-      "_src": "build_manager_rationale_285",
+      "_src": "build_manager_rationale_294",
       "_tgt": "build_manager_buildmanager_create_runtime",
       "source": "build_manager_buildmanager_create_runtime",
-      "target": "build_manager_rationale_285",
+      "target": "build_manager_rationale_294",
       "confidence_score": 1.0
     },
     {
@@ -24475,11 +24515,11 @@
       "source_file": "tools/mcp/scripts/build_server/build_manager.py",
       "source_location": "L25",
       "weight": 0.8,
-      "_src": "build_manager_rationale_262",
+      "_src": "build_manager_rationale_271",
       "_tgt": "base_platform_platformbase",
-      "confidence_score": 0.5,
-      "source": "build_manager_rationale_262",
-      "target": "base_platform_platformbase"
+      "source": "build_manager_rationale_271",
+      "target": "base_platform_platformbase",
+      "confidence_score": 0.5
     },
     {
       "relation": "uses",
@@ -24487,11 +24527,11 @@
       "source_file": "tools/mcp/scripts/build_server/build_manager.py",
       "source_location": "L25",
       "weight": 0.8,
-      "_src": "build_manager_rationale_285",
+      "_src": "build_manager_rationale_294",
       "_tgt": "base_platform_platformbase",
-      "confidence_score": 0.5,
-      "source": "build_manager_rationale_285",
-      "target": "base_platform_platformbase"
+      "source": "build_manager_rationale_294",
+      "target": "base_platform_platformbase",
+      "confidence_score": 0.5
     },
     {
       "relation": "imports_from",
@@ -25080,6 +25120,30 @@
       "confidence_score": 0.5,
       "source": "base_platform_platformbase",
       "target": "main_rationale_284"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "tools/mcp/scripts/build_server/build_manager.py",
+      "source_location": "L25",
+      "weight": 0.8,
+      "_src": "build_manager_rationale_262",
+      "_tgt": "base_platform_platformbase",
+      "confidence_score": 0.5,
+      "source": "base_platform_platformbase",
+      "target": "build_manager_rationale_262"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "tools/mcp/scripts/build_server/build_manager.py",
+      "source_location": "L25",
+      "weight": 0.8,
+      "_src": "build_manager_rationale_285",
+      "_tgt": "base_platform_platformbase",
+      "confidence_score": 0.5,
+      "source": "base_platform_platformbase",
+      "target": "build_manager_rationale_285"
     },
     {
       "relation": "uses",

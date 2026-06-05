@@ -1,12 +1,12 @@
 # Graph Report - .  (2026-06-05)
 
 ## Corpus Check
-- 186 files · ~433,891 words
+- 186 files · ~433,918 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 1543 nodes · 3480 edges · 150 communities detected
-- Extraction: 82% EXTRACTED · 18% INFERRED · 0% AMBIGUOUS · INFERRED: 642 edges (avg confidence: 0.5)
+- 1545 nodes · 3484 edges · 150 communities detected
+- Extraction: 81% EXTRACTED · 19% INFERRED · 0% AMBIGUOUS · INFERRED: 646 edges (avg confidence: 0.5)
 - Token cost: 0 input · 0 output
 
 ## Community Hubs (Navigation)
@@ -163,12 +163,12 @@
 
 ## God Nodes (most connected - your core abstractions)
 1. `PlatformType` - 82 edges
-2. `PlatformBase` - 76 edges
+2. `PlatformBase` - 78 edges
 3. `BuildServerClient` - 55 edges
 4. `EnvironmentItem` - 54 edges
-5. `Rock3cPlatform` - 41 edges
-6. `mg_snprintf()` - 41 edges
-7. `BuildStatus` - 40 edges
+5. `BuildStatus` - 42 edges
+6. `Rock3cPlatform` - 41 edges
+7. `mg_snprintf()` - 41 edges
 8. `BuildManager` - 39 edges
 9. `mg_free()` - 37 edges
 10. `SetupRequest` - 31 edges
@@ -193,7 +193,7 @@ Nodes (330): abort_cgi_process(), accept_new_connection(), addenv(), alloc_print
 
 ### Community 1 - "Community 1"
 Cohesion: 0.04
-Nodes (137): ABC, PlatformBase, Abstract base class for platform-specific operations.  Each target board (rock3c, Install missing dependencies. Returns setup log., Get the meson setup command for the toolkit., Get the meson setup command for the target binary., Get the command to compile the model, or None if not supported., Generate a YAML config file for this platform. (+129 more)
+Nodes (139): ABC, PlatformBase, Abstract base class for platform-specific operations.  Each target board (rock3c, Install missing dependencies. Returns setup log., Get the meson setup command for the toolkit., Get the meson setup command for the target binary., Get the command to compile the model, or None if not supported., Generate a YAML config file for this platform. (+131 more)
 
 ### Community 2 - "Community 2"
 Cohesion: 0.04
@@ -930,14 +930,14 @@ _Questions this graph is uniquely positioned to answer:_
 
 - **Are the 79 inferred relationships involving `PlatformType` (e.g. with `CubieA7sPlatform` and `Cubie A7S (Allwinner A527) platform implementation.  Provides platform-specific`) actually correct?**
   _`PlatformType` has 79 INFERRED edges - model-reasoned connections that need verification._
-- **Are the 59 inferred relationships involving `PlatformBase` (e.g. with `CubieA7sPlatform` and `Cubie A7S (Allwinner A527) platform implementation.  Provides platform-specific`) actually correct?**
-  _`PlatformBase` has 59 INFERRED edges - model-reasoned connections that need verification._
+- **Are the 61 inferred relationships involving `PlatformBase` (e.g. with `CubieA7sPlatform` and `Cubie A7S (Allwinner A527) platform implementation.  Provides platform-specific`) actually correct?**
+  _`PlatformBase` has 61 INFERRED edges - model-reasoned connections that need verification._
 - **Are the 36 inferred relationships involving `BuildServerClient` (e.g. with `TestRealProjectTarball` and `Test tarball creation against the actual project.`) actually correct?**
   _`BuildServerClient` has 36 INFERRED edges - model-reasoned connections that need verification._
 - **Are the 51 inferred relationships involving `EnvironmentItem` (e.g. with `CubieA7sPlatform` and `Cubie A7S (Allwinner A527) platform implementation.  Provides platform-specific`) actually correct?**
   _`EnvironmentItem` has 51 INFERRED edges - model-reasoned connections that need verification._
-- **Are the 31 inferred relationships involving `Rock3cPlatform` (e.g. with `PlatformBase` and `EnvironmentItem`) actually correct?**
-  _`Rock3cPlatform` has 31 INFERRED edges - model-reasoned connections that need verification._
+- **Are the 39 inferred relationships involving `BuildStatus` (e.g. with `BuildManager` and `Build Manager - orchestrates meson-based builds on the target board.  Handles: -`) actually correct?**
+  _`BuildStatus` has 39 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `Parse manufacturer-specific data from a BLE advertisement.     Format (from docs`, `Encode SSID + password for BLE provisioning write.     Format (from docs/ble-gat`, `Connect to a BLE device, read a characteristic, and disconnect.` to the rest of the system?**
   _81 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Community 0` be split into smaller, more focused modules?**

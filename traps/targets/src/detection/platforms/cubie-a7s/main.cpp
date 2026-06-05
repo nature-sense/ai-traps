@@ -80,7 +80,7 @@ int main(int argc, char* argv[]) {
         cfg.camera.lores_w             = 320;
         cfg.camera.lores_h             = 320;
         cfg.camera.fps                 = 15;
-        cfg.camera.device              = "/dev/video0";
+        cfg.camera.device              = "/dev/video11";
         cfg.inference.model_path       = "/usr/share/ai-trap/models/yolo11n.nbg";
         cfg.storage.output_dir         = "/var/lib/ai-trap/detections";
         cfg.storage.db_path            = "/var/lib/ai-trap/trap.db";

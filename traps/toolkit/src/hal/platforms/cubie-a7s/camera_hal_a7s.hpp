@@ -103,6 +103,7 @@ private:
     bool     mplane_    = false;
     uint32_t buf_type_  = V4L2_BUF_TYPE_VIDEO_CAPTURE;
     uint32_t v4l2_stride_ = 0;
+    uint32_t v4l2_pix_fmt_ = 0;  // Actual pixel format from driver
 
     // V4L2 buffer pool (MMAP buffers)
     std::vector<V4l2BufSlot> v4l2_buf_pool_;

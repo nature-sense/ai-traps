@@ -212,69 +212,119 @@ bool CameraHalA7s::init_v4l2() {
     std::cout << "[CameraHalA7s] Detected " << (mplane_ ? "multiplanar" : "single-planar")
               << " V4L2 API\n";
 
-    // 2. Set format: NV12 at configured resolution
+    // 2. Enumerate supported pixel formats
+    //    On Allwinner A733 (sunxi-vin), the driver may only support raw Bayer
+    //    formats (e.g. SBGGR8, SGRBG8) or JPEG, not NV12. We enumerate what's
+    //    available and try NV12 first, then fall back to whatever the driver
+    //    supports.
+    std::vector<uint32_t> supported_formats;
+    {
+        struct v4l2_fmtdesc fmtdesc{};
+        fmtdesc.type = buf_type_;
+        fmtdesc.index = 0;
+        while (ioctl(v4l2_fd_, VIDIOC_ENUM_FMT, &fmtdesc) == 0) {
+            supported_formats.push_back(fmtdesc.pixelformat);
+            std::cout << "[CameraHalA7s]   Supports: "
+                      << v4l2_fmt_name(fmtdesc.pixelformat) << "\n";
+            fmtdesc.index++;
+        }
+    }
+
+    // 3. Set format: prefer NV12, fall back to whatever the driver supports
+    //    Build a preference list: NV12 first, then any driver-native format
+    std::vector<uint32_t> format_prefs;
+    format_prefs.push_back(V4L2_PIX_FMT_NV12);
+
+    // Add all driver-supported formats after NV12
+    for (auto fmt : supported_formats) {
+        if (fmt != V4L2_PIX_FMT_NV12) {
+            format_prefs.push_back(fmt);
+        }
+    }
+
+    uint32_t selected_fmt = 0;
     bool fmt_ok = false;
 
-    if (mplane_) {
-        struct v4l2_format fmt{};
-        fmt.type = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
-        fmt.fmt.pix_mp.width       = static_cast<__u32>(cfg_.camera.full_w);
-        fmt.fmt.pix_mp.height      = static_cast<__u32>(cfg_.camera.full_h);
-        fmt.fmt.pix_mp.pixelformat = V4L2_PIX_FMT_NV12;
-        fmt.fmt.pix_mp.field       = V4L2_FIELD_NONE;
-        fmt.fmt.pix_mp.num_planes  = 1;
+    for (auto try_fmt : format_prefs) {
+        if (mplane_) {
+            struct v4l2_format fmt{};
+            fmt.type = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
+            fmt.fmt.pix_mp.width       = static_cast<__u32>(cfg_.camera.full_w);
+            fmt.fmt.pix_mp.height      = static_cast<__u32>(cfg_.camera.full_h);
+            fmt.fmt.pix_mp.pixelformat = try_fmt;
+            fmt.fmt.pix_mp.field       = V4L2_FIELD_NONE;
+            fmt.fmt.pix_mp.num_planes  = 1;
 
-        if (ioctl(v4l2_fd_, VIDIOC_S_FMT, &fmt) == 0) {
-            std::cout << "[CameraHalA7s] Format set (MPLANE): " << fmt.fmt.pix_mp.width << "x"
-                      << fmt.fmt.pix_mp.height << " "
-                      << v4l2_fmt_name(fmt.fmt.pix_mp.pixelformat)
-                      << " stride=" << fmt.fmt.pix_mp.plane_fmt[0].bytesperline << "\n";
-
-            if (fmt.fmt.pix_mp.pixelformat != V4L2_PIX_FMT_NV12) {
-                std::cerr << "[CameraHalA7s] Driver changed pixel format to "
+            if (ioctl(v4l2_fd_, VIDIOC_S_FMT, &fmt) == 0) {
+                std::cout << "[CameraHalA7s] Format set (MPLANE): "
+                          << fmt.fmt.pix_mp.width << "x"
+                          << fmt.fmt.pix_mp.height << " "
                           << v4l2_fmt_name(fmt.fmt.pix_mp.pixelformat)
-                          << ", expected NV12\n";
-                return false;
+                          << " stride=" << fmt.fmt.pix_mp.plane_fmt[0].bytesperline << "\n";
+                selected_fmt = fmt.fmt.pix_mp.pixelformat;
+                v4l2_stride_ = fmt.fmt.pix_mp.plane_fmt[0].bytesperline;
+                fmt_ok = true;
+                break;
+            }
+        } else {
+            struct v4l2_format fmt{};
+            fmt.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+            fmt.fmt.pix.width       = static_cast<__u32>(cfg_.camera.full_w);
+            fmt.fmt.pix.height      = static_cast<__u32>(cfg_.camera.full_h);
+            fmt.fmt.pix.pixelformat = try_fmt;
+            fmt.fmt.pix.field       = V4L2_FIELD_NONE;
+
+            if (ioctl(v4l2_fd_, VIDIOC_S_FMT, &fmt) == 0) {
+                std::cout << "[CameraHalA7s] Format set (single-planar): "
+                          << fmt.fmt.pix.width << "x"
+                          << fmt.fmt.pix.height << " "
+                          << v4l2_fmt_name(fmt.fmt.pix.pixelformat)
+                          << " stride=" << fmt.fmt.pix.bytesperline << "\n";
+                selected_fmt = fmt.fmt.pix.pixelformat;
+                v4l2_stride_ = fmt.fmt.pix.bytesperline;
+                fmt_ok = true;
+                break;
             }
 
-            v4l2_stride_ = fmt.fmt.pix_mp.plane_fmt[0].bytesperline;
-            fmt_ok = true;
-        } else {
-            std::cout << "[CameraHalA7s] MPLANE S_FMT failed ("
-                      << strerror(errno) << "), falling back to single-planar\n";
-            mplane_ = false;
-            buf_type_ = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+            // If MPLANE failed earlier, try single-planar for this format
+            if (mplane_) {
+                std::cout << "[CameraHalA7s] MPLANE S_FMT failed for "
+                          << v4l2_fmt_name(try_fmt) << " ("
+                          << strerror(errno) << "), trying single-planar\n";
+                mplane_ = false;
+                buf_type_ = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+
+                struct v4l2_format sfmt{};
+                sfmt.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+                sfmt.fmt.pix.width       = static_cast<__u32>(cfg_.camera.full_w);
+                sfmt.fmt.pix.height      = static_cast<__u32>(cfg_.camera.full_h);
+                sfmt.fmt.pix.pixelformat = try_fmt;
+                sfmt.fmt.pix.field       = V4L2_FIELD_NONE;
+
+                if (ioctl(v4l2_fd_, VIDIOC_S_FMT, &sfmt) == 0) {
+                    std::cout << "[CameraHalA7s] Format set (single-planar fallback): "
+                              << sfmt.fmt.pix.width << "x"
+                              << sfmt.fmt.pix.height << " "
+                              << v4l2_fmt_name(sfmt.fmt.pix.pixelformat)
+                              << " stride=" << sfmt.fmt.pix.bytesperline << "\n";
+                    selected_fmt = sfmt.fmt.pix.pixelformat;
+                    v4l2_stride_ = sfmt.fmt.pix.bytesperline;
+                    fmt_ok = true;
+                    break;
+                }
+            }
         }
     }
 
     if (!fmt_ok) {
-        struct v4l2_format fmt{};
-        fmt.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-        fmt.fmt.pix.width       = static_cast<__u32>(cfg_.camera.full_w);
-        fmt.fmt.pix.height      = static_cast<__u32>(cfg_.camera.full_h);
-        fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_NV12;
-        fmt.fmt.pix.field       = V4L2_FIELD_NONE;
-
-        if (ioctl(v4l2_fd_, VIDIOC_S_FMT, &fmt) < 0) {
-            std::cerr << "[CameraHalA7s] VIDIOC_S_FMT failed: "
-                      << strerror(errno) << "\n";
-            return false;
-        }
-
-        std::cout << "[CameraHalA7s] Format set (single-planar): " << fmt.fmt.pix.width << "x"
-                  << fmt.fmt.pix.height << " "
-                  << v4l2_fmt_name(fmt.fmt.pix.pixelformat)
-                  << " stride=" << fmt.fmt.pix.bytesperline << "\n";
-
-        if (fmt.fmt.pix.pixelformat != V4L2_PIX_FMT_NV12) {
-            std::cerr << "[CameraHalA7s] Driver changed pixel format to "
-                      << v4l2_fmt_name(fmt.fmt.pix.pixelformat)
-                      << ", expected NV12\n";
-            return false;
-        }
-
-        v4l2_stride_ = fmt.fmt.pix.bytesperline;
+        std::cerr << "[CameraHalA7s] Failed to set any V4L2 format\n";
+        return false;
     }
+
+    // Store the actual pixel format from the driver
+    v4l2_pix_fmt_ = selected_fmt;
+    std::cout << "[CameraHalA7s] Using pixel format: "
+              << v4l2_fmt_name(selected_fmt) << "\n";
 
     // 3. Set framerate
     struct v4l2_streamparm parm{};

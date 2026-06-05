@@ -23,6 +23,9 @@
 #include <vector>
 #include <cstdint>
 
+// V4L2 types needed for the interface (buf_type_ member)
+#include <linux/videodev2.h>
+
 namespace ct {
 
 // ─── CameraHalA7s ─────────────────────────────────────────────────────────────

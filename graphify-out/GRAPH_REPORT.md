@@ -1,11 +1,11 @@
-# Graph Report - .  (2026-06-04)
+# Graph Report - .  (2026-06-05)
 
 ## Corpus Check
-- 186 files · ~433,848 words
+- 186 files · ~433,880 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 1541 nodes · 3476 edges · 150 communities detected
+- 1543 nodes · 3480 edges · 150 communities detected
 - Extraction: 82% EXTRACTED · 18% INFERRED · 0% AMBIGUOUS · INFERRED: 642 edges (avg confidence: 0.5)
 - Token cost: 0 input · 0 output
 
@@ -252,16 +252,16 @@ Cohesion: 0.16
 Nodes (12): build_target(), build_toolkit(), Build functions for toolkit and target binaries.  Handles rsync-based source syn, Build the toolkit static library (libtoolkit.a) on the target board, Build the trap target binary on the target board, CompilerErrorParser, CrashParser, parse_line() (+4 more)
 
 ### Community 16 - "Community 16"
+Cohesion: 0.23
+Nodes (12): acquire_frames(), CameraHalA7s(), capture_buf_type(), init(), init_v4l2(), init_v4l2_mmap(), is_mplane(), scale_nv12_cpu() (+4 more)
+
+### Community 17 - "Community 17"
 Cohesion: 0.15
 Nodes (13): get_binary_path(), get_platform_config(), get_run_command(), Platform configuration and SSH helpers.  Defines platform-specific settings for, Execute a command on the remote board via SSH and return structured result, Launch a command in the background on the remote board via SSH, Get platform configuration, returns None if unknown, Resolve platform config with user-provided overrides (+5 more)
 
-### Community 17 - "Community 17"
+### Community 18 - "Community 18"
 Cohesion: 0.29
 Nodes (9): get_perf_count(), main(), signal_handler(), vnn_CreateNeuralNetwork(), vnn_PostProcessNeuralNetwork(), vnn_PreProcessNeuralNetwork(), vnn_ProcessGraph(), vnn_ReleaseNeuralNetwork() (+1 more)
-
-### Community 18 - "Community 18"
-Cohesion: 0.26
-Nodes (10): acquire_frames(), CameraHalA7s(), init(), init_v4l2(), init_v4l2_mmap(), scale_nv12_cpu(), set_v4l2_controls(), shutdown() (+2 more)
 
 ### Community 19 - "Community 19"
 Cohesion: 0.35

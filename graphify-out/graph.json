@@ -897,7 +897,7 @@
       "source_file": "tools/mcp/scripts/mcp_build/config.py",
       "source_location": "L1",
       "id": "tools_mcp_scripts_mcp_build_config_py",
-      "community": 16
+      "community": 17
     },
     {
       "label": "get_platform_config()",
@@ -905,7 +905,7 @@
       "source_file": "tools/mcp/scripts/mcp_build/config.py",
       "source_location": "L57",
       "id": "config_get_platform_config",
-      "community": 16
+      "community": 17
     },
     {
       "label": "resolve_config()",
@@ -913,7 +913,7 @@
       "source_file": "tools/mcp/scripts/mcp_build/config.py",
       "source_location": "L62",
       "id": "config_resolve_config",
-      "community": 16
+      "community": 17
     },
     {
       "label": "get_binary_path()",
@@ -921,7 +921,7 @@
       "source_file": "tools/mcp/scripts/mcp_build/config.py",
       "source_location": "L83",
       "id": "config_get_binary_path",
-      "community": 16
+      "community": 17
     },
     {
       "label": "get_run_command()",
@@ -929,7 +929,7 @@
       "source_file": "tools/mcp/scripts/mcp_build/config.py",
       "source_location": "L89",
       "id": "config_get_run_command",
-      "community": 16
+      "community": 17
     },
     {
       "label": "ssh_execute()",
@@ -937,7 +937,7 @@
       "source_file": "tools/mcp/scripts/mcp_build/config.py",
       "source_location": "L100",
       "id": "config_ssh_execute",
-      "community": 16
+      "community": 17
     },
     {
       "label": "ssh_execute_background()",
@@ -945,14 +945,14 @@
       "source_file": "tools/mcp/scripts/mcp_build/config.py",
       "source_location": "L130",
       "id": "config_ssh_execute_background",
-      "community": 16
+      "community": 17
     },
     {
       "label": "Platform configuration and SSH helpers.  Defines platform-specific settings for",
       "file_type": "rationale",
       "source_file": "tools/mcp/scripts/mcp_build/config.py",
       "source_location": "L1",
-      "community": 16,
+      "community": 17,
       "id": "config_rationale_1"
     },
     {
@@ -960,7 +960,7 @@
       "file_type": "rationale",
       "source_file": "tools/mcp/scripts/mcp_build/config.py",
       "source_location": "L58",
-      "community": 16,
+      "community": 17,
       "id": "config_rationale_58"
     },
     {
@@ -968,7 +968,7 @@
       "file_type": "rationale",
       "source_file": "tools/mcp/scripts/mcp_build/config.py",
       "source_location": "L63",
-      "community": 16,
+      "community": 17,
       "id": "config_rationale_63"
     },
     {
@@ -976,7 +976,7 @@
       "file_type": "rationale",
       "source_file": "tools/mcp/scripts/mcp_build/config.py",
       "source_location": "L84",
-      "community": 16,
+      "community": 17,
       "id": "config_rationale_84"
     },
     {
@@ -984,7 +984,7 @@
       "file_type": "rationale",
       "source_file": "tools/mcp/scripts/mcp_build/config.py",
       "source_location": "L90",
-      "community": 16,
+      "community": 17,
       "id": "config_rationale_90"
     },
     {
@@ -992,7 +992,7 @@
       "file_type": "rationale",
       "source_file": "tools/mcp/scripts/mcp_build/config.py",
       "source_location": "L101",
-      "community": 16,
+      "community": 17,
       "id": "config_rationale_101"
     },
     {
@@ -1000,7 +1000,7 @@
       "file_type": "rationale",
       "source_file": "tools/mcp/scripts/mcp_build/config.py",
       "source_location": "L131",
-      "community": 16,
+      "community": 17,
       "id": "config_rationale_131"
     },
     {
@@ -3633,7 +3633,7 @@
       "source_file": "traps/targets/src/detection/platforms/rock3c/main.cpp",
       "source_location": "L1",
       "id": "traps_targets_src_detection_platforms_rock3c_main_cpp",
-      "community": 17
+      "community": 18
     },
     {
       "label": "signal_handler()",
@@ -3641,7 +3641,7 @@
       "source_file": "traps/targets/src/detection/platforms/cubie-a7s/main.cpp",
       "source_location": "L43",
       "id": "main_signal_handler",
-      "community": 17
+      "community": 18
     },
     {
       "label": "main()",
@@ -3649,7 +3649,7 @@
       "source_file": "models/detection/insects/yolo26n/nbg_output/generated/main.c",
       "source_location": "L212",
       "id": "main_main",
-      "community": 17
+      "community": 18
     },
     {
       "label": "rock3c_detection_pipeline.hpp",
@@ -3681,7 +3681,7 @@
       "source_file": "traps/targets/src/detection/platforms/native/main.cpp",
       "source_location": "L1",
       "id": "traps_targets_src_detection_platforms_native_main_cpp",
-      "community": 17
+      "community": 18
     },
     {
       "label": "native_detection_pipeline.cpp",
@@ -3737,7 +3737,7 @@
       "source_file": "traps/targets/src/detection/platforms/cubie-a7s/main.cpp",
       "source_location": "L1",
       "id": "traps_targets_src_detection_platforms_cubie_a7s_main_cpp",
-      "community": 17
+      "community": 18
     },
     {
       "label": "cubie_a7s_detection_pipeline.hpp",
@@ -5857,15 +5857,15 @@
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.hpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_hal_platforms_cubie_a7s_camera_hal_a7s_hpp",
-      "community": 18
+      "community": 16
     },
     {
       "label": "CameraHalA7s()",
       "file_type": "code",
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.cpp",
-      "source_location": "L74",
+      "source_location": "L87",
       "id": "camera_hal_a7s_camerahala7s",
-      "community": 18
+      "community": 16
     },
     {
       "label": "video_scaler_opencl.cpp",
@@ -6009,7 +6009,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.cpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_hal_platforms_cubie_a7s_camera_hal_a7s_cpp",
-      "community": 18
+      "community": 16
     },
     {
       "label": "v4l2_fmt_name()",
@@ -6017,79 +6017,95 @@
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.cpp",
       "source_location": "L40",
       "id": "camera_hal_a7s_v4l2_fmt_name",
-      "community": 18
+      "community": 16
     },
     {
       "label": "try_open_v4l2()",
       "file_type": "code",
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.cpp",
-      "source_location": "L51",
+      "source_location": "L52",
       "id": "camera_hal_a7s_try_open_v4l2",
-      "community": 18
+      "community": 16
+    },
+    {
+      "label": "is_mplane()",
+      "file_type": "code",
+      "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.cpp",
+      "source_location": "L75",
+      "id": "camera_hal_a7s_is_mplane",
+      "community": 16
+    },
+    {
+      "label": "capture_buf_type()",
+      "file_type": "code",
+      "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.cpp",
+      "source_location": "L82",
+      "id": "camera_hal_a7s_capture_buf_type",
+      "community": 16
     },
     {
       "label": "init()",
       "file_type": "code",
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.cpp",
-      "source_location": "L81",
+      "source_location": "L94",
       "id": "camera_hal_a7s_init",
-      "community": 18
+      "community": 16
     },
     {
       "label": "init_v4l2()",
       "file_type": "code",
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.cpp",
-      "source_location": "L117",
+      "source_location": "L130",
       "id": "camera_hal_a7s_init_v4l2",
-      "community": 18
+      "community": 16
     },
     {
       "label": "init_v4l2_mmap()",
       "file_type": "code",
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.cpp",
-      "source_location": "L186",
+      "source_location": "L241",
       "id": "camera_hal_a7s_init_v4l2_mmap",
-      "community": 18
+      "community": 16
     },
     {
       "label": "set_v4l2_controls()",
       "file_type": "code",
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.cpp",
-      "source_location": "L259",
+      "source_location": "L361",
       "id": "camera_hal_a7s_set_v4l2_controls",
-      "community": 18
+      "community": 16
     },
     {
       "label": "acquire_frames()",
       "file_type": "code",
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.cpp",
-      "source_location": "L301",
+      "source_location": "L403",
       "id": "camera_hal_a7s_acquire_frames",
-      "community": 18
+      "community": 16
     },
     {
       "label": "release_frames()",
       "file_type": "code",
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.cpp",
-      "source_location": "L406",
+      "source_location": "L532",
       "id": "camera_hal_a7s_release_frames",
-      "community": 18
+      "community": 16
     },
     {
       "label": "shutdown()",
       "file_type": "code",
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.cpp",
-      "source_location": "L412",
+      "source_location": "L538",
       "id": "camera_hal_a7s_shutdown",
-      "community": 18
+      "community": 16
     },
     {
       "label": "scale_nv12_cpu()",
       "file_type": "code",
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.cpp",
-      "source_location": "L454",
+      "source_location": "L580",
       "id": "camera_hal_a7s_scale_nv12_cpu",
-      "community": 18
+      "community": 16
     },
     {
       "label": "video_scaler_opencl.hpp",
@@ -11537,7 +11553,7 @@
       "source_file": "models/detection/insects/yolo26n/nbg_output/generated/main.c",
       "source_location": "L1",
       "id": "models_detection_insects_yolo26n_nbg_output_generated_main_c",
-      "community": 17
+      "community": 18
     },
     {
       "label": "vnn_ReleaseNeuralNetwork()",
@@ -11545,7 +11561,7 @@
       "source_file": "models/detection/insects/yolo26n/nbg_output/generated/main.c",
       "source_location": "L41",
       "id": "main_vnn_releaseneuralnetwork",
-      "community": 17
+      "community": 18
     },
     {
       "label": "vnn_PostProcessNeuralNetwork()",
@@ -11553,7 +11569,7 @@
       "source_file": "models/detection/insects/yolo26n/nbg_output/generated/main.c",
       "source_location": "L53",
       "id": "main_vnn_postprocessneuralnetwork",
-      "community": 17
+      "community": 18
     },
     {
       "label": "get_perf_count()",
@@ -11561,7 +11577,7 @@
       "source_file": "models/detection/insects/yolo26n/nbg_output/generated/main.c",
       "source_location": "L62",
       "id": "main_get_perf_count",
-      "community": 17
+      "community": 18
     },
     {
       "label": "vnn_VerifyGraph()",
@@ -11569,7 +11585,7 @@
       "source_file": "models/detection/insects/yolo26n/nbg_output/generated/main.c",
       "source_location": "L81",
       "id": "main_vnn_verifygraph",
-      "community": 17
+      "community": 18
     },
     {
       "label": "vnn_ProcessGraph()",
@@ -11577,7 +11593,7 @@
       "source_file": "models/detection/insects/yolo26n/nbg_output/generated/main.c",
       "source_location": "L103",
       "id": "main_vnn_processgraph",
-      "community": 17
+      "community": 18
     },
     {
       "label": "vnn_PreProcessNeuralNetwork()",
@@ -11585,7 +11601,7 @@
       "source_file": "models/detection/insects/yolo26n/nbg_output/generated/main.c",
       "source_location": "L168",
       "id": "main_vnn_preprocessneuralnetwork",
-      "community": 17
+      "community": 18
     },
     {
       "label": "vnn_CreateNeuralNetwork()",
@@ -11593,7 +11609,7 @@
       "source_file": "models/detection/insects/yolo26n/nbg_output/generated/main.c",
       "source_location": "L186",
       "id": "main_vnn_createneuralnetwork",
-      "community": 17
+      "community": 18
     },
     {
       "label": "vnn_post_process.h",
@@ -33877,7 +33893,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.cpp",
-      "source_location": "L76",
+      "source_location": "L89",
       "weight": 1.0,
       "_src": "traps_toolkit_src_hal_platforms_cubie_a7s_camera_hal_a7s_cpp",
       "_tgt": "camera_hal_a7s_camerahala7s",
@@ -33889,7 +33905,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.cpp",
-      "source_location": "L77",
+      "source_location": "L90",
       "weight": 1.0,
       "_src": "camera_hal_a7s_camerahala7s",
       "_tgt": "camera_hal_a7s_shutdown",
@@ -34165,7 +34181,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.cpp",
-      "source_location": "L51",
+      "source_location": "L52",
       "weight": 1.0,
       "_src": "traps_toolkit_src_hal_platforms_cubie_a7s_camera_hal_a7s_cpp",
       "_tgt": "camera_hal_a7s_try_open_v4l2",
@@ -34177,7 +34193,31 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.cpp",
-      "source_location": "L81",
+      "source_location": "L75",
+      "weight": 1.0,
+      "_src": "traps_toolkit_src_hal_platforms_cubie_a7s_camera_hal_a7s_cpp",
+      "_tgt": "camera_hal_a7s_is_mplane",
+      "source": "traps_toolkit_src_hal_platforms_cubie_a7s_camera_hal_a7s_cpp",
+      "target": "camera_hal_a7s_is_mplane",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.cpp",
+      "source_location": "L82",
+      "weight": 1.0,
+      "_src": "traps_toolkit_src_hal_platforms_cubie_a7s_camera_hal_a7s_cpp",
+      "_tgt": "camera_hal_a7s_capture_buf_type",
+      "source": "traps_toolkit_src_hal_platforms_cubie_a7s_camera_hal_a7s_cpp",
+      "target": "camera_hal_a7s_capture_buf_type",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.cpp",
+      "source_location": "L94",
       "weight": 1.0,
       "_src": "traps_toolkit_src_hal_platforms_cubie_a7s_camera_hal_a7s_cpp",
       "_tgt": "camera_hal_a7s_init",
@@ -34189,7 +34229,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.cpp",
-      "source_location": "L117",
+      "source_location": "L130",
       "weight": 1.0,
       "_src": "traps_toolkit_src_hal_platforms_cubie_a7s_camera_hal_a7s_cpp",
       "_tgt": "camera_hal_a7s_init_v4l2",
@@ -34201,7 +34241,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.cpp",
-      "source_location": "L186",
+      "source_location": "L241",
       "weight": 1.0,
       "_src": "traps_toolkit_src_hal_platforms_cubie_a7s_camera_hal_a7s_cpp",
       "_tgt": "camera_hal_a7s_init_v4l2_mmap",
@@ -34213,7 +34253,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.cpp",
-      "source_location": "L259",
+      "source_location": "L361",
       "weight": 1.0,
       "_src": "traps_toolkit_src_hal_platforms_cubie_a7s_camera_hal_a7s_cpp",
       "_tgt": "camera_hal_a7s_set_v4l2_controls",
@@ -34225,7 +34265,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.cpp",
-      "source_location": "L301",
+      "source_location": "L403",
       "weight": 1.0,
       "_src": "traps_toolkit_src_hal_platforms_cubie_a7s_camera_hal_a7s_cpp",
       "_tgt": "camera_hal_a7s_acquire_frames",
@@ -34237,7 +34277,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.cpp",
-      "source_location": "L406",
+      "source_location": "L532",
       "weight": 1.0,
       "_src": "traps_toolkit_src_hal_platforms_cubie_a7s_camera_hal_a7s_cpp",
       "_tgt": "camera_hal_a7s_release_frames",
@@ -34249,7 +34289,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.cpp",
-      "source_location": "L412",
+      "source_location": "L538",
       "weight": 1.0,
       "_src": "traps_toolkit_src_hal_platforms_cubie_a7s_camera_hal_a7s_cpp",
       "_tgt": "camera_hal_a7s_shutdown",
@@ -34261,7 +34301,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.cpp",
-      "source_location": "L454",
+      "source_location": "L580",
       "weight": 1.0,
       "_src": "traps_toolkit_src_hal_platforms_cubie_a7s_camera_hal_a7s_cpp",
       "_tgt": "camera_hal_a7s_scale_nv12_cpu",
@@ -34273,7 +34313,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.cpp",
-      "source_location": "L150",
+      "source_location": "L174",
       "weight": 1.0,
       "_src": "camera_hal_a7s_init_v4l2",
       "_tgt": "camera_hal_a7s_v4l2_fmt_name",
@@ -34285,7 +34325,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.cpp",
-      "source_location": "L120",
+      "source_location": "L133",
       "weight": 1.0,
       "_src": "camera_hal_a7s_init_v4l2",
       "_tgt": "camera_hal_a7s_try_open_v4l2",
@@ -34297,7 +34337,31 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.cpp",
-      "source_location": "L90",
+      "source_location": "L150",
+      "weight": 1.0,
+      "_src": "camera_hal_a7s_init_v4l2",
+      "_tgt": "camera_hal_a7s_is_mplane",
+      "source": "camera_hal_a7s_is_mplane",
+      "target": "camera_hal_a7s_init_v4l2",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.cpp",
+      "source_location": "L151",
+      "weight": 1.0,
+      "_src": "camera_hal_a7s_init_v4l2",
+      "_tgt": "camera_hal_a7s_capture_buf_type",
+      "source": "camera_hal_a7s_capture_buf_type",
+      "target": "camera_hal_a7s_init_v4l2",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.cpp",
+      "source_location": "L103",
       "weight": 1.0,
       "_src": "camera_hal_a7s_init",
       "_tgt": "camera_hal_a7s_init_v4l2",
@@ -34309,7 +34373,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.cpp",
-      "source_location": "L106",
+      "source_location": "L119",
       "weight": 1.0,
       "_src": "camera_hal_a7s_init",
       "_tgt": "camera_hal_a7s_shutdown",
@@ -34321,7 +34385,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.cpp",
-      "source_location": "L172",
+      "source_location": "L227",
       "weight": 1.0,
       "_src": "camera_hal_a7s_init_v4l2",
       "_tgt": "camera_hal_a7s_init_v4l2_mmap",
@@ -34333,7 +34397,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.cpp",
-      "source_location": "L177",
+      "source_location": "L232",
       "weight": 1.0,
       "_src": "camera_hal_a7s_init_v4l2",
       "_tgt": "camera_hal_a7s_set_v4l2_controls",
@@ -34345,7 +34409,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.cpp",
-      "source_location": "L357",
+      "source_location": "L467",
       "weight": 1.0,
       "_src": "camera_hal_a7s_acquire_frames",
       "_tgt": "camera_hal_a7s_scale_nv12_cpu",

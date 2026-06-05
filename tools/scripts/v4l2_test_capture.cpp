@@ -52,8 +52,11 @@
 #include <sys/ioctl.h>
 #include <sys/mman.h>
 #include <sys/stat.h>
+#include <sys/sysmacros.h>
 #include <poll.h>
 #include <linux/videodev2.h>
+#include <linux/media.h>
+#include <linux/v4l2-subdev.h>
 #include <errno.h>
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -147,6 +150,244 @@ static void list_devices() {
     }
 }
 
+// ─── Media controller pipeline configuration ──────────────────────────────────
+// The sunxi-vin driver on Allwinner A527 requires the sensor subdev to be
+// configured via the media controller API before VIDIOC_S_FMT will succeed.
+// This function finds the media device, locates the sensor subdev, and
+// configures its format.
+
+static bool configure_media_pipeline(int video_fd, int width, int height) {
+    // Find the media device
+    for (int med_idx = 0; med_idx <= 3; ++med_idx) {
+        char media_path[32];
+        snprintf(media_path, sizeof(media_path), "/dev/media%d", med_idx);
+
+        int media_fd = ::open(media_path, O_RDWR, 0);
+        if (media_fd < 0) continue;
+
+        // Enumerate entities to find sensor subdev
+        int sensor_entity_id = -1;
+        struct media_entity_desc entity{};
+        entity.id = MEDIA_ENT_ID_FLAG_NEXT;
+        while (ioctl(media_fd, MEDIA_IOC_ENUM_ENTITIES, &entity) == 0) {
+            if (entity.type == MEDIA_ENT_T_V4L2_SUBDEV_SENSOR ||
+                (entity.type == MEDIA_ENT_T_V4L2_SUBDEV &&
+                 strstr(entity.name, "imx415") != nullptr)) {
+                sensor_entity_id = entity.id;
+                std::cout << "  Found sensor subdev: " << entity.name << "\n";
+            }
+            entity.id |= MEDIA_ENT_ID_FLAG_NEXT;
+        }
+
+        if (sensor_entity_id < 0) {
+            ::close(media_fd);
+            continue;
+        }
+
+        // Find the sensor subdev device node
+        struct media_entity_desc sensor_entity{};
+        sensor_entity.id = static_cast<__u32>(sensor_entity_id);
+        if (ioctl(media_fd, MEDIA_IOC_ENUM_ENTITIES, &sensor_entity) < 0 ||
+            sensor_entity.dev.major == 0) {
+            ::close(media_fd);
+            continue;
+        }
+
+        char sensor_dev_path[64] = {};
+        bool found = false;
+        for (int sd = 0; sd <= 31; ++sd) {
+            char sd_path[32];
+            snprintf(sd_path, sizeof(sd_path), "/dev/v4l-subdev%d", sd);
+            struct stat st{};
+            if (stat(sd_path, &st) == 0 &&
+                major(st.st_rdev) == sensor_entity.dev.major &&
+                minor(st.st_rdev) == sensor_entity.dev.minor) {
+                strncpy(sensor_dev_path, sd_path, sizeof(sensor_dev_path) - 1);
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
+            ::close(media_fd);
+            continue;
+        }
+
+        // Open and configure the sensor subdev
+        int subdev_fd = ::open(sensor_dev_path, O_RDWR, 0);
+        if (subdev_fd < 0) {
+            ::close(media_fd);
+            continue;
+        }
+
+        struct v4l2_subdev_format sd_fmt{};
+        sd_fmt.which = V4L2_SUBDEV_FORMAT_ACTIVE;
+        sd_fmt.pad = 0;
+        sd_fmt.format.width = static_cast<__u32>(width);
+        sd_fmt.format.height = static_cast<__u32>(height);
+
+        // Try common mbus codes for IMX415
+        uint32_t mbus_codes[] = {
+            MEDIA_BUS_FMT_SBGGR10_1X10,
+            MEDIA_BUS_FMT_SRGGB10_1X10,
+            MEDIA_BUS_FMT_SGRBG10_1X10,
+            MEDIA_BUS_FMT_SGBRG10_1X10,
+            MEDIA_BUS_FMT_SBGGR12_1X12,
+            MEDIA_BUS_FMT_SRGGB12_1X12,
+            MEDIA_BUS_FMT_SBGGR8_1X8,
+            MEDIA_BUS_FMT_SRGGB8_1X8,
+            MEDIA_BUS_FMT_UYVY8_1X16,
+            MEDIA_BUS_FMT_YUYV8_1X16,
+        };
+
+        bool ok = false;
+        for (auto code : mbus_codes) {
+            sd_fmt.format.code = code;
+            if (ioctl(subdev_fd, VIDIOC_SUBDEV_S_FMT, &sd_fmt) == 0) {
+                std::cout << "  Sensor subdev format: "
+                          << sd_fmt.format.width << "x" << sd_fmt.format.height
+                          << " code=0x" << std::hex << sd_fmt.format.code
+                          << std::dec << "\n";
+                ok = true;
+                break;
+            }
+        }
+
+        if (!ok) {
+            std::cerr << "  Sensor subdev configuration failed\n";
+            ::close(subdev_fd);
+            ::close(media_fd);
+            continue;
+        }
+        std::cout << "  Sensor subdev configured\n";
+
+        // 2. Configure ISP subdev (sunxi_isp.0)
+        // The ISP subdev is typically v4l-subdev13 on this platform
+        // We need to set both input (pad0) and output (pad2) formats
+        int isp_subdev_fd = -1;
+        for (int sd = 0; sd <= 31; ++sd) {
+            char sd_path[32];
+            snprintf(sd_path, sizeof(sd_path), "/dev/v4l-subdev%d", sd);
+            int tfd = ::open(sd_path, O_RDWR, 0);
+            if (tfd >= 0) {
+                struct media_entity_desc ent{};
+                ent.id = MEDIA_ENT_ID_FLAG_NEXT;
+                while (ioctl(media_fd, MEDIA_IOC_ENUM_ENTITIES, &ent) == 0) {
+                    struct stat st{};
+                    if (fstat(tfd, &st) == 0 &&
+                        ent.dev.major == major(st.st_rdev) &&
+                        ent.dev.minor == minor(st.st_rdev)) {
+                        if (strstr(ent.name, "sunxi_isp") != nullptr) {
+                            isp_subdev_fd = tfd;
+                            std::cout << "  Found ISP subdev: " << ent.name
+                                      << " (" << sd_path << ")\n";
+                            break;
+                        }
+                    }
+                    ent.id |= MEDIA_ENT_ID_FLAG_NEXT;
+                }
+                if (isp_subdev_fd < 0) {
+                    ::close(tfd);
+                } else {
+                    break;
+                }
+            }
+        }
+
+        if (isp_subdev_fd >= 0) {
+            // Set ISP input format (pad0) - same as sensor output
+            struct v4l2_subdev_format isp_fmt{};
+            isp_fmt.which = V4L2_SUBDEV_FORMAT_ACTIVE;
+            isp_fmt.pad = 0;
+            isp_fmt.format.width = static_cast<__u32>(width);
+            isp_fmt.format.height = static_cast<__u32>(height);
+            isp_fmt.format.code = sd_fmt.format.code;  // Same mbus code as sensor
+
+            if (ioctl(isp_subdev_fd, VIDIOC_SUBDEV_S_FMT, &isp_fmt) == 0) {
+                std::cout << "  ISP pad0 format: " << isp_fmt.format.width << "x"
+                          << isp_fmt.format.height << " code=0x"
+                          << std::hex << isp_fmt.format.code << std::dec << "\n";
+            }
+
+            // Set ISP output format (pad2) - try YUYV
+            isp_fmt.pad = 2;
+            isp_fmt.format.code = MEDIA_BUS_FMT_YUYV8_1X16;
+            if (ioctl(isp_subdev_fd, VIDIOC_SUBDEV_S_FMT, &isp_fmt) == 0) {
+                std::cout << "  ISP pad2 format: " << isp_fmt.format.width << "x"
+                          << isp_fmt.format.height << " code=0x"
+                          << std::hex << isp_fmt.format.code << std::dec << "\n";
+            }
+
+            ::close(isp_subdev_fd);
+        }
+
+        // 3. Configure scaler subdev (sunxi_scaler.0)
+        int scaler_subdev_fd = -1;
+        for (int sd = 0; sd <= 31; ++sd) {
+            char sd_path[32];
+            snprintf(sd_path, sizeof(sd_path), "/dev/v4l-subdev%d", sd);
+            int tfd = ::open(sd_path, O_RDWR, 0);
+            if (tfd >= 0) {
+                struct media_entity_desc ent{};
+                ent.id = MEDIA_ENT_ID_FLAG_NEXT;
+                while (ioctl(media_fd, MEDIA_IOC_ENUM_ENTITIES, &ent) == 0) {
+                    struct stat st{};
+                    if (fstat(tfd, &st) == 0 &&
+                        ent.dev.major == major(st.st_rdev) &&
+                        ent.dev.minor == minor(st.st_rdev)) {
+                        if (strstr(ent.name, "sunxi_scaler") != nullptr) {
+                            scaler_subdev_fd = tfd;
+                            std::cout << "  Found scaler subdev: " << ent.name
+                                      << " (" << sd_path << ")\n";
+                            break;
+                        }
+                    }
+                    ent.id |= MEDIA_ENT_ID_FLAG_NEXT;
+                }
+                if (scaler_subdev_fd < 0) {
+                    ::close(tfd);
+                } else {
+                    break;
+                }
+            }
+        }
+
+        if (scaler_subdev_fd >= 0) {
+            // Set scaler input format (pad0)
+            struct v4l2_subdev_format sc_fmt{};
+            sc_fmt.which = V4L2_SUBDEV_FORMAT_ACTIVE;
+            sc_fmt.pad = 0;
+            sc_fmt.format.width = static_cast<__u32>(width);
+            sc_fmt.format.height = static_cast<__u32>(height);
+            sc_fmt.format.code = MEDIA_BUS_FMT_YUYV8_1X16;
+
+            if (ioctl(scaler_subdev_fd, VIDIOC_SUBDEV_S_FMT, &sc_fmt) == 0) {
+                std::cout << "  Scaler pad0 format: " << sc_fmt.format.width << "x"
+                          << sc_fmt.format.height << " code=0x"
+                          << std::hex << sc_fmt.format.code << std::dec << "\n";
+            }
+
+            // Set scaler output format (pad1)
+            sc_fmt.pad = 1;
+            if (ioctl(scaler_subdev_fd, VIDIOC_SUBDEV_S_FMT, &sc_fmt) == 0) {
+                std::cout << "  Scaler pad1 format: " << sc_fmt.format.width << "x"
+                          << sc_fmt.format.height << " code=0x"
+                          << std::hex << sc_fmt.format.code << std::dec << "\n";
+            }
+
+            ::close(scaler_subdev_fd);
+        }
+
+        ::close(subdev_fd);
+        ::close(media_fd);
+        std::cout << "  Media pipeline configured\n";
+        return true;
+    }
+
+    std::cerr << "  Media pipeline configuration failed\n";
+    return false;
+}
+
 // ─── Frame capture ────────────────────────────────────────────────────────────
 
 struct CaptureContext {
@@ -165,7 +406,11 @@ static bool capture_frame(CaptureContext& ctx,
                           const char* output_path,
                           int width, int height,
                           int pixelformat) {
-    // 1. Set format
+    // 1. Configure media pipeline (required by sunxi-vin driver)
+    std::cout << "Configuring media pipeline...\n";
+    configure_media_pipeline(ctx.fd, width, height);
+
+    // 2. Set format - try multiplanar first, fall back to single-planar
     if (ctx.mplane) {
         struct v4l2_format fmt{};
         fmt.type = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;

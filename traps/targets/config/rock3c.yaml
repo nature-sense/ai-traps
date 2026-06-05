@@ -1,10 +1,12 @@
 # ─── AI Camera Trap Configuration — ROCK 3C (RK3566) ──────────────────────────
-# Camera: Radxa Camera 4K (IMX415) via RK_AIQ ISP
+# Camera: picamera2 (IMX219) via RK_AIQ ISP
 # Inference: Rockchip NPU (RKNN model format)
 # Scaling: RGA hardware scaler
+#
+# To switch to Radxa Camera 4K (IMX415), change model to "imx415".
 
 camera:
-  model: "imx415"
+  model: "imx219"
   full_w: 1920
   full_h: 1080
   med_w: 640

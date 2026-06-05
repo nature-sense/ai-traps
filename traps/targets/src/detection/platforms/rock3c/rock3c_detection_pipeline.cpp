@@ -17,6 +17,7 @@
 #include "rock3c_detection_pipeline.hpp"
 
 #include "camera/camera_hal_actor.hpp"
+#include "hal/platforms/rock3c/camera_hal_imx219.hpp"
 #include "hal/platforms/rock3c/camera_hal_imx415.hpp"
 #include "hal/platforms/rock3c/inference_hal_rknn.hpp"
 
@@ -85,7 +86,20 @@ void Rock3cDetectionPipeline::shutdown() {
 // ─── Factory methods ──────────────────────────────────────────────────────────
 
 std::unique_ptr<CameraActor> Rock3cDetectionPipeline::createCamera() {
-    auto hal = std::make_unique<CameraHalImx415>();
+    // Select camera HAL based on the model name from config.
+    // Supported models: "imx219" (picamera2), "imx415" (Radxa Camera 4K).
+    const std::string& model = cfg_.camera.model;
+    std::cout << "[Rock3cDetectionPipeline] creating camera HAL for model=\""
+              << model << "\"\n";
+
+    std::unique_ptr<ICameraHAL> hal;
+    if (model == "imx219") {
+        hal = std::make_unique<CameraHalImx219>();
+    } else {
+        // Default to IMX415 (also handles "imx415" and unknown models gracefully)
+        hal = std::make_unique<CameraHalImx415>();
+    }
+
     auto actor = std::make_unique<CameraHalActor>(std::move(hal));
     return actor;
 }

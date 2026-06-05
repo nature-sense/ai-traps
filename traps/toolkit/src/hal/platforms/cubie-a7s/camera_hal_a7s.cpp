@@ -48,6 +48,7 @@ static const char* v4l2_fmt_name(uint32_t fourcc) {
 }
 
 /// Try to open a V4L2 video device. Returns fd or -1.
+/// Accepts both single-planar and multiplanar capture devices.
 static int try_open_v4l2(const char* device) {
     int fd = ::open(device, O_RDWR, 0);
     if (fd < 0) return -1;
@@ -58,8 +59,8 @@ static int try_open_v4l2(const char* device) {
         return -1;
     }
 
-    // Must be a video capture device
-    if (!(cap.capabilities & V4L2_CAP_VIDEO_CAPTURE)) {
+    // Must be a video capture device (single or multi-planar)
+    if (!(cap.capabilities & (V4L2_CAP_VIDEO_CAPTURE | V4L2_CAP_VIDEO_CAPTURE_MPLANE))) {
         ::close(fd);
         return -1;
     }
@@ -68,6 +69,18 @@ static int try_open_v4l2(const char* device) {
               << ": " << reinterpret_cast<const char*>(cap.card)
               << " (driver: " << reinterpret_cast<const char*>(cap.driver) << ")\n";
     return fd;
+}
+
+/// Determine if the device uses multiplanar API based on capabilities.
+static bool is_mplane(int fd) {
+    struct v4l2_capability cap{};
+    if (ioctl(fd, VIDIOC_QUERYCAP, &cap) < 0) return false;
+    return (cap.capabilities & V4L2_CAP_VIDEO_CAPTURE_MPLANE) != 0;
+}
+
+/// Return the appropriate buffer type for capture (single or multi-planar).
+static uint32_t capture_buf_type(bool mplane) {
+    return mplane ? V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE : V4L2_BUF_TYPE_VIDEO_CAPTURE;
 }
 
 // ─── Constructor / Destructor ─────────────────────────────────────────────────
@@ -133,33 +146,75 @@ bool CameraHalA7s::init_v4l2() {
         return false;
     }
 
+    // Detect if multiplanar API is required
+    mplane_ = is_mplane(v4l2_fd_);
+    buf_type_ = capture_buf_type(mplane_);
+
+    std::cout << "[CameraHalA7s] Using " << (mplane_ ? "multiplanar" : "single-planar")
+              << " V4L2 API\n";
+
     // 2. Set format: NV12 at configured resolution
-    struct v4l2_format fmt{};
-    fmt.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-    fmt.fmt.pix.width       = static_cast<__u32>(cfg_.camera.full_w);
-    fmt.fmt.pix.height      = static_cast<__u32>(cfg_.camera.full_h);
-    fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_NV12;
-    fmt.fmt.pix.field       = V4L2_FIELD_NONE;
+    if (mplane_) {
+        struct v4l2_format fmt{};
+        fmt.type = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
+        fmt.fmt.pix_mp.width       = static_cast<__u32>(cfg_.camera.full_w);
+        fmt.fmt.pix_mp.height      = static_cast<__u32>(cfg_.camera.full_h);
+        fmt.fmt.pix_mp.pixelformat = V4L2_PIX_FMT_NV12;
+        fmt.fmt.pix_mp.field       = V4L2_FIELD_NONE;
+        fmt.fmt.pix_mp.num_planes  = 1;
 
-    if (ioctl(v4l2_fd_, VIDIOC_S_FMT, &fmt) < 0) {
-        std::cerr << "[CameraHalA7s] VIDIOC_S_FMT failed: " << strerror(errno) << "\n";
-        return false;
-    }
+        if (ioctl(v4l2_fd_, VIDIOC_S_FMT, &fmt) < 0) {
+            std::cerr << "[CameraHalA7s] VIDIOC_S_FMT (MPLANE) failed: "
+                      << strerror(errno) << "\n";
+            return false;
+        }
 
-    std::cout << "[CameraHalA7s] Format set: " << fmt.fmt.pix.width << "x" << fmt.fmt.pix.height
-              << " " << v4l2_fmt_name(fmt.fmt.pix.pixelformat)
-              << " stride=" << fmt.fmt.pix.bytesperline << "\n";
+        std::cout << "[CameraHalA7s] Format set: " << fmt.fmt.pix_mp.width << "x"
+                  << fmt.fmt.pix_mp.height << " "
+                  << v4l2_fmt_name(fmt.fmt.pix_mp.pixelformat)
+                  << " stride=" << fmt.fmt.pix_mp.plane_fmt[0].bytesperline << "\n";
 
-    // Check that the driver honoured our format request
-    if (fmt.fmt.pix.pixelformat != V4L2_PIX_FMT_NV12) {
-        std::cerr << "[CameraHalA7s] Driver changed pixel format to "
-                  << v4l2_fmt_name(fmt.fmt.pix.pixelformat) << ", expected NV12\n";
-        return false;
+        if (fmt.fmt.pix_mp.pixelformat != V4L2_PIX_FMT_NV12) {
+            std::cerr << "[CameraHalA7s] Driver changed pixel format to "
+                      << v4l2_fmt_name(fmt.fmt.pix_mp.pixelformat)
+                      << ", expected NV12\n";
+            return false;
+        }
+
+        // Store the actual bytesperline from the driver
+        v4l2_stride_ = fmt.fmt.pix_mp.plane_fmt[0].bytesperline;
+    } else {
+        struct v4l2_format fmt{};
+        fmt.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+        fmt.fmt.pix.width       = static_cast<__u32>(cfg_.camera.full_w);
+        fmt.fmt.pix.height      = static_cast<__u32>(cfg_.camera.full_h);
+        fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_NV12;
+        fmt.fmt.pix.field       = V4L2_FIELD_NONE;
+
+        if (ioctl(v4l2_fd_, VIDIOC_S_FMT, &fmt) < 0) {
+            std::cerr << "[CameraHalA7s] VIDIOC_S_FMT failed: "
+                      << strerror(errno) << "\n";
+            return false;
+        }
+
+        std::cout << "[CameraHalA7s] Format set: " << fmt.fmt.pix.width << "x"
+                  << fmt.fmt.pix.height << " "
+                  << v4l2_fmt_name(fmt.fmt.pix.pixelformat)
+                  << " stride=" << fmt.fmt.pix.bytesperline << "\n";
+
+        if (fmt.fmt.pix.pixelformat != V4L2_PIX_FMT_NV12) {
+            std::cerr << "[CameraHalA7s] Driver changed pixel format to "
+                      << v4l2_fmt_name(fmt.fmt.pix.pixelformat)
+                      << ", expected NV12\n";
+            return false;
+        }
+
+        v4l2_stride_ = fmt.fmt.pix.bytesperline;
     }
 
     // 3. Set framerate
     struct v4l2_streamparm parm{};
-    parm.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+    parm.type = buf_type_;
     parm.parm.capture.timeperframe.numerator   = 1;
     parm.parm.capture.timeperframe.denominator = static_cast<__u32>(cfg_.camera.fps);
     if (ioctl(v4l2_fd_, VIDIOC_S_PARM, &parm) < 0) {
@@ -168,7 +223,7 @@ bool CameraHalA7s::init_v4l2() {
     }
 
     // 4. Request buffers and MMAP
-    uint32_t frame_size = fmt.fmt.pix.width * fmt.fmt.pix.height * 3 / 2;
+    uint32_t frame_size = cfg_.camera.full_w * cfg_.camera.full_h * 3 / 2;
     if (!init_v4l2_mmap(frame_size)) {
         return false;
     }
@@ -186,7 +241,7 @@ bool CameraHalA7s::init_v4l2() {
 bool CameraHalA7s::init_v4l2_mmap(uint32_t frame_size) {
     struct v4l2_requestbuffers req{};
     req.count  = 4;  // Double-buffered + 2 for safety
-    req.type   = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+    req.type   = buf_type_;
     req.memory = V4L2_MEMORY_MMAP;
 
     if (ioctl(v4l2_fd_, VIDIOC_REQBUFS, &req) < 0) {
@@ -202,50 +257,97 @@ bool CameraHalA7s::init_v4l2_mmap(uint32_t frame_size) {
     v4l2_buf_pool_.resize(req.count);
 
     for (unsigned int i = 0; i < req.count; ++i) {
-        struct v4l2_buffer buf{};
-        buf.type   = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-        buf.memory = V4L2_MEMORY_MMAP;
-        buf.index  = i;
+        if (mplane_) {
+            struct v4l2_buffer buf{};
+            struct v4l2_plane plane{};
+            buf.type   = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
+            buf.memory = V4L2_MEMORY_MMAP;
+            buf.index  = i;
+            buf.m.planes = &plane;
+            buf.length   = 1;
 
-        if (ioctl(v4l2_fd_, VIDIOC_QUERYBUF, &buf) < 0) {
-            std::cerr << "[CameraHalA7s] VIDIOC_QUERYBUF[" << i << "] failed: "
-                      << strerror(errno) << "\n";
-            return false;
+            if (ioctl(v4l2_fd_, VIDIOC_QUERYBUF, &buf) < 0) {
+                std::cerr << "[CameraHalA7s] VIDIOC_QUERYBUF[" << i << "] failed: "
+                          << strerror(errno) << "\n";
+                return false;
+            }
+
+            v4l2_buf_pool_[i].index  = i;
+            v4l2_buf_pool_[i].length = plane.length;
+            v4l2_buf_pool_[i].mapped = mmap(nullptr, plane.length,
+                                            PROT_READ | PROT_WRITE,
+                                            MAP_SHARED,
+                                            v4l2_fd_, plane.m.mem_offset);
+            if (v4l2_buf_pool_[i].mapped == MAP_FAILED) {
+                std::cerr << "[CameraHalA7s] mmap[" << i << "] failed: "
+                          << strerror(errno) << "\n";
+                return false;
+            }
+
+            std::cout << "[CameraHalA7s] Buffer " << i << ": "
+                      << plane.length << " bytes @ " << v4l2_buf_pool_[i].mapped << "\n";
+        } else {
+            struct v4l2_buffer buf{};
+            buf.type   = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+            buf.memory = V4L2_MEMORY_MMAP;
+            buf.index  = i;
+
+            if (ioctl(v4l2_fd_, VIDIOC_QUERYBUF, &buf) < 0) {
+                std::cerr << "[CameraHalA7s] VIDIOC_QUERYBUF[" << i << "] failed: "
+                          << strerror(errno) << "\n";
+                return false;
+            }
+
+            v4l2_buf_pool_[i].index  = i;
+            v4l2_buf_pool_[i].length = buf.length;
+            v4l2_buf_pool_[i].mapped = mmap(nullptr, buf.length,
+                                            PROT_READ | PROT_WRITE,
+                                            MAP_SHARED,
+                                            v4l2_fd_, buf.m.offset);
+            if (v4l2_buf_pool_[i].mapped == MAP_FAILED) {
+                std::cerr << "[CameraHalA7s] mmap[" << i << "] failed: "
+                          << strerror(errno) << "\n";
+                return false;
+            }
+
+            std::cout << "[CameraHalA7s] Buffer " << i << ": "
+                      << buf.length << " bytes @ " << v4l2_buf_pool_[i].mapped << "\n";
         }
-
-        v4l2_buf_pool_[i].index  = i;
-        v4l2_buf_pool_[i].length = buf.length;
-        v4l2_buf_pool_[i].mapped = mmap(nullptr, buf.length,
-                                        PROT_READ | PROT_WRITE,
-                                        MAP_SHARED,
-                                        v4l2_fd_, buf.m.offset);
-        if (v4l2_buf_pool_[i].mapped == MAP_FAILED) {
-            std::cerr << "[CameraHalA7s] mmap[" << i << "] failed: "
-                      << strerror(errno) << "\n";
-            return false;
-        }
-
-        std::cout << "[CameraHalA7s] Buffer " << i << ": "
-                  << buf.length << " bytes @ " << v4l2_buf_pool_[i].mapped << "\n";
     }
 
     // Pre-queue all buffers
     for (auto& slot : v4l2_buf_pool_) {
-        struct v4l2_buffer buf{};
-        buf.type   = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-        buf.memory = V4L2_MEMORY_MMAP;
-        buf.index  = slot.index;
+        if (mplane_) {
+            struct v4l2_buffer buf{};
+            struct v4l2_plane plane{};
+            buf.type    = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
+            buf.memory  = V4L2_MEMORY_MMAP;
+            buf.index   = slot.index;
+            buf.m.planes = &plane;
+            buf.length   = 1;
 
-        if (ioctl(v4l2_fd_, VIDIOC_QBUF, &buf) < 0) {
-            std::cerr << "[CameraHalA7s] VIDIOC_QBUF[" << slot.index << "] failed: "
-                      << strerror(errno) << "\n";
-            return false;
+            if (ioctl(v4l2_fd_, VIDIOC_QBUF, &buf) < 0) {
+                std::cerr << "[CameraHalA7s] VIDIOC_QBUF[" << slot.index << "] failed: "
+                          << strerror(errno) << "\n";
+                return false;
+            }
+        } else {
+            struct v4l2_buffer buf{};
+            buf.type   = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+            buf.memory = V4L2_MEMORY_MMAP;
+            buf.index  = slot.index;
+
+            if (ioctl(v4l2_fd_, VIDIOC_QBUF, &buf) < 0) {
+                std::cerr << "[CameraHalA7s] VIDIOC_QBUF[" << slot.index << "] failed: "
+                          << strerror(errno) << "\n";
+                return false;
+            }
         }
         slot.queued = true;
     }
 
     // Start streaming
-    int type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+    int type = static_cast<int>(buf_type_);
     if (ioctl(v4l2_fd_, VIDIOC_STREAMON, &type) < 0) {
         std::cerr << "[CameraHalA7s] VIDIOC_STREAMON failed: " << strerror(errno) << "\n";
         return false;
@@ -304,8 +406,13 @@ bool CameraHalA7s::acquire_frames(FrameBuffer& full, FrameBuffer& medium,
 
     // 1. Dequeue a frame (blocking, with poll timeout)
     struct v4l2_buffer buf{};
-    buf.type   = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-    buf.memory = V4L2_MEMORY_MMAP;
+    struct v4l2_plane plane{};
+    buf.type    = buf_type_;
+    buf.memory  = V4L2_MEMORY_MMAP;
+    if (mplane_) {
+        buf.m.planes = &plane;
+        buf.length   = 1;
+    }
 
     // Use poll() to wait for data with timeout
     struct pollfd pfd;
@@ -342,11 +449,14 @@ bool CameraHalA7s::acquire_frames(FrameBuffer& full, FrameBuffer& medium,
     }
 
     // 3. Populate full frame buffer (points directly to MMAP buffer)
+    uint32_t bytesused = mplane_ ? plane.bytesused : buf.bytesused;
+    uint32_t buf_length = mplane_ ? plane.length : buf.length;
+
     frame_full_.data         = static_cast<uint8_t*>(slot.mapped);
     frame_full_.width        = static_cast<uint32_t>(cfg_.camera.full_w);
     frame_full_.height       = static_cast<uint32_t>(cfg_.camera.full_h);
-    frame_full_.stride       = static_cast<uint32_t>(cfg_.camera.full_w);
-    frame_full_.size         = slot.length;
+    frame_full_.stride       = v4l2_stride_ > 0 ? v4l2_stride_ : static_cast<uint32_t>(cfg_.camera.full_w);
+    frame_full_.size         = bytesused > 0 ? bytesused : buf_length;
     frame_full_.timestamp_ms = timestamp_ms;
     frame_full_.dma_fd       = -1;
 
@@ -382,15 +492,31 @@ bool CameraHalA7s::acquire_frames(FrameBuffer& full, FrameBuffer& medium,
     frame_lores_.dma_fd       = -1;
 
     // 5. Re-queue the buffer for the next frame
-    struct v4l2_buffer qbuf{};
-    qbuf.type   = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-    qbuf.memory = V4L2_MEMORY_MMAP;
-    qbuf.index  = buf.index;
+    if (mplane_) {
+        struct v4l2_buffer qbuf{};
+        struct v4l2_plane qplane{};
+        qbuf.type    = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
+        qbuf.memory  = V4L2_MEMORY_MMAP;
+        qbuf.index   = buf.index;
+        qbuf.m.planes = &qplane;
+        qbuf.length   = 1;
 
-    if (ioctl(v4l2_fd_, VIDIOC_QBUF, &qbuf) < 0) {
-        std::cerr << "[CameraHalA7s] VIDIOC_QBUF (re-queue) failed: "
-                  << strerror(errno) << "\n";
-        return false;
+        if (ioctl(v4l2_fd_, VIDIOC_QBUF, &qbuf) < 0) {
+            std::cerr << "[CameraHalA7s] VIDIOC_QBUF (re-queue) failed: "
+                      << strerror(errno) << "\n";
+            return false;
+        }
+    } else {
+        struct v4l2_buffer qbuf{};
+        qbuf.type   = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+        qbuf.memory = V4L2_MEMORY_MMAP;
+        qbuf.index  = buf.index;
+
+        if (ioctl(v4l2_fd_, VIDIOC_QBUF, &qbuf) < 0) {
+            std::cerr << "[CameraHalA7s] VIDIOC_QBUF (re-queue) failed: "
+                      << strerror(errno) << "\n";
+            return false;
+        }
     }
     slot.queued = true;
 
@@ -414,7 +540,7 @@ void CameraHalA7s::shutdown() {
 
     // Stop streaming
     if (v4l2_fd_ >= 0) {
-        int type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+        int type = static_cast<int>(buf_type_);
         ioctl(v4l2_fd_, VIDIOC_STREAMOFF, &type);
     }
 

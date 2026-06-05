@@ -96,6 +96,11 @@ private:
     // V4L2 device
     int v4l2_fd_ = -1;
 
+    // Multiplanar API flag and buffer type
+    bool     mplane_    = false;
+    uint32_t buf_type_  = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+    uint32_t v4l2_stride_ = 0;
+
     // V4L2 buffer pool (MMAP buffers)
     std::vector<V4l2BufSlot> v4l2_buf_pool_;
 

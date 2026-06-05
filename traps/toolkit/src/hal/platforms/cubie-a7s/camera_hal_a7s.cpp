@@ -30,6 +30,8 @@
 #include <sys/stat.h>
 #include <poll.h>
 #include <linux/videodev2.h>
+#include <linux/media.h>
+#include <linux/v4l2-subdev.h>
 #include <errno.h>
 
 namespace ct {
@@ -126,6 +128,250 @@ bool CameraHalA7s::init(const PipelineConfig& cfg) {
     return true;
 }
 
+// ─── Media controller pipeline helpers ────────────────────────────────────────
+// The sunxi-vin driver on Allwinner A733 uses the media controller API.
+// Before VIDIOC_S_FMT will succeed on the video capture node, the sensor
+// subdev must be configured via the subdev API, and the pipeline links
+// must be properly set up.
+//
+// Pipeline topology (typical):
+//   sensor subdev (e.g. imx415 4-001a) → sunxi-vin capture (/dev/video0)
+
+/// Open the media device and configure the pipeline for the given video node.
+/// Returns true if the pipeline was configured successfully.
+static bool configure_media_pipeline(int video_fd, int width, int height, int fps) {
+    // First, find which media device this video node belongs to
+    struct v4l2_capability cap{};
+    if (ioctl(video_fd, VIDIOC_QUERYCAP, &cap) < 0) {
+        std::cerr << "[CameraHalA7s] configure_media_pipeline: VIDIOC_QUERYCAP failed: "
+                  << strerror(errno) << "\n";
+        return false;
+    }
+
+    // The bus_info typically contains the media device name, e.g. "platform:sunxi-vin"
+    // We need to find the corresponding /dev/media* device
+    std::cout << "[CameraHalA7s]   Video bus_info: " << cap.bus_info << "\n";
+
+    // Try each media device to find one that contains this video node
+    for (int med_idx = 0; med_idx <= 3; ++med_idx) {
+        char media_path[32];
+        snprintf(media_path, sizeof(media_path), "/dev/media%d", med_idx);
+
+        int media_fd = ::open(media_path, O_RDWR, 0);
+        if (media_fd < 0) continue;
+
+        // Get media device info
+        struct media_device_info med_info{};
+        if (ioctl(media_fd, MEDIA_IOC_DEVICE_INFO, &med_info) < 0) {
+            ::close(media_fd);
+            continue;
+        }
+
+        std::cout << "[CameraHalA7s]   Media device " << media_path
+                  << ": " << med_info.model << "\n";
+
+        // Enumerate entities to find the sensor subdev and video node
+        int sensor_subdev_fd = -1;
+        int video_entity_id = -1;
+        int sensor_entity_id = -1;
+
+        struct media_entity_desc entity{};
+        entity.id = MEDIA_ENT_ID_FLAG_NEXT;
+        while (ioctl(media_fd, MEDIA_IOC_ENUM_ENTITIES, &entity) == 0) {
+            std::cout << "[CameraHalA7s]     Entity " << entity.id
+                      << ": \"" << entity.name << "\""
+                      << " type=" << entity.type << "\n";
+
+            // Check if this is a sensor subdev (type MEDIA_ENT_T_V4L2_SUBDEV_SENSOR)
+            if (entity.type == MEDIA_ENT_T_V4L2_SUBDEV_SENSOR ||
+                (entity.type == MEDIA_ENT_T_V4L2_SUBDEV &&
+                 strstr(entity.name, "imx415") != nullptr)) {
+                sensor_entity_id = entity.id;
+                std::cout << "[CameraHalA7s]       -> Found sensor subdev\n";
+            }
+
+            // Check if this is our video capture node
+            if (entity.type == MEDIA_ENT_T_DEVNODE &&
+                strstr(entity.name, "sunxi-vin") != nullptr) {
+                video_entity_id = entity.id;
+                std::cout << "[CameraHalA7s]       -> Found video capture entity\n";
+            }
+
+            entity.id |= MEDIA_ENT_ID_FLAG_NEXT;
+        }
+
+        if (sensor_entity_id < 0) {
+            std::cout << "[CameraHalA7s]   No sensor subdev found on " << media_path << "\n";
+            ::close(media_fd);
+            continue;
+        }
+
+        // Get the sensor subdev device node from sysfs
+        // The entity has a devnode major/minor - we need to find the /dev/v4l-subdev* node
+        char sensor_dev_path[64] = {};
+        bool found_sensor_dev = false;
+
+        // Re-enumerate to get entity info with devnode
+        struct media_entity_desc sensor_entity{};
+        sensor_entity.id = static_cast<__u32>(sensor_entity_id);
+        if (ioctl(media_fd, MEDIA_IOC_ENUM_ENTITIES, &sensor_entity) == 0) {
+            if (sensor_entity.dev.major > 0) {
+                // Find the subdev device by major/minor
+                for (int sd = 0; sd <= 31; ++sd) {
+                    char sd_path[32];
+                    snprintf(sd_path, sizeof(sd_path), "/dev/v4l-subdev%d", sd);
+                    struct stat st{};
+                    if (stat(sd_path, &st) == 0 &&
+                        major(st.st_rdev) == sensor_entity.dev.major &&
+                        minor(st.st_rdev) == sensor_entity.dev.minor) {
+                        strncpy(sensor_dev_path, sd_path, sizeof(sensor_dev_path) - 1);
+                        found_sensor_dev = true;
+                        std::cout << "[CameraHalA7s]   Sensor subdev device: "
+                                  << sensor_dev_path << "\n";
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (!found_sensor_dev) {
+            // Fallback: try to find the subdev by scanning /sys/class/video4linux/
+            // The sensor subdev is typically v4l-subdev0 or v4l-subdev1
+            for (int sd = 0; sd <= 7; ++sd) {
+                char sd_path[32];
+                snprintf(sd_path, sizeof(sd_path), "/dev/v4l-subdev%d", sd);
+                sensor_subdev_fd = ::open(sd_path, O_RDWR, 0);
+                if (sensor_subdev_fd >= 0) {
+                    struct v4l2_subdev_capability sd_cap{};
+                    if (ioctl(sensor_subdev_fd, VIDIOC_SUBDEV_QUERYCAP, &sd_cap) == 0) {
+                        std::cout << "[CameraHalA7s]   Trying subdev " << sd_path
+                                  << ": " << sd_cap.name << "\n";
+                        if (strstr(reinterpret_cast<const char*>(sd_cap.name), "imx415") ||
+                            strstr(reinterpret_cast<const char*>(sd_cap.name), "sensor")) {
+                            strncpy(sensor_dev_path, sd_path, sizeof(sensor_dev_path) - 1);
+                            found_sensor_dev = true;
+                            std::cout << "[CameraHalA7s]   Found sensor subdev: "
+                                      << sensor_dev_path << "\n";
+                            ::close(sensor_subdev_fd);
+                            sensor_subdev_fd = -1;
+                            break;
+                        }
+                    }
+                    ::close(sensor_subdev_fd);
+                    sensor_subdev_fd = -1;
+                }
+            }
+        }
+
+        if (!found_sensor_dev) {
+            std::cerr << "[CameraHalA7s]   Could not find sensor subdev device node\n";
+            ::close(media_fd);
+            continue;
+        }
+
+        // Open the sensor subdev
+        sensor_subdev_fd = ::open(sensor_dev_path, O_RDWR, 0);
+        if (sensor_subdev_fd < 0) {
+            std::cerr << "[CameraHalA7s]   Failed to open sensor subdev: "
+                      << strerror(errno) << "\n";
+            ::close(media_fd);
+            continue;
+        }
+
+        // Configure the sensor subdev format
+        // First try the native sensor resolution (IMX415: 3840x2160 or 1920x1080)
+        struct v4l2_subdev_format sd_fmt{};
+        sd_fmt.which = V4L2_SUBDEV_FORMAT_ACTIVE;
+        sd_fmt.pad = 0;  // Sensor pads: 0 = output
+        sd_fmt.format.width = static_cast<__u32>(width);
+        sd_fmt.format.height = static_cast<__u32>(height);
+
+        // Try a few common media bus formats for the sensor
+        // IMX415 typically outputs SBGGR10 or SRGGB10
+        uint32_t mbus_codes[] = {
+            MEDIA_BUS_FMT_SBGGR10_1X10,
+            MEDIA_BUS_FMT_SRGGB10_1X10,
+            MEDIA_BUS_FMT_SGRBG10_1X10,
+            MEDIA_BUS_FMT_SGBRG10_1X10,
+            MEDIA_BUS_FMT_SBGGR12_1X12,
+            MEDIA_BUS_FMT_SRGGB12_1X12,
+            MEDIA_BUS_FMT_SBGGR8_1X8,
+            MEDIA_BUS_FMT_SRGGB8_1X8,
+            MEDIA_BUS_FMT_UYVY8_1X16,
+            MEDIA_BUS_FMT_YUYV8_1X16,
+        };
+
+        bool subdev_fmt_ok = false;
+        for (auto mbus_code : mbus_codes) {
+            sd_fmt.format.code = mbus_code;
+            if (ioctl(sensor_subdev_fd, VIDIOC_SUBDEV_S_FMT, &sd_fmt) == 0) {
+                std::cout << "[CameraHalA7s]   Sensor subdev format set: "
+                          << sd_fmt.format.width << "x" << sd_fmt.format.height
+                          << " code=0x" << std::hex << sd_fmt.format.code << std::dec << "\n";
+                subdev_fmt_ok = true;
+                break;
+            }
+        }
+
+        if (!subdev_fmt_ok) {
+            // Try enumerating sensor formats
+            std::cout << "[CameraHalA7s]   Enumerating sensor subdev formats...\n";
+            struct v4l2_subdev_mbus_code_enum mbus_enum{};
+            mbus_enum.pad = 0;
+            mbus_enum.which = V4L2_SUBDEV_FORMAT_ACTIVE;
+            mbus_enum.index = 0;
+            while (ioctl(sensor_subdev_fd, VIDIOC_SUBDEV_ENUM_MBUS_CODE, &mbus_enum) == 0) {
+                std::cout << "[CameraHalA7s]     Sensor supports mbus code: 0x"
+                          << std::hex << mbus_enum.code << std::dec << "\n";
+                sd_fmt.format.code = mbus_enum.code;
+                if (ioctl(sensor_subdev_fd, VIDIOC_SUBDEV_S_FMT, &sd_fmt) == 0) {
+                    std::cout << "[CameraHalA7s]   Sensor subdev format set: "
+                              << sd_fmt.format.width << "x" << sd_fmt.format.height
+                              << " code=0x" << std::hex << sd_fmt.format.code << std::dec << "\n";
+                    subdev_fmt_ok = true;
+                    break;
+                }
+                mbus_enum.index++;
+            }
+        }
+
+        if (!subdev_fmt_ok) {
+            std::cerr << "[CameraHalA7s]   Failed to set sensor subdev format\n";
+            ::close(sensor_subdev_fd);
+            ::close(media_fd);
+            continue;
+        }
+
+        // Set sensor framerate
+        struct v4l2_subdev_frame_interval_enum fie{};
+        fie.pad = 0;
+        fie.index = 0;
+        fie.code = sd_fmt.format.code;
+        fie.width = sd_fmt.format.width;
+        fie.height = sd_fmt.format.height;
+
+        // Try to set frame interval
+        struct v4l2_subdev_frame_interval fi{};
+        fi.pad = 0;
+        fi.interval.numerator = 1;
+        fi.interval.denominator = static_cast<__u32>(fps);
+        if (ioctl(sensor_subdev_fd, VIDIOC_SUBDEV_S_FRAME_INTERVAL, &fi) < 0) {
+            std::cout << "[CameraHalA7s]   Sensor frame interval not supported (non-fatal)\n";
+        } else {
+            std::cout << "[CameraHalA7s]   Sensor frame interval set: "
+                      << fi.interval.numerator << "/" << fi.interval.denominator << "\n";
+        }
+
+        ::close(sensor_subdev_fd);
+        ::close(media_fd);
+        std::cout << "[CameraHalA7s] Media pipeline configured successfully\n";
+        return true;
+    }
+
+    std::cerr << "[CameraHalA7s] Failed to configure media pipeline\n";
+    return false;
+}
+
 // ─── init_v4l2 ────────────────────────────────────────────────────────────────
 bool CameraHalA7s::init_v4l2() {
     // Try the configured device path first, then common alternatives
@@ -212,7 +458,19 @@ bool CameraHalA7s::init_v4l2() {
     std::cout << "[CameraHalA7s] Detected " << (mplane_ ? "multiplanar" : "single-planar")
               << " V4L2 API\n";
 
-    // 2. Enumerate supported pixel formats
+    // 2. Configure the media controller pipeline (required by sunxi-vin driver)
+    //    This must be done BEFORE VIDIOC_S_FMT, as the sunxi-vin driver needs
+    //    the sensor subdev configured first.
+    if (!configure_media_pipeline(v4l2_fd_,
+                                  static_cast<int>(cfg_.camera.full_w),
+                                  static_cast<int>(cfg_.camera.full_h),
+                                  static_cast<int>(cfg_.camera.fps))) {
+        std::cerr << "[CameraHalA7s] Media pipeline configuration failed, "
+                  << "trying without it...\n";
+        // Non-fatal - some drivers may not need media controller config
+    }
+
+    // 3. Enumerate supported pixel formats
     //    On Allwinner A733 (sunxi-vin), the driver may only support raw Bayer
     //    formats (e.g. SBGGR8, SGRBG8) or JPEG, not NV12. We enumerate what's
     //    available and try NV12 first, then fall back to whatever the driver
@@ -230,7 +488,7 @@ bool CameraHalA7s::init_v4l2() {
         }
     }
 
-    // 3. Set format: prefer NV12, fall back to whatever the driver supports
+    // 4. Set format: prefer NV12, fall back to whatever the driver supports
     //    Build a preference list: NV12 first, then any driver-native format
     std::vector<uint32_t> format_prefs;
     format_prefs.push_back(V4L2_PIX_FMT_NV12);

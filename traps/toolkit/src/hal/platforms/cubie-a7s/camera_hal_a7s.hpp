@@ -25,6 +25,7 @@
 
 // V4L2 types needed for the interface (buf_type_ member)
 #include <linux/videodev2.h>
+#include <linux/media.h>
 
 namespace ct {
 
@@ -47,8 +48,10 @@ namespace ct {
 //   - NPU: Vivante VIPLite (OpenVX-based, for inference)
 //   - GPU: Mali G57 (OpenCL-capable, for optional video scaling)
 //
-// NOTE: This implementation has NOT been tested on real hardware.
-//       TODO: Test and validate on Radxa Cubie A7S.
+// NOTE: The sunxi-vin driver on Allwinner A733 requires media controller
+//       pipeline configuration before VIDIOC_S_FMT will succeed. The sensor
+//       subdev must be configured first via the subdev API, then the video
+//       capture node can accept format settings.
 struct CameraHalA7s : ICameraHAL {
     CameraHalA7s();
     ~CameraHalA7s() override;

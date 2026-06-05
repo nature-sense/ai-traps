@@ -33881,7 +33881,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.hpp",
-      "source_location": "L54",
+      "source_location": "L57",
       "weight": 1.0,
       "_src": "traps_toolkit_src_hal_platforms_cubie_a7s_camera_hal_a7s_hpp",
       "_tgt": "camera_hal_a7s_camerahala7s",

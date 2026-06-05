@@ -28,11 +28,22 @@
 #include <sys/ioctl.h>
 #include <sys/mman.h>
 #include <sys/stat.h>
+#include <sys/sysmacros.h>  // major(), minor()
 #include <poll.h>
 #include <linux/videodev2.h>
 #include <linux/media.h>
 #include <linux/v4l2-subdev.h>
 #include <errno.h>
+
+// Compatibility defines for older kernel headers
+#ifndef MEDIA_ENT_T_V4L2_SUBDEV_SENSOR
+#define MEDIA_ENT_T_V4L2_SUBDEV_SENSOR MEDIA_ENT_T_V4L2_SUBDEV
+#endif
+#ifndef VIDIOC_SUBDEV_QUERYCAP
+// Fallback: if not defined, we'll skip the subdev capability query
+#define VIDIOC_SUBDEV_QUERYCAP 0
+struct v4l2_subdev_capability { char name[64]; };
+#endif
 
 namespace ct {
 

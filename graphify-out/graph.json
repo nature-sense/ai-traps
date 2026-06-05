@@ -9,7 +9,7 @@
       "source_file": "tools/mcp/scripts/generate_project_graph.py",
       "source_location": "L1",
       "id": "tools_mcp_scripts_generate_project_graph_py",
-      "community": 39
+      "community": 40
     },
     {
       "label": "draw_module_structure()",
@@ -17,7 +17,7 @@
       "source_file": "tools/mcp/scripts/generate_project_graph.py",
       "source_location": "L69",
       "id": "generate_project_graph_draw_module_structure",
-      "community": 39
+      "community": 40
     },
     {
       "label": "draw_actor_pipeline()",
@@ -25,7 +25,7 @@
       "source_file": "tools/mcp/scripts/generate_project_graph.py",
       "source_location": "L117",
       "id": "generate_project_graph_draw_actor_pipeline",
-      "community": 39
+      "community": 40
     },
     {
       "label": "draw_build_deploy()",
@@ -33,7 +33,7 @@
       "source_file": "tools/mcp/scripts/generate_project_graph.py",
       "source_location": "L237",
       "id": "generate_project_graph_draw_build_deploy",
-      "community": 39
+      "community": 40
     },
     {
       "label": "draw_data_flow()",
@@ -41,7 +41,7 @@
       "source_file": "tools/mcp/scripts/generate_project_graph.py",
       "source_location": "L359",
       "id": "generate_project_graph_draw_data_flow",
-      "community": 39
+      "community": 40
     },
     {
       "label": "main()",
@@ -49,7 +49,7 @@
       "source_file": "tools/mcp/scripts/generate_project_graph.py",
       "source_location": "L448",
       "id": "generate_project_graph_main",
-      "community": 39
+      "community": 40
     },
     {
       "label": "trap-mcp-server.py",
@@ -249,7 +249,7 @@
       "source_file": "tools/mcp/scripts/mcp-build-server.py",
       "source_location": "L1",
       "id": "tools_mcp_scripts_mcp_build_server_py",
-      "community": 61
+      "community": 62
     },
     {
       "label": "main()",
@@ -257,14 +257,14 @@
       "source_file": "tools/mcp/scripts/mcp-build-server.py",
       "source_location": "L33",
       "id": "mcp_build_server_main",
-      "community": 61
+      "community": 62
     },
     {
       "label": "Run the MCP build server",
       "file_type": "rationale",
       "source_file": "tools/mcp/scripts/mcp-build-server.py",
       "source_location": "L34",
-      "community": 61,
+      "community": 62,
       "id": "mcp_build_server_rationale_34"
     },
     {
@@ -273,7 +273,7 @@
       "source_file": "tools/mcp/scripts/generate_actor_diagram.py",
       "source_location": "L1",
       "id": "tools_mcp_scripts_generate_actor_diagram_py",
-      "community": 62
+      "community": 63
     },
     {
       "label": "get_port_position()",
@@ -281,14 +281,14 @@
       "source_file": "tools/mcp/scripts/generate_actor_diagram.py",
       "source_location": "L280",
       "id": "generate_actor_diagram_get_port_position",
-      "community": 62
+      "community": 63
     },
     {
       "label": "Get the (x, y) position of a port on an actor.",
       "file_type": "rationale",
       "source_file": "tools/mcp/scripts/generate_actor_diagram.py",
       "source_location": "L281",
-      "community": 62,
+      "community": 63,
       "id": "generate_actor_diagram_rationale_281"
     },
     {
@@ -433,7 +433,7 @@
       "source_file": "tools/mcp/scripts/build_server.py",
       "source_location": "L1",
       "id": "tools_mcp_scripts_build_server_py",
-      "community": 63
+      "community": 64
     },
     {
       "label": "main()",
@@ -441,14 +441,14 @@
       "source_file": "tools/mcp/scripts/build_server.py",
       "source_location": "L42",
       "id": "build_server_main",
-      "community": 63
+      "community": 64
     },
     {
       "label": "Run the build server with uvicorn.",
       "file_type": "rationale",
       "source_file": "tools/mcp/scripts/build_server.py",
       "source_location": "L43",
-      "community": 63,
+      "community": 64,
       "id": "build_server_rationale_43"
     },
     {
@@ -849,7 +849,7 @@
       "source_file": "tools/mcp/scripts/mcp_build/build.py",
       "source_location": "L1",
       "id": "tools_mcp_scripts_mcp_build_build_py",
-      "community": 15
+      "community": 17
     },
     {
       "label": "build_toolkit()",
@@ -857,7 +857,7 @@
       "source_file": "tools/mcp/scripts/mcp_build/build.py",
       "source_location": "L15",
       "id": "build_build_toolkit",
-      "community": 15
+      "community": 17
     },
     {
       "label": "build_target()",
@@ -865,14 +865,14 @@
       "source_file": "tools/mcp/scripts/mcp_build/build.py",
       "source_location": "L83",
       "id": "build_build_target",
-      "community": 15
+      "community": 17
     },
     {
       "label": "Build functions for toolkit and target binaries.  Handles rsync-based source syn",
       "file_type": "rationale",
       "source_file": "tools/mcp/scripts/mcp_build/build.py",
       "source_location": "L1",
-      "community": 15,
+      "community": 17,
       "id": "build_rationale_1"
     },
     {
@@ -880,7 +880,7 @@
       "file_type": "rationale",
       "source_file": "tools/mcp/scripts/mcp_build/build.py",
       "source_location": "L16",
-      "community": 15,
+      "community": 17,
       "id": "build_rationale_16"
     },
     {
@@ -888,7 +888,7 @@
       "file_type": "rationale",
       "source_file": "tools/mcp/scripts/mcp_build/build.py",
       "source_location": "L84",
-      "community": 15,
+      "community": 17,
       "id": "build_rationale_84"
     },
     {
@@ -897,7 +897,7 @@
       "source_file": "tools/mcp/scripts/mcp_build/config.py",
       "source_location": "L1",
       "id": "tools_mcp_scripts_mcp_build_config_py",
-      "community": 17
+      "community": 18
     },
     {
       "label": "get_platform_config()",
@@ -905,7 +905,7 @@
       "source_file": "tools/mcp/scripts/mcp_build/config.py",
       "source_location": "L57",
       "id": "config_get_platform_config",
-      "community": 17
+      "community": 18
     },
     {
       "label": "resolve_config()",
@@ -913,7 +913,7 @@
       "source_file": "tools/mcp/scripts/mcp_build/config.py",
       "source_location": "L62",
       "id": "config_resolve_config",
-      "community": 17
+      "community": 18
     },
     {
       "label": "get_binary_path()",
@@ -921,7 +921,7 @@
       "source_file": "tools/mcp/scripts/mcp_build/config.py",
       "source_location": "L83",
       "id": "config_get_binary_path",
-      "community": 17
+      "community": 18
     },
     {
       "label": "get_run_command()",
@@ -929,7 +929,7 @@
       "source_file": "tools/mcp/scripts/mcp_build/config.py",
       "source_location": "L89",
       "id": "config_get_run_command",
-      "community": 17
+      "community": 18
     },
     {
       "label": "ssh_execute()",
@@ -937,7 +937,7 @@
       "source_file": "tools/mcp/scripts/mcp_build/config.py",
       "source_location": "L100",
       "id": "config_ssh_execute",
-      "community": 17
+      "community": 18
     },
     {
       "label": "ssh_execute_background()",
@@ -945,14 +945,14 @@
       "source_file": "tools/mcp/scripts/mcp_build/config.py",
       "source_location": "L130",
       "id": "config_ssh_execute_background",
-      "community": 17
+      "community": 18
     },
     {
       "label": "Platform configuration and SSH helpers.  Defines platform-specific settings for",
       "file_type": "rationale",
       "source_file": "tools/mcp/scripts/mcp_build/config.py",
       "source_location": "L1",
-      "community": 17,
+      "community": 18,
       "id": "config_rationale_1"
     },
     {
@@ -960,7 +960,7 @@
       "file_type": "rationale",
       "source_file": "tools/mcp/scripts/mcp_build/config.py",
       "source_location": "L58",
-      "community": 17,
+      "community": 18,
       "id": "config_rationale_58"
     },
     {
@@ -968,7 +968,7 @@
       "file_type": "rationale",
       "source_file": "tools/mcp/scripts/mcp_build/config.py",
       "source_location": "L63",
-      "community": 17,
+      "community": 18,
       "id": "config_rationale_63"
     },
     {
@@ -976,7 +976,7 @@
       "file_type": "rationale",
       "source_file": "tools/mcp/scripts/mcp_build/config.py",
       "source_location": "L84",
-      "community": 17,
+      "community": 18,
       "id": "config_rationale_84"
     },
     {
@@ -984,7 +984,7 @@
       "file_type": "rationale",
       "source_file": "tools/mcp/scripts/mcp_build/config.py",
       "source_location": "L90",
-      "community": 17,
+      "community": 18,
       "id": "config_rationale_90"
     },
     {
@@ -992,7 +992,7 @@
       "file_type": "rationale",
       "source_file": "tools/mcp/scripts/mcp_build/config.py",
       "source_location": "L101",
-      "community": 17,
+      "community": 18,
       "id": "config_rationale_101"
     },
     {
@@ -1000,7 +1000,7 @@
       "file_type": "rationale",
       "source_file": "tools/mcp/scripts/mcp_build/config.py",
       "source_location": "L131",
-      "community": 17,
+      "community": 18,
       "id": "config_rationale_131"
     },
     {
@@ -1009,7 +1009,7 @@
       "source_file": "tools/mcp/scripts/mcp_build/deploy.py",
       "source_location": "L1",
       "id": "tools_mcp_scripts_mcp_build_deploy_py",
-      "community": 34
+      "community": 35
     },
     {
       "label": "generate_config_yaml()",
@@ -1017,7 +1017,7 @@
       "source_file": "tools/mcp/scripts/mcp_build/deploy.py",
       "source_location": "L17",
       "id": "deploy_generate_config_yaml",
-      "community": 34
+      "community": 35
     },
     {
       "label": "generate_systemd_service()",
@@ -1025,7 +1025,7 @@
       "source_file": "tools/mcp/scripts/mcp_build/deploy.py",
       "source_location": "L165",
       "id": "deploy_generate_systemd_service",
-      "community": 34
+      "community": 35
     },
     {
       "label": "deploy_to_board()",
@@ -1033,14 +1033,14 @@
       "source_file": "tools/mcp/scripts/mcp_build/deploy.py",
       "source_location": "L183",
       "id": "deploy_deploy_to_board",
-      "community": 34
+      "community": 35
     },
     {
       "label": "Deploy pipeline functions.  Handles config generation, systemd service creation,",
       "file_type": "rationale",
       "source_file": "tools/mcp/scripts/mcp_build/deploy.py",
       "source_location": "L1",
-      "community": 34,
+      "community": 35,
       "id": "deploy_rationale_1"
     },
     {
@@ -1048,7 +1048,7 @@
       "file_type": "rationale",
       "source_file": "tools/mcp/scripts/mcp_build/deploy.py",
       "source_location": "L18",
-      "community": 34,
+      "community": 35,
       "id": "deploy_rationale_18"
     },
     {
@@ -1056,7 +1056,7 @@
       "file_type": "rationale",
       "source_file": "tools/mcp/scripts/mcp_build/deploy.py",
       "source_location": "L166",
-      "community": 34,
+      "community": 35,
       "id": "deploy_rationale_166"
     },
     {
@@ -1064,7 +1064,7 @@
       "file_type": "rationale",
       "source_file": "tools/mcp/scripts/mcp_build/deploy.py",
       "source_location": "L184",
-      "community": 34,
+      "community": 35,
       "id": "deploy_rationale_184"
     },
     {
@@ -1417,7 +1417,7 @@
       "source_file": "tools/mcp/scripts/mcp_build/tools.py",
       "source_location": "L1",
       "id": "tools_mcp_scripts_mcp_build_tools_py",
-      "community": 51
+      "community": 52
     },
     {
       "label": "list_tools()",
@@ -1425,14 +1425,14 @@
       "source_file": "tools/mcp/scripts/mcp_build/tools.py",
       "source_location": "L14",
       "id": "tools_list_tools",
-      "community": 51
+      "community": 52
     },
     {
       "label": "MCP tool definitions.  Defines the schemas for all tools exposed by the ai-trap-",
       "file_type": "rationale",
       "source_file": "tools/mcp/scripts/mcp_build/tools.py",
       "source_location": "L1",
-      "community": 51,
+      "community": 52,
       "id": "tools_rationale_1"
     },
     {
@@ -1440,7 +1440,7 @@
       "file_type": "rationale",
       "source_file": "tools/mcp/scripts/mcp_build/tools.py",
       "source_location": "L15",
-      "community": 51,
+      "community": 52,
       "id": "tools_rationale_15"
     },
     {
@@ -1449,14 +1449,14 @@
       "source_file": "tools/mcp/scripts/mcp_build/__init__.py",
       "source_location": "L1",
       "id": "tools_mcp_scripts_mcp_build_init_py",
-      "community": 64
+      "community": 65
     },
     {
       "label": "Build Server Package - AI Camera Trap Build Server  A FastAPI-based build server",
       "file_type": "rationale",
       "source_file": "tools/mcp/scripts/build_server/__init__.py",
       "source_location": "L1",
-      "community": 64,
+      "community": 65,
       "id": "init_rationale_1"
     },
     {
@@ -1465,7 +1465,7 @@
       "source_file": "tools/mcp/scripts/mcp_build/parsers.py",
       "source_location": "L1",
       "id": "tools_mcp_scripts_mcp_build_parsers_py",
-      "community": 15
+      "community": 17
     },
     {
       "label": "CompilerErrorParser",
@@ -1473,7 +1473,7 @@
       "source_file": "tools/mcp/scripts/mcp_build/parsers.py",
       "source_location": "L12",
       "id": "parsers_compilererrorparser",
-      "community": 15
+      "community": 17
     },
     {
       "label": "parse_line()",
@@ -1481,7 +1481,7 @@
       "source_file": "tools/mcp/scripts/mcp_build/parsers.py",
       "source_location": "L36",
       "id": "parsers_parse_line",
-      "community": 15
+      "community": 17
     },
     {
       "label": "parse_output()",
@@ -1489,7 +1489,7 @@
       "source_file": "tools/mcp/scripts/mcp_build/parsers.py",
       "source_location": "L73",
       "id": "parsers_parse_output",
-      "community": 15
+      "community": 17
     },
     {
       "label": "CrashParser",
@@ -1497,7 +1497,7 @@
       "source_file": "tools/mcp/scripts/mcp_build/parsers.py",
       "source_location": "L124",
       "id": "parsers_crashparser",
-      "community": 15
+      "community": 17
     },
     {
       "label": "parse_gdb_output()",
@@ -1505,14 +1505,14 @@
       "source_file": "tools/mcp/scripts/mcp_build/parsers.py",
       "source_location": "L149",
       "id": "parsers_parse_gdb_output",
-      "community": 15
+      "community": 17
     },
     {
       "label": "Compiler error and crash output parsers.  Provides structured parsing of GCC/Cla",
       "file_type": "rationale",
       "source_file": "tools/mcp/scripts/mcp_build/parsers.py",
       "source_location": "L1",
-      "community": 15,
+      "community": 17,
       "id": "parsers_rationale_1"
     },
     {
@@ -1520,7 +1520,7 @@
       "file_type": "rationale",
       "source_file": "tools/mcp/scripts/mcp_build/parsers.py",
       "source_location": "L13",
-      "community": 15,
+      "community": 17,
       "id": "parsers_rationale_13"
     },
     {
@@ -1528,7 +1528,7 @@
       "file_type": "rationale",
       "source_file": "tools/mcp/scripts/mcp_build/parsers.py",
       "source_location": "L37",
-      "community": 100,
+      "community": 101,
       "id": "parsers_rationale_37"
     },
     {
@@ -1536,7 +1536,7 @@
       "file_type": "rationale",
       "source_file": "tools/mcp/scripts/mcp_build/parsers.py",
       "source_location": "L74",
-      "community": 101,
+      "community": 102,
       "id": "parsers_rationale_74"
     },
     {
@@ -1544,7 +1544,7 @@
       "file_type": "rationale",
       "source_file": "tools/mcp/scripts/mcp_build/parsers.py",
       "source_location": "L125",
-      "community": 15,
+      "community": 17,
       "id": "parsers_rationale_125"
     },
     {
@@ -1552,7 +1552,7 @@
       "file_type": "rationale",
       "source_file": "tools/mcp/scripts/mcp_build/parsers.py",
       "source_location": "L150",
-      "community": 102,
+      "community": 103,
       "id": "parsers_rationale_150"
     },
     {
@@ -1561,7 +1561,7 @@
       "source_file": "tools/mcp/scripts/mcp_build/model.py",
       "source_location": "L1",
       "id": "tools_mcp_scripts_mcp_build_model_py",
-      "community": 40
+      "community": 41
     },
     {
       "label": "compile_rknn_model()",
@@ -1569,7 +1569,7 @@
       "source_file": "tools/mcp/scripts/mcp_build/model.py",
       "source_location": "L17",
       "id": "model_compile_rknn_model",
-      "community": 40
+      "community": 41
     },
     {
       "label": "compile_nbg_model()",
@@ -1577,14 +1577,14 @@
       "source_file": "tools/mcp/scripts/mcp_build/model.py",
       "source_location": "L139",
       "id": "model_compile_nbg_model",
-      "community": 40
+      "community": 41
     },
     {
       "label": "Model compilation functions.  Supports compiling ONNX models to: - RKNN format f",
       "file_type": "rationale",
       "source_file": "tools/mcp/scripts/mcp_build/model.py",
       "source_location": "L1",
-      "community": 40,
+      "community": 41,
       "id": "model_rationale_1"
     },
     {
@@ -1592,7 +1592,7 @@
       "file_type": "rationale",
       "source_file": "tools/mcp/scripts/mcp_build/model.py",
       "source_location": "L18",
-      "community": 40,
+      "community": 41,
       "id": "model_rationale_18"
     },
     {
@@ -1600,7 +1600,7 @@
       "file_type": "rationale",
       "source_file": "tools/mcp/scripts/mcp_build/model.py",
       "source_location": "L140",
-      "community": 40,
+      "community": 41,
       "id": "model_rationale_140"
     },
     {
@@ -1881,7 +1881,7 @@
       "source_file": "tools/mcp/scripts/build_server/__init__.py",
       "source_location": "L1",
       "id": "tools_mcp_scripts_build_server_init_py",
-      "community": 64
+      "community": 65
     },
     {
       "label": "cubie_a7s.py",
@@ -1889,7 +1889,7 @@
       "source_file": "tools/mcp/scripts/build_server/cubie_a7s.py",
       "source_location": "L1",
       "id": "tools_mcp_scripts_build_server_cubie_a7s_py",
-      "community": 24
+      "community": 25
     },
     {
       "label": "CubieA7sPlatform",
@@ -1913,7 +1913,7 @@
       "source_file": "tools/mcp/scripts/build_server/cubie_a7s.py",
       "source_location": "L25",
       "id": "cubie_a7s_platform",
-      "community": 24
+      "community": 25
     },
     {
       "label": "platform_name()",
@@ -1921,7 +1921,7 @@
       "source_file": "tools/mcp/scripts/build_server/cubie_a7s.py",
       "source_location": "L29",
       "id": "cubie_a7s_platform_name",
-      "community": 24
+      "community": 25
     },
     {
       "label": "meson_cross_file()",
@@ -1929,7 +1929,7 @@
       "source_file": "tools/mcp/scripts/build_server/cubie_a7s.py",
       "source_location": "L33",
       "id": "cubie_a7s_meson_cross_file",
-      "community": 24
+      "community": 25
     },
     {
       "label": "default_build_dir()",
@@ -1937,7 +1937,7 @@
       "source_file": "tools/mcp/scripts/build_server/cubie_a7s.py",
       "source_location": "L37",
       "id": "cubie_a7s_default_build_dir",
-      "community": 24
+      "community": 25
     },
     {
       "label": "default_trap_name()",
@@ -1945,7 +1945,7 @@
       "source_file": "tools/mcp/scripts/build_server/cubie_a7s.py",
       "source_location": "L41",
       "id": "cubie_a7s_default_trap_name",
-      "community": 24
+      "community": 25
     },
     {
       "label": "model_type()",
@@ -1953,7 +1953,7 @@
       "source_file": "tools/mcp/scripts/build_server/cubie_a7s.py",
       "source_location": "L45",
       "id": "cubie_a7s_model_type",
-      "community": 24
+      "community": 25
     },
     {
       "label": "model_install_dir()",
@@ -1961,7 +1961,7 @@
       "source_file": "tools/mcp/scripts/build_server/cubie_a7s.py",
       "source_location": "L49",
       "id": "cubie_a7s_model_install_dir",
-      "community": 24
+      "community": 25
     },
     {
       "label": "config_install_dir()",
@@ -1969,7 +1969,7 @@
       "source_file": "tools/mcp/scripts/build_server/cubie_a7s.py",
       "source_location": "L53",
       "id": "cubie_a7s_config_install_dir",
-      "community": 24
+      "community": 25
     },
     {
       "label": "trap_install_dir()",
@@ -1977,7 +1977,7 @@
       "source_file": "tools/mcp/scripts/build_server/cubie_a7s.py",
       "source_location": "L57",
       "id": "cubie_a7s_trap_install_dir",
-      "community": 24
+      "community": 25
     },
     {
       "label": ".check_dependencies()",
@@ -2113,7 +2113,7 @@
       "source_file": "tools/mcp/scripts/build_server/rock3c.py",
       "source_location": "L1",
       "id": "tools_mcp_scripts_build_server_rock3c_py",
-      "community": 25
+      "community": 26
     },
     {
       "label": "Rock3cPlatform",
@@ -2129,7 +2129,7 @@
       "source_file": "tools/mcp/scripts/build_server/rock3c.py",
       "source_location": "L25",
       "id": "rock3c_platform",
-      "community": 25
+      "community": 26
     },
     {
       "label": "platform_name()",
@@ -2137,7 +2137,7 @@
       "source_file": "tools/mcp/scripts/build_server/rock3c.py",
       "source_location": "L29",
       "id": "rock3c_platform_name",
-      "community": 25
+      "community": 26
     },
     {
       "label": "meson_cross_file()",
@@ -2145,7 +2145,7 @@
       "source_file": "tools/mcp/scripts/build_server/rock3c.py",
       "source_location": "L33",
       "id": "rock3c_meson_cross_file",
-      "community": 25
+      "community": 26
     },
     {
       "label": "default_build_dir()",
@@ -2153,7 +2153,7 @@
       "source_file": "tools/mcp/scripts/build_server/rock3c.py",
       "source_location": "L37",
       "id": "rock3c_default_build_dir",
-      "community": 25
+      "community": 26
     },
     {
       "label": "default_trap_name()",
@@ -2161,7 +2161,7 @@
       "source_file": "tools/mcp/scripts/build_server/rock3c.py",
       "source_location": "L41",
       "id": "rock3c_default_trap_name",
-      "community": 25
+      "community": 26
     },
     {
       "label": "model_type()",
@@ -2169,7 +2169,7 @@
       "source_file": "tools/mcp/scripts/build_server/rock3c.py",
       "source_location": "L45",
       "id": "rock3c_model_type",
-      "community": 25
+      "community": 26
     },
     {
       "label": "model_install_dir()",
@@ -2177,7 +2177,7 @@
       "source_file": "tools/mcp/scripts/build_server/rock3c.py",
       "source_location": "L49",
       "id": "rock3c_model_install_dir",
-      "community": 25
+      "community": 26
     },
     {
       "label": "config_install_dir()",
@@ -2185,7 +2185,7 @@
       "source_file": "tools/mcp/scripts/build_server/rock3c.py",
       "source_location": "L53",
       "id": "rock3c_config_install_dir",
-      "community": 25
+      "community": 26
     },
     {
       "label": "trap_install_dir()",
@@ -2193,7 +2193,7 @@
       "source_file": "tools/mcp/scripts/build_server/rock3c.py",
       "source_location": "L57",
       "id": "rock3c_trap_install_dir",
-      "community": 25
+      "community": 26
     },
     {
       "label": ".check_dependencies()",
@@ -2465,7 +2465,7 @@
       "source_file": "tools/mcp/scripts/build_server/base_platform.py",
       "source_location": "L1",
       "id": "tools_mcp_scripts_build_server_base_platform_py",
-      "community": 1
+      "community": 13
     },
     {
       "label": "PlatformBase",
@@ -2481,7 +2481,7 @@
       "source_file": "",
       "source_location": "",
       "id": "abc",
-      "community": 1
+      "community": 13
     },
     {
       "label": ".__init__()",
@@ -2497,7 +2497,7 @@
       "source_file": "tools/mcp/scripts/build_server/base_platform.py",
       "source_location": "L40",
       "id": "base_platform_platform",
-      "community": 1
+      "community": 13
     },
     {
       "label": "platform_name()",
@@ -2505,7 +2505,7 @@
       "source_file": "tools/mcp/scripts/build_server/base_platform.py",
       "source_location": "L46",
       "id": "base_platform_platform_name",
-      "community": 1
+      "community": 13
     },
     {
       "label": "meson_cross_file()",
@@ -2513,7 +2513,7 @@
       "source_file": "tools/mcp/scripts/build_server/base_platform.py",
       "source_location": "L52",
       "id": "base_platform_meson_cross_file",
-      "community": 1
+      "community": 13
     },
     {
       "label": "default_build_dir()",
@@ -2521,7 +2521,7 @@
       "source_file": "tools/mcp/scripts/build_server/base_platform.py",
       "source_location": "L58",
       "id": "base_platform_default_build_dir",
-      "community": 1
+      "community": 13
     },
     {
       "label": "default_trap_name()",
@@ -2529,7 +2529,7 @@
       "source_file": "tools/mcp/scripts/build_server/base_platform.py",
       "source_location": "L64",
       "id": "base_platform_default_trap_name",
-      "community": 1
+      "community": 13
     },
     {
       "label": "model_type()",
@@ -2537,7 +2537,7 @@
       "source_file": "tools/mcp/scripts/build_server/base_platform.py",
       "source_location": "L70",
       "id": "base_platform_model_type",
-      "community": 1
+      "community": 13
     },
     {
       "label": "model_install_dir()",
@@ -2545,7 +2545,7 @@
       "source_file": "tools/mcp/scripts/build_server/base_platform.py",
       "source_location": "L76",
       "id": "base_platform_model_install_dir",
-      "community": 1
+      "community": 13
     },
     {
       "label": "config_install_dir()",
@@ -2553,7 +2553,7 @@
       "source_file": "tools/mcp/scripts/build_server/base_platform.py",
       "source_location": "L82",
       "id": "base_platform_config_install_dir",
-      "community": 1
+      "community": 13
     },
     {
       "label": "trap_install_dir()",
@@ -2561,7 +2561,7 @@
       "source_file": "tools/mcp/scripts/build_server/base_platform.py",
       "source_location": "L88",
       "id": "base_platform_trap_install_dir",
-      "community": 1
+      "community": 13
     },
     {
       "label": "check_dependencies()",
@@ -2569,7 +2569,7 @@
       "source_file": "tools/mcp/scripts/build_server/base_platform.py",
       "source_location": "L95",
       "id": "base_platform_check_dependencies",
-      "community": 1
+      "community": 13
     },
     {
       "label": "setup_dependencies()",
@@ -2577,7 +2577,7 @@
       "source_file": "tools/mcp/scripts/build_server/base_platform.py",
       "source_location": "L100",
       "id": "base_platform_setup_dependencies",
-      "community": 1
+      "community": 13
     },
     {
       "label": "get_meson_setup_command()",
@@ -2585,7 +2585,7 @@
       "source_file": "tools/mcp/scripts/build_server/base_platform.py",
       "source_location": "L107",
       "id": "base_platform_get_meson_setup_command",
-      "community": 1
+      "community": 13
     },
     {
       "label": "get_target_meson_setup_command()",
@@ -2593,7 +2593,7 @@
       "source_file": "tools/mcp/scripts/build_server/base_platform.py",
       "source_location": "L112",
       "id": "base_platform_get_target_meson_setup_command",
-      "community": 1
+      "community": 13
     },
     {
       "label": "get_model_compile_command()",
@@ -2601,7 +2601,7 @@
       "source_file": "tools/mcp/scripts/build_server/base_platform.py",
       "source_location": "L117",
       "id": "base_platform_get_model_compile_command",
-      "community": 1
+      "community": 13
     },
     {
       "label": "generate_config_yaml()",
@@ -2609,7 +2609,7 @@
       "source_file": "tools/mcp/scripts/build_server/base_platform.py",
       "source_location": "L124",
       "id": "base_platform_generate_config_yaml",
-      "community": 1
+      "community": 13
     },
     {
       "label": ".get_hostname()",
@@ -3201,7 +3201,7 @@
       "source_file": "tools/scripts/v4l2_test_capture.cpp",
       "source_location": "L1",
       "id": "tools_scripts_v4l2_test_capture_cpp",
-      "community": 41
+      "community": 42
     },
     {
       "label": "v4l2_fmt_name()",
@@ -3209,7 +3209,7 @@
       "source_file": "tools/scripts/v4l2_test_capture.cpp",
       "source_location": "L61",
       "id": "v4l2_test_capture_v4l2_fmt_name",
-      "community": 41
+      "community": 42
     },
     {
       "label": "print_caps()",
@@ -3217,7 +3217,7 @@
       "source_file": "tools/scripts/v4l2_test_capture.cpp",
       "source_location": "L71",
       "id": "v4l2_test_capture_print_caps",
-      "community": 41
+      "community": 42
     },
     {
       "label": "list_devices()",
@@ -3225,7 +3225,7 @@
       "source_file": "tools/scripts/v4l2_test_capture.cpp",
       "source_location": "L82",
       "id": "v4l2_test_capture_list_devices",
-      "community": 41
+      "community": 42
     },
     {
       "label": "capture_frame()",
@@ -3233,7 +3233,7 @@
       "source_file": "tools/scripts/v4l2_test_capture.cpp",
       "source_location": "L164",
       "id": "v4l2_test_capture_capture_frame",
-      "community": 41
+      "community": 42
     },
     {
       "label": "main()",
@@ -3241,7 +3241,7 @@
       "source_file": "tools/scripts/v4l2_test_capture.cpp",
       "source_location": "L372",
       "id": "v4l2_test_capture_main",
-      "community": 41
+      "community": 42
     },
     {
       "label": "add_license_headers.py",
@@ -3249,7 +3249,7 @@
       "source_file": "tools/scripts/add_license_headers.py",
       "source_location": "L1",
       "id": "tools_scripts_add_license_headers_py",
-      "community": 35
+      "community": 36
     },
     {
       "label": "should_skip()",
@@ -3257,7 +3257,7 @@
       "source_file": "tools/scripts/add_license_headers.py",
       "source_location": "L172",
       "id": "add_license_headers_should_skip",
-      "community": 35
+      "community": 36
     },
     {
       "label": "has_license()",
@@ -3265,7 +3265,7 @@
       "source_file": "tools/scripts/add_license_headers.py",
       "source_location": "L195",
       "id": "add_license_headers_has_license",
-      "community": 35
+      "community": 36
     },
     {
       "label": "add_header()",
@@ -3273,7 +3273,7 @@
       "source_file": "tools/scripts/add_license_headers.py",
       "source_location": "L203",
       "id": "add_license_headers_add_header",
-      "community": 35
+      "community": 36
     },
     {
       "label": "main()",
@@ -3281,14 +3281,14 @@
       "source_file": "tools/scripts/add_license_headers.py",
       "source_location": "L244",
       "id": "add_license_headers_main",
-      "community": 35
+      "community": 36
     },
     {
       "label": "Check if a file should be skipped.",
       "file_type": "rationale",
       "source_file": "tools/scripts/add_license_headers.py",
       "source_location": "L173",
-      "community": 35,
+      "community": 36,
       "id": "add_license_headers_rationale_173"
     },
     {
@@ -3296,7 +3296,7 @@
       "file_type": "rationale",
       "source_file": "tools/scripts/add_license_headers.py",
       "source_location": "L196",
-      "community": 35,
+      "community": 36,
       "id": "add_license_headers_rationale_196"
     },
     {
@@ -3304,7 +3304,7 @@
       "file_type": "rationale",
       "source_file": "tools/scripts/add_license_headers.py",
       "source_location": "L204",
-      "community": 35,
+      "community": 36,
       "id": "add_license_headers_rationale_204"
     },
     {
@@ -3313,7 +3313,7 @@
       "source_file": "tools/scripts/ble_test_advertise.py",
       "source_location": "L1",
       "id": "tools_scripts_ble_test_advertise_py",
-      "community": 26
+      "community": 27
     },
     {
       "label": "TestAdvertisement",
@@ -3321,7 +3321,7 @@
       "source_file": "tools/scripts/ble_test_advertise.py",
       "source_location": "L26",
       "id": "ble_test_advertise_testadvertisement",
-      "community": 26
+      "community": 27
     },
     {
       "label": ".__init__()",
@@ -3329,7 +3329,7 @@
       "source_file": "tools/scripts/ble_test_advertise.py",
       "source_location": "L29",
       "id": "ble_test_advertise_testadvertisement_init",
-      "community": 26
+      "community": 27
     },
     {
       "label": ".get_properties()",
@@ -3337,7 +3337,7 @@
       "source_file": "tools/scripts/ble_test_advertise.py",
       "source_location": "L43",
       "id": "ble_test_advertise_testadvertisement_get_properties",
-      "community": 26
+      "community": 27
     },
     {
       "label": ".get_path()",
@@ -3345,7 +3345,7 @@
       "source_file": "tools/scripts/ble_test_advertise.py",
       "source_location": "L73",
       "id": "ble_test_advertise_testadvertisement_get_path",
-      "community": 26
+      "community": 27
     },
     {
       "label": "GetAll()",
@@ -3353,7 +3353,7 @@
       "source_file": "tools/scripts/ble_test_advertise.py",
       "source_location": "L77",
       "id": "ble_test_advertise_getall",
-      "community": 26
+      "community": 27
     },
     {
       "label": "Release()",
@@ -3361,7 +3361,7 @@
       "source_file": "tools/scripts/ble_test_advertise.py",
       "source_location": "L85",
       "id": "ble_test_advertise_release",
-      "community": 26
+      "community": 27
     },
     {
       "label": "Get()",
@@ -3369,7 +3369,7 @@
       "source_file": "tools/scripts/ble_test_advertise.py",
       "source_location": "L89",
       "id": "ble_test_advertise_get",
-      "community": 26
+      "community": 27
     },
     {
       "label": "main()",
@@ -3377,7 +3377,7 @@
       "source_file": "tools/scripts/ble_test_advertise.cpp",
       "source_location": "L13",
       "id": "ble_test_advertise_main",
-      "community": 26
+      "community": 27
     },
     {
       "label": "ble_test_advertise.cpp",
@@ -3385,7 +3385,7 @@
       "source_file": "tools/scripts/ble_test_advertise.cpp",
       "source_location": "L1",
       "id": "tools_scripts_ble_test_advertise_cpp",
-      "community": 26
+      "community": 27
     },
     {
       "label": "ble_advert.cpp",
@@ -3393,7 +3393,7 @@
       "source_file": "tools/scripts/ble_advert.cpp",
       "source_location": "L1",
       "id": "tools_scripts_ble_advert_cpp",
-      "community": 65
+      "community": 66
     },
     {
       "label": "signal_handler()",
@@ -3401,7 +3401,7 @@
       "source_file": "tools/scripts/ble_advert.cpp",
       "source_location": "L19",
       "id": "ble_advert_signal_handler",
-      "community": 65
+      "community": 66
     },
     {
       "label": "main()",
@@ -3409,7 +3409,7 @@
       "source_file": "tools/scripts/ble_advert.cpp",
       "source_location": "L23",
       "id": "ble_advert_main",
-      "community": 65
+      "community": 66
     },
     {
       "label": "ble_scan_traps.py",
@@ -3417,7 +3417,7 @@
       "source_file": "tools/scripts/ble_scan_traps.py",
       "source_location": "L1",
       "id": "tools_scripts_ble_scan_traps_py",
-      "community": 66
+      "community": 67
     },
     {
       "label": "parse_manufacturer_data()",
@@ -3425,7 +3425,7 @@
       "source_file": "tools/scripts/ble_scan_traps.py",
       "source_location": "L23",
       "id": "ble_scan_traps_parse_manufacturer_data",
-      "community": 66
+      "community": 67
     },
     {
       "label": "scan()",
@@ -3433,7 +3433,7 @@
       "source_file": "tools/scripts/ble_scan_traps.py",
       "source_location": "L39",
       "id": "ble_scan_traps_scan",
-      "community": 66
+      "community": 67
     },
     {
       "label": "sanity_check_for_cpp.cpp",
@@ -3441,7 +3441,7 @@
       "source_file": "traps/targets/build-host/meson-private/sanity_check_for_cpp.cpp",
       "source_location": "L1",
       "id": "traps_targets_build_host_meson_private_sanity_check_for_cpp_cpp",
-      "community": 52
+      "community": 53
     },
     {
       "label": "breakCCompiler",
@@ -3449,7 +3449,7 @@
       "source_file": "traps/toolkit/build-host/meson-private/sanity_check_for_cpp.cpp",
       "source_location": "L1",
       "id": "sanity_check_for_cpp_breakccompiler",
-      "community": 52
+      "community": 53
     },
     {
       "label": "main()",
@@ -3457,7 +3457,7 @@
       "source_file": "traps/toolkit/build-host/meson-private/sanity_check_for_cpp.cpp",
       "source_location": "L1",
       "id": "sanity_check_for_cpp_main",
-      "community": 52
+      "community": 53
     },
     {
       "label": "sanity_check_for_c.c",
@@ -3465,7 +3465,7 @@
       "source_file": "traps/targets/build-host/meson-private/sanity_check_for_c.c",
       "source_location": "L1",
       "id": "traps_targets_build_host_meson_private_sanity_check_for_c_c",
-      "community": 67
+      "community": 68
     },
     {
       "label": "main()",
@@ -3473,7 +3473,7 @@
       "source_file": "traps/toolkit/build-host/meson-private/sanity_check_for_c.c",
       "source_location": "L1",
       "id": "sanity_check_for_c_main",
-      "community": 67
+      "community": 68
     },
     {
       "label": "base_detection_pipeline.cpp",
@@ -3633,7 +3633,7 @@
       "source_file": "traps/targets/src/detection/platforms/rock3c/rock3c_detection_pipeline.cpp",
       "source_location": "L1",
       "id": "traps_targets_src_detection_platforms_rock3c_rock3c_detection_pipeline_cpp",
-      "community": 36
+      "community": 37
     },
     {
       "label": "Rock3cDetectionPipeline",
@@ -3641,7 +3641,7 @@
       "source_file": "traps/targets/src/detection/platforms/rock3c/rock3c_detection_pipeline.hpp",
       "source_location": "L34",
       "id": "rock3c_detection_pipeline_rock3cdetectionpipeline",
-      "community": 36
+      "community": 37
     },
     {
       "label": "init()",
@@ -3649,7 +3649,7 @@
       "source_file": "traps/targets/src/detection/platforms/rock3c/rock3c_detection_pipeline.cpp",
       "source_location": "L37",
       "id": "rock3c_detection_pipeline_init",
-      "community": 36
+      "community": 37
     },
     {
       "label": "shutdown()",
@@ -3657,7 +3657,7 @@
       "source_file": "traps/targets/src/detection/platforms/rock3c/rock3c_detection_pipeline.cpp",
       "source_location": "L70",
       "id": "rock3c_detection_pipeline_shutdown",
-      "community": 36
+      "community": 37
     },
     {
       "label": "createCamera()",
@@ -3665,7 +3665,7 @@
       "source_file": "traps/targets/src/detection/platforms/rock3c/rock3c_detection_pipeline.cpp",
       "source_location": "L87",
       "id": "rock3c_detection_pipeline_createcamera",
-      "community": 36
+      "community": 37
     },
     {
       "label": "createInferenceHAL()",
@@ -3673,7 +3673,7 @@
       "source_file": "traps/targets/src/detection/platforms/rock3c/rock3c_detection_pipeline.cpp",
       "source_location": "L93",
       "id": "rock3c_detection_pipeline_createinferencehal",
-      "community": 36
+      "community": 37
     },
     {
       "label": "main.cpp",
@@ -3681,7 +3681,7 @@
       "source_file": "traps/targets/src/detection/platforms/rock3c/main.cpp",
       "source_location": "L1",
       "id": "traps_targets_src_detection_platforms_rock3c_main_cpp",
-      "community": 18
+      "community": 19
     },
     {
       "label": "signal_handler()",
@@ -3689,7 +3689,7 @@
       "source_file": "traps/targets/src/detection/platforms/cubie-a7s/main.cpp",
       "source_location": "L43",
       "id": "main_signal_handler",
-      "community": 18
+      "community": 19
     },
     {
       "label": "main()",
@@ -3697,7 +3697,7 @@
       "source_file": "models/detection/insects/yolo26n/nbg_output/generated/main.c",
       "source_location": "L212",
       "id": "main_main",
-      "community": 18
+      "community": 19
     },
     {
       "label": "rock3c_detection_pipeline.hpp",
@@ -3705,7 +3705,7 @@
       "source_file": "traps/targets/src/detection/platforms/rock3c/rock3c_detection_pipeline.hpp",
       "source_location": "L1",
       "id": "traps_targets_src_detection_platforms_rock3c_rock3c_detection_pipeline_hpp",
-      "community": 36
+      "community": 37
     },
     {
       "label": "native_detection_pipeline.hpp",
@@ -3713,7 +3713,7 @@
       "source_file": "traps/targets/src/detection/platforms/native/native_detection_pipeline.hpp",
       "source_location": "L1",
       "id": "traps_targets_src_detection_platforms_native_native_detection_pipeline_hpp",
-      "community": 84
+      "community": 85
     },
     {
       "label": "NativeDetectionPipeline",
@@ -3721,7 +3721,7 @@
       "source_file": "traps/targets/src/detection/platforms/native/native_detection_pipeline.hpp",
       "source_location": "L26",
       "id": "native_detection_pipeline_nativedetectionpipeline",
-      "community": 84
+      "community": 85
     },
     {
       "label": "main.cpp",
@@ -3729,7 +3729,7 @@
       "source_file": "traps/targets/src/detection/platforms/native/main.cpp",
       "source_location": "L1",
       "id": "traps_targets_src_detection_platforms_native_main_cpp",
-      "community": 18
+      "community": 19
     },
     {
       "label": "native_detection_pipeline.cpp",
@@ -3737,7 +3737,7 @@
       "source_file": "traps/targets/src/detection/platforms/native/native_detection_pipeline.cpp",
       "source_location": "L1",
       "id": "traps_targets_src_detection_platforms_native_native_detection_pipeline_cpp",
-      "community": 68
+      "community": 69
     },
     {
       "label": "createCamera()",
@@ -3745,7 +3745,7 @@
       "source_file": "traps/targets/src/detection/platforms/native/native_detection_pipeline.cpp",
       "source_location": "L27",
       "id": "native_detection_pipeline_createcamera",
-      "community": 68
+      "community": 69
     },
     {
       "label": "createInferenceHAL()",
@@ -3753,7 +3753,7 @@
       "source_file": "traps/targets/src/detection/platforms/native/native_detection_pipeline.cpp",
       "source_location": "L34",
       "id": "native_detection_pipeline_createinferencehal",
-      "community": 68
+      "community": 69
     },
     {
       "label": "cubie_a7s_detection_pipeline.cpp",
@@ -3761,7 +3761,7 @@
       "source_file": "traps/targets/src/detection/platforms/cubie-a7s/cubie_a7s_detection_pipeline.cpp",
       "source_location": "L1",
       "id": "traps_targets_src_detection_platforms_cubie_a7s_cubie_a7s_detection_pipeline_cpp",
-      "community": 69
+      "community": 70
     },
     {
       "label": "createCamera()",
@@ -3769,7 +3769,7 @@
       "source_file": "traps/targets/src/detection/platforms/cubie-a7s/cubie_a7s_detection_pipeline.cpp",
       "source_location": "L27",
       "id": "cubie_a7s_detection_pipeline_createcamera",
-      "community": 69
+      "community": 70
     },
     {
       "label": "createInferenceHAL()",
@@ -3777,7 +3777,7 @@
       "source_file": "traps/targets/src/detection/platforms/cubie-a7s/cubie_a7s_detection_pipeline.cpp",
       "source_location": "L33",
       "id": "cubie_a7s_detection_pipeline_createinferencehal",
-      "community": 69
+      "community": 70
     },
     {
       "label": "main.cpp",
@@ -3785,7 +3785,7 @@
       "source_file": "traps/targets/src/detection/platforms/cubie-a7s/main.cpp",
       "source_location": "L1",
       "id": "traps_targets_src_detection_platforms_cubie_a7s_main_cpp",
-      "community": 18
+      "community": 19
     },
     {
       "label": "cubie_a7s_detection_pipeline.hpp",
@@ -3793,7 +3793,7 @@
       "source_file": "traps/targets/src/detection/platforms/cubie-a7s/cubie_a7s_detection_pipeline.hpp",
       "source_location": "L1",
       "id": "traps_targets_src_detection_platforms_cubie_a7s_cubie_a7s_detection_pipeline_hpp",
-      "community": 85
+      "community": 86
     },
     {
       "label": "CubieA7sDetectionPipeline",
@@ -3801,7 +3801,7 @@
       "source_file": "traps/targets/src/detection/platforms/cubie-a7s/cubie_a7s_detection_pipeline.hpp",
       "source_location": "L26",
       "id": "cubie_a7s_detection_pipeline_cubiea7sdetectionpipeline",
-      "community": 85
+      "community": 86
     },
     {
       "label": "types.hpp",
@@ -3809,7 +3809,7 @@
       "source_file": "traps/targets/src/detection/actors/types.hpp",
       "source_location": "L1",
       "id": "traps_targets_src_detection_actors_types_hpp",
-      "community": 103
+      "community": 104
     },
     {
       "label": "http_handler_actor.cpp",
@@ -4145,7 +4145,7 @@
       "source_file": "traps/targets/src/detection/actors/session/session_actor.hpp",
       "source_location": "L1",
       "id": "traps_targets_src_detection_actors_session_session_actor_hpp",
-      "community": 104
+      "community": 105
     },
     {
       "label": "json.hpp",
@@ -5233,7 +5233,7 @@
       "source_file": "traps/toolkit/build-host/meson-private/sanity_check_for_cpp.cpp",
       "source_location": "L1",
       "id": "traps_toolkit_build_host_meson_private_sanity_check_for_cpp_cpp",
-      "community": 52
+      "community": 53
     },
     {
       "label": "sanity_check_for_c.c",
@@ -5241,7 +5241,7 @@
       "source_file": "traps/toolkit/build-host/meson-private/sanity_check_for_c.c",
       "source_location": "L1",
       "id": "traps_toolkit_build_host_meson_private_sanity_check_for_c_c",
-      "community": 67
+      "community": 68
     },
     {
       "label": "CMakeCCompilerId.c",
@@ -5249,7 +5249,7 @@
       "source_file": "traps/toolkit/build-host/meson-private/__CMake_compiler_info__/CMakeFiles/4.3.1/CompilerIdC/CMakeCCompilerId.c",
       "source_location": "L1",
       "id": "traps_toolkit_build_host_meson_private_cmake_compiler_info_cmakefiles_4_3_1_compileridc_cmakeccompilerid_c",
-      "community": 86
+      "community": 87
     },
     {
       "label": "main()",
@@ -5257,7 +5257,7 @@
       "source_file": "traps/toolkit/build-host/meson-private/__CMake_compiler_info__/CMakeFiles/4.3.1/CompilerIdC/CMakeCCompilerId.c",
       "source_location": "L902",
       "id": "cmakeccompilerid_main",
-      "community": 86
+      "community": 87
     },
     {
       "label": "apple-sdk.c",
@@ -5265,7 +5265,7 @@
       "source_file": "traps/toolkit/build-host/meson-private/__CMake_compiler_info__/CMakeFiles/4.3.1/CompilerIdC/apple-sdk.c",
       "source_location": "L1",
       "id": "traps_toolkit_build_host_meson_private_cmake_compiler_info_cmakefiles_4_3_1_compileridc_apple_sdk_c",
-      "community": 105
+      "community": 106
     },
     {
       "label": "CMakeCXXCompilerId.cpp",
@@ -5273,7 +5273,7 @@
       "source_file": "traps/toolkit/build-host/meson-private/__CMake_compiler_info__/CMakeFiles/4.3.1/CompilerIdCXX/CMakeCXXCompilerId.cpp",
       "source_location": "L1",
       "id": "traps_toolkit_build_host_meson_private_cmake_compiler_info_cmakefiles_4_3_1_compileridcxx_cmakecxxcompilerid_cpp",
-      "community": 87
+      "community": 88
     },
     {
       "label": "main()",
@@ -5281,7 +5281,7 @@
       "source_file": "traps/toolkit/build-host/meson-private/__CMake_compiler_info__/CMakeFiles/4.3.1/CompilerIdCXX/CMakeCXXCompilerId.cpp",
       "source_location": "L924",
       "id": "cmakecxxcompilerid_main",
-      "community": 87
+      "community": 88
     },
     {
       "label": "apple-sdk.cpp",
@@ -5289,7 +5289,7 @@
       "source_file": "traps/toolkit/build-host/meson-private/__CMake_compiler_info__/CMakeFiles/4.3.1/CompilerIdCXX/apple-sdk.cpp",
       "source_location": "L1",
       "id": "traps_toolkit_build_host_meson_private_cmake_compiler_info_cmakefiles_4_3_1_compileridcxx_apple_sdk_cpp",
-      "community": 106
+      "community": 107
     },
     {
       "label": "camera_hal_imx219.cpp",
@@ -5297,7 +5297,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/camera_hal_imx219.cpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_hal_platforms_rock3c_camera_hal_imx219_cpp",
-      "community": 13
+      "community": 14
     },
     {
       "label": "alloc_dma_buf()",
@@ -5305,7 +5305,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/camera_hal_imx219.cpp",
       "source_location": "L40",
       "id": "camera_hal_imx219_alloc_dma_buf",
-      "community": 13
+      "community": 14
     },
     {
       "label": "map_dma_buf()",
@@ -5313,7 +5313,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/camera_hal_imx219.cpp",
       "source_location": "L66",
       "id": "camera_hal_imx219_map_dma_buf",
-      "community": 13
+      "community": 14
     },
     {
       "label": "unmap_dma_buf()",
@@ -5321,7 +5321,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/camera_hal_imx219.cpp",
       "source_location": "L76",
       "id": "camera_hal_imx219_unmap_dma_buf",
-      "community": 13
+      "community": 14
     },
     {
       "label": "scale_nv12()",
@@ -5329,7 +5329,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/camera_hal_imx219.cpp",
       "source_location": "L87",
       "id": "camera_hal_imx219_scale_nv12",
-      "community": 13
+      "community": 14
     },
     {
       "label": "aiq_err_cb()",
@@ -5337,7 +5337,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/camera_hal_imx219.cpp",
       "source_location": "L123",
       "id": "camera_hal_imx219_aiq_err_cb",
-      "community": 13
+      "community": 14
     },
     {
       "label": "aiq_sof_cb()",
@@ -5345,7 +5345,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/camera_hal_imx219.cpp",
       "source_location": "L130",
       "id": "camera_hal_imx219_aiq_sof_cb",
-      "community": 13
+      "community": 14
     },
     {
       "label": "init_aiq()",
@@ -5353,7 +5353,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/camera_hal_imx219.cpp",
       "source_location": "L137",
       "id": "camera_hal_imx219_init_aiq",
-      "community": 13
+      "community": 14
     },
     {
       "label": "init_v4l2()",
@@ -5361,7 +5361,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/camera_hal_imx219.cpp",
       "source_location": "L197",
       "id": "camera_hal_imx219_init_v4l2",
-      "community": 13
+      "community": 14
     },
     {
       "label": "init_v4l2_mmap()",
@@ -5369,7 +5369,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/camera_hal_imx219.cpp",
       "source_location": "L331",
       "id": "camera_hal_imx219_init_v4l2_mmap",
-      "community": 13
+      "community": 14
     },
     {
       "label": "init_scaler_buffers()",
@@ -5377,7 +5377,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/camera_hal_imx219.cpp",
       "source_location": "L430",
       "id": "camera_hal_imx219_init_scaler_buffers",
-      "community": 13
+      "community": 14
     },
     {
       "label": "init()",
@@ -5385,7 +5385,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/camera_hal_imx219.cpp",
       "source_location": "L457",
       "id": "camera_hal_imx219_init",
-      "community": 13
+      "community": 14
     },
     {
       "label": "acquire_frames()",
@@ -5393,7 +5393,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/camera_hal_imx219.cpp",
       "source_location": "L482",
       "id": "camera_hal_imx219_acquire_frames",
-      "community": 13
+      "community": 14
     },
     {
       "label": "acquire_frames_impl()",
@@ -5401,7 +5401,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/camera_hal_imx219.cpp",
       "source_location": "L494",
       "id": "camera_hal_imx219_acquire_frames_impl",
-      "community": 13
+      "community": 14
     },
     {
       "label": "release_frames()",
@@ -5409,7 +5409,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/camera_hal_imx219.cpp",
       "source_location": "L582",
       "id": "camera_hal_imx219_release_frames",
-      "community": 13
+      "community": 14
     },
     {
       "label": "release_frames_impl()",
@@ -5417,7 +5417,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/camera_hal_imx219.cpp",
       "source_location": "L586",
       "id": "camera_hal_imx219_release_frames_impl",
-      "community": 13
+      "community": 14
     },
     {
       "label": "shutdown()",
@@ -5425,7 +5425,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/camera_hal_imx219.cpp",
       "source_location": "L597",
       "id": "camera_hal_imx219_shutdown",
-      "community": 13
+      "community": 14
     },
     {
       "label": "camera_hal_imx415.hpp",
@@ -5433,7 +5433,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/camera_hal_imx415.hpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_hal_platforms_rock3c_camera_hal_imx415_hpp",
-      "community": 107
+      "community": 108
     },
     {
       "label": "video_scaler_hal_rga.cpp",
@@ -5441,7 +5441,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/video_scaler_hal_rga.cpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_hal_platforms_rock3c_video_scaler_hal_rga_cpp",
-      "community": 42
+      "community": 43
     },
     {
       "label": "VideoScalerRGA",
@@ -5449,7 +5449,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/video_scaler_hal_rga.hpp",
       "source_location": "L29",
       "id": "video_scaler_hal_rga_videoscalerrga",
-      "community": 42
+      "community": 43
     },
     {
       "label": "scale_nv12()",
@@ -5457,7 +5457,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/video_scaler_hal_rga.cpp",
       "source_location": "L31",
       "id": "video_scaler_hal_rga_scale_nv12",
-      "community": 42
+      "community": 43
     },
     {
       "label": "scale_nv12_to_bgr()",
@@ -5465,7 +5465,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/video_scaler_hal_rga.cpp",
       "source_location": "L37",
       "id": "video_scaler_hal_rga_scale_nv12_to_bgr",
-      "community": 42
+      "community": 43
     },
     {
       "label": "blit()",
@@ -5473,7 +5473,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/video_scaler_hal_rga.cpp",
       "source_location": "L43",
       "id": "video_scaler_hal_rga_blit",
-      "community": 42
+      "community": 43
     },
     {
       "label": "inference_hal_rknn.cpp",
@@ -5481,7 +5481,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/inference_hal_rknn.cpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_hal_platforms_rock3c_inference_hal_rknn_cpp",
-      "community": 28
+      "community": 29
     },
     {
       "label": "InferenceHalRKNN",
@@ -5489,7 +5489,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/inference_hal_rknn.hpp",
       "source_location": "L41",
       "id": "inference_hal_rknn_inferencehalrknn",
-      "community": 28
+      "community": 29
     },
     {
       "label": "init()",
@@ -5497,7 +5497,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/inference_hal_rknn.cpp",
       "source_location": "L49",
       "id": "inference_hal_rknn_init",
-      "community": 28
+      "community": 29
     },
     {
       "label": "detect()",
@@ -5505,7 +5505,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/inference_hal_rknn.cpp",
       "source_location": "L144",
       "id": "inference_hal_rknn_detect",
-      "community": 28
+      "community": 29
     },
     {
       "label": "shutdown()",
@@ -5513,7 +5513,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/inference_hal_rknn.cpp",
       "source_location": "L376",
       "id": "inference_hal_rknn_shutdown",
-      "community": 28
+      "community": 29
     },
     {
       "label": "nv12_to_rgb_resize()",
@@ -5521,7 +5521,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/inference_hal_rknn.cpp",
       "source_location": "L391",
       "id": "inference_hal_rknn_nv12_to_rgb_resize",
-      "community": 28
+      "community": 29
     },
     {
       "label": "nms()",
@@ -5529,7 +5529,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/inference_hal_rknn.cpp",
       "source_location": "L447",
       "id": "inference_hal_rknn_nms",
-      "community": 28
+      "community": 29
     },
     {
       "label": "inference_hal_rknn.hpp",
@@ -5537,7 +5537,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/inference_hal_rknn.hpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_hal_platforms_rock3c_inference_hal_rknn_hpp",
-      "community": 28
+      "community": 29
     },
     {
       "label": ".InferenceHalRKNN()",
@@ -5545,7 +5545,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/inference_hal_rknn.hpp",
       "source_location": "L47",
       "id": "inference_hal_rknn_inferencehalrknn_inferencehalrknn",
-      "community": 28
+      "community": 29
     },
     {
       "label": "camera_hal_imx219.hpp",
@@ -5553,7 +5553,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/camera_hal_imx219.hpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_hal_platforms_rock3c_camera_hal_imx219_hpp",
-      "community": 108
+      "community": 109
     },
     {
       "label": "camera_hal_imx415.cpp",
@@ -5561,7 +5561,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/camera_hal_imx415.cpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_hal_platforms_rock3c_camera_hal_imx415_cpp",
-      "community": 14
+      "community": 15
     },
     {
       "label": "alloc_dma_buf()",
@@ -5569,7 +5569,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/camera_hal_imx415.cpp",
       "source_location": "L40",
       "id": "camera_hal_imx415_alloc_dma_buf",
-      "community": 14
+      "community": 15
     },
     {
       "label": "map_dma_buf()",
@@ -5577,7 +5577,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/camera_hal_imx415.cpp",
       "source_location": "L66",
       "id": "camera_hal_imx415_map_dma_buf",
-      "community": 14
+      "community": 15
     },
     {
       "label": "unmap_dma_buf()",
@@ -5585,7 +5585,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/camera_hal_imx415.cpp",
       "source_location": "L76",
       "id": "camera_hal_imx415_unmap_dma_buf",
-      "community": 14
+      "community": 15
     },
     {
       "label": "scale_nv12()",
@@ -5593,7 +5593,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/camera_hal_imx415.cpp",
       "source_location": "L87",
       "id": "camera_hal_imx415_scale_nv12",
-      "community": 14
+      "community": 15
     },
     {
       "label": "aiq_err_cb()",
@@ -5601,7 +5601,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/camera_hal_imx415.cpp",
       "source_location": "L123",
       "id": "camera_hal_imx415_aiq_err_cb",
-      "community": 14
+      "community": 15
     },
     {
       "label": "aiq_sof_cb()",
@@ -5609,7 +5609,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/camera_hal_imx415.cpp",
       "source_location": "L130",
       "id": "camera_hal_imx415_aiq_sof_cb",
-      "community": 14
+      "community": 15
     },
     {
       "label": "init_aiq()",
@@ -5617,7 +5617,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/camera_hal_imx415.cpp",
       "source_location": "L137",
       "id": "camera_hal_imx415_init_aiq",
-      "community": 14
+      "community": 15
     },
     {
       "label": "init_v4l2()",
@@ -5625,7 +5625,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/camera_hal_imx415.cpp",
       "source_location": "L197",
       "id": "camera_hal_imx415_init_v4l2",
-      "community": 14
+      "community": 15
     },
     {
       "label": "init_v4l2_mmap()",
@@ -5633,7 +5633,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/camera_hal_imx415.cpp",
       "source_location": "L250",
       "id": "camera_hal_imx415_init_v4l2_mmap",
-      "community": 14
+      "community": 15
     },
     {
       "label": "init_scaler_buffers()",
@@ -5641,7 +5641,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/camera_hal_imx415.cpp",
       "source_location": "L349",
       "id": "camera_hal_imx415_init_scaler_buffers",
-      "community": 14
+      "community": 15
     },
     {
       "label": "init()",
@@ -5649,7 +5649,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/camera_hal_imx415.cpp",
       "source_location": "L376",
       "id": "camera_hal_imx415_init",
-      "community": 14
+      "community": 15
     },
     {
       "label": "acquire_frames()",
@@ -5657,7 +5657,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/camera_hal_imx415.cpp",
       "source_location": "L401",
       "id": "camera_hal_imx415_acquire_frames",
-      "community": 14
+      "community": 15
     },
     {
       "label": "acquire_frames_impl()",
@@ -5665,7 +5665,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/camera_hal_imx415.cpp",
       "source_location": "L413",
       "id": "camera_hal_imx415_acquire_frames_impl",
-      "community": 14
+      "community": 15
     },
     {
       "label": "release_frames()",
@@ -5673,7 +5673,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/camera_hal_imx415.cpp",
       "source_location": "L501",
       "id": "camera_hal_imx415_release_frames",
-      "community": 14
+      "community": 15
     },
     {
       "label": "release_frames_impl()",
@@ -5681,7 +5681,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/camera_hal_imx415.cpp",
       "source_location": "L505",
       "id": "camera_hal_imx415_release_frames_impl",
-      "community": 14
+      "community": 15
     },
     {
       "label": "shutdown()",
@@ -5689,7 +5689,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/camera_hal_imx415.cpp",
       "source_location": "L516",
       "id": "camera_hal_imx415_shutdown",
-      "community": 14
+      "community": 15
     },
     {
       "label": "video_scaler_hal_rga.hpp",
@@ -5697,7 +5697,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rock3c/video_scaler_hal_rga.hpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_hal_platforms_rock3c_video_scaler_hal_rga_hpp",
-      "community": 42
+      "community": 43
     },
     {
       "label": "camera_hal_native.hpp",
@@ -5705,7 +5705,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/native/camera_hal_native.hpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_hal_platforms_native_camera_hal_native_hpp",
-      "community": 109
+      "community": 110
     },
     {
       "label": "inference_hal_native.cpp",
@@ -5713,7 +5713,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/native/inference_hal_native.cpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_hal_platforms_native_inference_hal_native_cpp",
-      "community": 37
+      "community": 38
     },
     {
       "label": "init()",
@@ -5721,7 +5721,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/native/inference_hal_native.cpp",
       "source_location": "L22",
       "id": "inference_hal_native_init",
-      "community": 37
+      "community": 38
     },
     {
       "label": "detect()",
@@ -5729,7 +5729,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/native/inference_hal_native.cpp",
       "source_location": "L29",
       "id": "inference_hal_native_detect",
-      "community": 37
+      "community": 38
     },
     {
       "label": "last_inference_us()",
@@ -5737,7 +5737,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/native/inference_hal_native.cpp",
       "source_location": "L35",
       "id": "inference_hal_native_last_inference_us",
-      "community": 37
+      "community": 38
     },
     {
       "label": "input_width()",
@@ -5745,7 +5745,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/native/inference_hal_native.cpp",
       "source_location": "L39",
       "id": "inference_hal_native_input_width",
-      "community": 37
+      "community": 38
     },
     {
       "label": "input_height()",
@@ -5753,7 +5753,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/native/inference_hal_native.cpp",
       "source_location": "L43",
       "id": "inference_hal_native_input_height",
-      "community": 37
+      "community": 38
     },
     {
       "label": "shutdown()",
@@ -5761,7 +5761,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/native/inference_hal_native.cpp",
       "source_location": "L47",
       "id": "inference_hal_native_shutdown",
-      "community": 37
+      "community": 38
     },
     {
       "label": "classifier_hal_native.hpp",
@@ -5769,7 +5769,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/native/classifier_hal_native.hpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_hal_platforms_native_classifier_hal_native_hpp",
-      "community": 70
+      "community": 71
     },
     {
       "label": "ClassifierHalNative",
@@ -5777,7 +5777,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/native/classifier_hal_native.hpp",
       "source_location": "L28",
       "id": "classifier_hal_native_classifierhalnative",
-      "community": 70
+      "community": 71
     },
     {
       "label": ".ClassifierHalNative()",
@@ -5785,7 +5785,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/native/classifier_hal_native.hpp",
       "source_location": "L30",
       "id": "classifier_hal_native_classifierhalnative_classifierhalnative",
-      "community": 70
+      "community": 71
     },
     {
       "label": "video_scaler_native.hpp",
@@ -5793,7 +5793,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/native/video_scaler_native.hpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_hal_platforms_native_video_scaler_native_hpp",
-      "community": 110
+      "community": 111
     },
     {
       "label": "inference_hal_native.hpp",
@@ -5801,7 +5801,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/native/inference_hal_native.hpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_hal_platforms_native_inference_hal_native_hpp",
-      "community": 111
+      "community": 112
     },
     {
       "label": "classifier_hal_native.cpp",
@@ -5809,7 +5809,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/native/classifier_hal_native.cpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_hal_platforms_native_classifier_hal_native_cpp",
-      "community": 53
+      "community": 54
     },
     {
       "label": "init()",
@@ -5817,7 +5817,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/native/classifier_hal_native.cpp",
       "source_location": "L23",
       "id": "classifier_hal_native_init",
-      "community": 53
+      "community": 54
     },
     {
       "label": "classify()",
@@ -5825,7 +5825,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/native/classifier_hal_native.cpp",
       "source_location": "L30",
       "id": "classifier_hal_native_classify",
-      "community": 53
+      "community": 54
     },
     {
       "label": "shutdown()",
@@ -5833,7 +5833,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/native/classifier_hal_native.cpp",
       "source_location": "L48",
       "id": "classifier_hal_native_shutdown",
-      "community": 53
+      "community": 54
     },
     {
       "label": "video_scaler_native.cpp",
@@ -5841,7 +5841,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/native/video_scaler_native.cpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_hal_platforms_native_video_scaler_native_cpp",
-      "community": 71
+      "community": 72
     },
     {
       "label": "scale_nv12()",
@@ -5849,7 +5849,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/native/video_scaler_native.cpp",
       "source_location": "L23",
       "id": "video_scaler_native_scale_nv12",
-      "community": 71
+      "community": 72
     },
     {
       "label": "scale_nv12_to_bgr()",
@@ -5857,7 +5857,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/native/video_scaler_native.cpp",
       "source_location": "L31",
       "id": "video_scaler_native_scale_nv12_to_bgr",
-      "community": 71
+      "community": 72
     },
     {
       "label": "camera_hal_native.cpp",
@@ -5865,7 +5865,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/native/camera_hal_native.cpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_hal_platforms_native_camera_hal_native_cpp",
-      "community": 44
+      "community": 45
     },
     {
       "label": "init()",
@@ -5873,7 +5873,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/native/camera_hal_native.cpp",
       "source_location": "L23",
       "id": "camera_hal_native_init",
-      "community": 44
+      "community": 45
     },
     {
       "label": "acquire_frames()",
@@ -5881,7 +5881,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/native/camera_hal_native.cpp",
       "source_location": "L32",
       "id": "camera_hal_native_acquire_frames",
-      "community": 44
+      "community": 45
     },
     {
       "label": "release_frames()",
@@ -5889,7 +5889,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/native/camera_hal_native.cpp",
       "source_location": "L53",
       "id": "camera_hal_native_release_frames",
-      "community": 44
+      "community": 45
     },
     {
       "label": "shutdown()",
@@ -5897,7 +5897,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/native/camera_hal_native.cpp",
       "source_location": "L57",
       "id": "camera_hal_native_shutdown",
-      "community": 44
+      "community": 45
     },
     {
       "label": "camera_hal_a7s.hpp",
@@ -5911,7 +5911,7 @@
       "label": "CameraHalA7s()",
       "file_type": "code",
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.cpp",
-      "source_location": "L87",
+      "source_location": "L89",
       "id": "camera_hal_a7s_camerahala7s",
       "community": 16
     },
@@ -5921,7 +5921,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/video_scaler_opencl.cpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_hal_platforms_cubie_a7s_video_scaler_opencl_cpp",
-      "community": 29
+      "community": 30
     },
     {
       "label": "nv12_resize_kernel_source()",
@@ -5929,7 +5929,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/video_scaler_opencl.cpp",
       "source_location": "L46",
       "id": "video_scaler_opencl_nv12_resize_kernel_source",
-      "community": 29
+      "community": 30
     },
     {
       "label": "VideoScalerOpenCL()",
@@ -5937,7 +5937,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/video_scaler_opencl.hpp",
       "source_location": "L47",
       "id": "video_scaler_opencl_videoscaleropencl",
-      "community": 29
+      "community": 30
     },
     {
       "label": "init_opencl()",
@@ -5945,7 +5945,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/video_scaler_opencl.cpp",
       "source_location": "L187",
       "id": "video_scaler_opencl_init_opencl",
-      "community": 29
+      "community": 30
     },
     {
       "label": "scale_nv12()",
@@ -5953,7 +5953,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/video_scaler_opencl.cpp",
       "source_location": "L258",
       "id": "video_scaler_opencl_scale_nv12",
-      "community": 29
+      "community": 30
     },
     {
       "label": "scale_nv12_to_bgr()",
@@ -5961,7 +5961,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/video_scaler_opencl.cpp",
       "source_location": "L283",
       "id": "video_scaler_opencl_scale_nv12_to_bgr",
-      "community": 29
+      "community": 30
     },
     {
       "label": "scale_frame()",
@@ -5969,7 +5969,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/video_scaler_opencl.cpp",
       "source_location": "L298",
       "id": "video_scaler_opencl_scale_frame",
-      "community": 29
+      "community": 30
     },
     {
       "label": "device_name()",
@@ -5977,7 +5977,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/video_scaler_opencl.cpp",
       "source_location": "L314",
       "id": "video_scaler_opencl_device_name",
-      "community": 29
+      "community": 30
     },
     {
       "label": "inference_hal_vip.cpp",
@@ -5985,7 +5985,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/inference_hal_vip.cpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_hal_platforms_cubie_a7s_inference_hal_vip_cpp",
-      "community": 30
+      "community": 31
     },
     {
       "label": "InferenceHalVIP()",
@@ -5993,7 +5993,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/inference_hal_vip.hpp",
       "source_location": "L59",
       "id": "inference_hal_vip_inferencehalvip",
-      "community": 30
+      "community": 31
     },
     {
       "label": "init()",
@@ -6001,7 +6001,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/inference_hal_vip.cpp",
       "source_location": "L109",
       "id": "inference_hal_vip_init",
-      "community": 30
+      "community": 31
     },
     {
       "label": "detect()",
@@ -6009,7 +6009,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/inference_hal_vip.cpp",
       "source_location": "L301",
       "id": "inference_hal_vip_detect",
-      "community": 30
+      "community": 31
     },
     {
       "label": "shutdown()",
@@ -6017,7 +6017,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/inference_hal_vip.cpp",
       "source_location": "L416",
       "id": "inference_hal_vip_shutdown",
-      "community": 30
+      "community": 31
     },
     {
       "label": "nv12_to_rgb_resize()",
@@ -6025,7 +6025,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/inference_hal_vip.cpp",
       "source_location": "L464",
       "id": "inference_hal_vip_nv12_to_rgb_resize",
-      "community": 30
+      "community": 31
     },
     {
       "label": "decode_yolo_dfl()",
@@ -6033,7 +6033,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/inference_hal_vip.cpp",
       "source_location": "L539",
       "id": "inference_hal_vip_decode_yolo_dfl",
-      "community": 30
+      "community": 31
     },
     {
       "label": "nms()",
@@ -6041,7 +6041,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/inference_hal_vip.cpp",
       "source_location": "L737",
       "id": "inference_hal_vip_nms",
-      "community": 30
+      "community": 31
     },
     {
       "label": "inference_hal_vip.hpp",
@@ -6049,7 +6049,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/inference_hal_vip.hpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_hal_platforms_cubie_a7s_inference_hal_vip_hpp",
-      "community": 30
+      "community": 31
     },
     {
       "label": "camera_hal_a7s.cpp",
@@ -6063,7 +6063,7 @@
       "label": "v4l2_fmt_name()",
       "file_type": "code",
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.cpp",
-      "source_location": "L40",
+      "source_location": "L42",
       "id": "camera_hal_a7s_v4l2_fmt_name",
       "community": 16
     },
@@ -6071,7 +6071,7 @@
       "label": "try_open_v4l2()",
       "file_type": "code",
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.cpp",
-      "source_location": "L52",
+      "source_location": "L54",
       "id": "camera_hal_a7s_try_open_v4l2",
       "community": 16
     },
@@ -6079,7 +6079,7 @@
       "label": "is_mplane()",
       "file_type": "code",
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.cpp",
-      "source_location": "L75",
+      "source_location": "L77",
       "id": "camera_hal_a7s_is_mplane",
       "community": 16
     },
@@ -6087,7 +6087,7 @@
       "label": "capture_buf_type()",
       "file_type": "code",
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.cpp",
-      "source_location": "L82",
+      "source_location": "L84",
       "id": "camera_hal_a7s_capture_buf_type",
       "community": 16
     },
@@ -6095,15 +6095,23 @@
       "label": "init()",
       "file_type": "code",
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.cpp",
-      "source_location": "L94",
+      "source_location": "L96",
       "id": "camera_hal_a7s_init",
+      "community": 16
+    },
+    {
+      "label": "configure_media_pipeline()",
+      "file_type": "code",
+      "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.cpp",
+      "source_location": "L142",
+      "id": "camera_hal_a7s_configure_media_pipeline",
       "community": 16
     },
     {
       "label": "init_v4l2()",
       "file_type": "code",
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.cpp",
-      "source_location": "L130",
+      "source_location": "L376",
       "id": "camera_hal_a7s_init_v4l2",
       "community": 16
     },
@@ -6111,7 +6119,7 @@
       "label": "init_v4l2_mmap()",
       "file_type": "code",
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.cpp",
-      "source_location": "L355",
+      "source_location": "L613",
       "id": "camera_hal_a7s_init_v4l2_mmap",
       "community": 16
     },
@@ -6119,7 +6127,7 @@
       "label": "set_v4l2_controls()",
       "file_type": "code",
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.cpp",
-      "source_location": "L475",
+      "source_location": "L733",
       "id": "camera_hal_a7s_set_v4l2_controls",
       "community": 16
     },
@@ -6127,7 +6135,7 @@
       "label": "acquire_frames()",
       "file_type": "code",
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.cpp",
-      "source_location": "L517",
+      "source_location": "L775",
       "id": "camera_hal_a7s_acquire_frames",
       "community": 16
     },
@@ -6135,7 +6143,7 @@
       "label": "release_frames()",
       "file_type": "code",
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.cpp",
-      "source_location": "L646",
+      "source_location": "L904",
       "id": "camera_hal_a7s_release_frames",
       "community": 16
     },
@@ -6143,7 +6151,7 @@
       "label": "shutdown()",
       "file_type": "code",
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.cpp",
-      "source_location": "L652",
+      "source_location": "L910",
       "id": "camera_hal_a7s_shutdown",
       "community": 16
     },
@@ -6151,7 +6159,7 @@
       "label": "scale_nv12_cpu()",
       "file_type": "code",
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.cpp",
-      "source_location": "L694",
+      "source_location": "L952",
       "id": "camera_hal_a7s_scale_nv12_cpu",
       "community": 16
     },
@@ -6161,7 +6169,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/video_scaler_opencl.hpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_hal_platforms_cubie_a7s_video_scaler_opencl_hpp",
-      "community": 29
+      "community": 30
     },
     {
       "label": "video_scaler_vse.hpp",
@@ -6169,7 +6177,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rdk-x5/video_scaler_vse.hpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_hal_platforms_rdk_x5_video_scaler_vse_hpp",
-      "community": 45
+      "community": 46
     },
     {
       "label": "VideoScalerVSE()",
@@ -6177,7 +6185,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rdk-x5/video_scaler_vse.cpp",
       "source_location": "L28",
       "id": "video_scaler_vse_videoscalervse",
-      "community": 45
+      "community": 46
     },
     {
       "label": "inference_hal_bpu.hpp",
@@ -6185,7 +6193,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rdk-x5/inference_hal_bpu.hpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_hal_platforms_rdk_x5_inference_hal_bpu_hpp",
-      "community": 31
+      "community": 32
     },
     {
       "label": "InferenceHalBPU()",
@@ -6193,7 +6201,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rdk-x5/inference_hal_bpu.cpp",
       "source_location": "L30",
       "id": "inference_hal_bpu_inferencehalbpu",
-      "community": 31
+      "community": 32
     },
     {
       "label": "camera_hal_rdkx5.hpp",
@@ -6201,7 +6209,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rdk-x5/camera_hal_rdkx5.hpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_hal_platforms_rdk_x5_camera_hal_rdkx5_hpp",
-      "community": 21
+      "community": 22
     },
     {
       "label": "CameraHalRdkX5()",
@@ -6209,7 +6217,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rdk-x5/camera_hal_rdkx5.cpp",
       "source_location": "L33",
       "id": "camera_hal_rdkx5_camerahalrdkx5",
-      "community": 21
+      "community": 22
     },
     {
       "label": "video_scaler_vse.cpp",
@@ -6217,7 +6225,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rdk-x5/video_scaler_vse.cpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_hal_platforms_rdk_x5_video_scaler_vse_cpp",
-      "community": 45
+      "community": 46
     },
     {
       "label": "scale_nv12()",
@@ -6225,7 +6233,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rdk-x5/video_scaler_vse.cpp",
       "source_location": "L38",
       "id": "video_scaler_vse_scale_nv12",
-      "community": 45
+      "community": 46
     },
     {
       "label": "scale_nv12_to_bgr()",
@@ -6233,7 +6241,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rdk-x5/video_scaler_vse.cpp",
       "source_location": "L74",
       "id": "video_scaler_vse_scale_nv12_to_bgr",
-      "community": 45
+      "community": 46
     },
     {
       "label": "inference_hal_bpu.cpp",
@@ -6241,7 +6249,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rdk-x5/inference_hal_bpu.cpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_hal_platforms_rdk_x5_inference_hal_bpu_cpp",
-      "community": 31
+      "community": 32
     },
     {
       "label": "init()",
@@ -6249,7 +6257,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rdk-x5/inference_hal_bpu.cpp",
       "source_location": "L37",
       "id": "inference_hal_bpu_init",
-      "community": 31
+      "community": 32
     },
     {
       "label": "detect()",
@@ -6257,7 +6265,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rdk-x5/inference_hal_bpu.cpp",
       "source_location": "L108",
       "id": "inference_hal_bpu_detect",
-      "community": 31
+      "community": 32
     },
     {
       "label": "nv12_to_rgb()",
@@ -6265,7 +6273,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rdk-x5/inference_hal_bpu.cpp",
       "source_location": "L128",
       "id": "inference_hal_bpu_nv12_to_rgb",
-      "community": 31
+      "community": 32
     },
     {
       "label": "decode_outputs()",
@@ -6273,7 +6281,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rdk-x5/inference_hal_bpu.cpp",
       "source_location": "L178",
       "id": "inference_hal_bpu_decode_outputs",
-      "community": 31
+      "community": 32
     },
     {
       "label": "nms()",
@@ -6281,7 +6289,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rdk-x5/inference_hal_bpu.cpp",
       "source_location": "L199",
       "id": "inference_hal_bpu_nms",
-      "community": 31
+      "community": 32
     },
     {
       "label": "shutdown()",
@@ -6289,7 +6297,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rdk-x5/inference_hal_bpu.cpp",
       "source_location": "L259",
       "id": "inference_hal_bpu_shutdown",
-      "community": 31
+      "community": 32
     },
     {
       "label": "camera_hal_rdkx5.cpp",
@@ -6297,7 +6305,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rdk-x5/camera_hal_rdkx5.cpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_hal_platforms_rdk_x5_camera_hal_rdkx5_cpp",
-      "community": 21
+      "community": 22
     },
     {
       "label": "init()",
@@ -6305,7 +6313,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rdk-x5/camera_hal_rdkx5.cpp",
       "source_location": "L40",
       "id": "camera_hal_rdkx5_init",
-      "community": 21
+      "community": 22
     },
     {
       "label": "init_v4l2()",
@@ -6313,7 +6321,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rdk-x5/camera_hal_rdkx5.cpp",
       "source_location": "L73",
       "id": "camera_hal_rdkx5_init_v4l2",
-      "community": 21
+      "community": 22
     },
     {
       "label": "init_vse_channels()",
@@ -6321,7 +6329,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rdk-x5/camera_hal_rdkx5.cpp",
       "source_location": "L217",
       "id": "camera_hal_rdkx5_init_vse_channels",
-      "community": 21
+      "community": 22
     },
     {
       "label": "alloc_vse_buffer()",
@@ -6329,7 +6337,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rdk-x5/camera_hal_rdkx5.cpp",
       "source_location": "L259",
       "id": "camera_hal_rdkx5_alloc_vse_buffer",
-      "community": 21
+      "community": 22
     },
     {
       "label": "free_vse_buffer()",
@@ -6337,7 +6345,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rdk-x5/camera_hal_rdkx5.cpp",
       "source_location": "L317",
       "id": "camera_hal_rdkx5_free_vse_buffer",
-      "community": 21
+      "community": 22
     },
     {
       "label": "acquire_frames()",
@@ -6345,7 +6353,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rdk-x5/camera_hal_rdkx5.cpp",
       "source_location": "L336",
       "id": "camera_hal_rdkx5_acquire_frames",
-      "community": 21
+      "community": 22
     },
     {
       "label": "release_frames()",
@@ -6353,7 +6361,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rdk-x5/camera_hal_rdkx5.cpp",
       "source_location": "L418",
       "id": "camera_hal_rdkx5_release_frames",
-      "community": 21
+      "community": 22
     },
     {
       "label": "shutdown()",
@@ -6361,7 +6369,7 @@
       "source_file": "traps/toolkit/src/hal/platforms/rdk-x5/camera_hal_rdkx5.cpp",
       "source_location": "L425",
       "id": "camera_hal_rdkx5_shutdown",
-      "community": 21
+      "community": 22
     },
     {
       "label": "frame_buffer.hpp",
@@ -6369,7 +6377,7 @@
       "source_file": "traps/toolkit/src/hal/api/frame_buffer.hpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_hal_api_frame_buffer_hpp",
-      "community": 112
+      "community": 113
     },
     {
       "label": "config_loader.cpp",
@@ -6377,7 +6385,7 @@
       "source_file": "traps/toolkit/src/hal/api/config_loader.cpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_hal_api_config_loader_cpp",
-      "community": 54
+      "community": 55
     },
     {
       "label": "get_or()",
@@ -6385,7 +6393,7 @@
       "source_file": "traps/toolkit/src/hal/api/config_loader.cpp",
       "source_location": "L32",
       "id": "config_loader_get_or",
-      "community": 54
+      "community": 55
     },
     {
       "label": "loadConfig()",
@@ -6393,7 +6401,7 @@
       "source_file": "traps/toolkit/src/hal/api/config_loader.cpp",
       "source_location": "L47",
       "id": "config_loader_loadconfig",
-      "community": 54
+      "community": 55
     },
     {
       "label": "saveConfig()",
@@ -6401,7 +6409,7 @@
       "source_file": "traps/toolkit/src/hal/api/config_loader.cpp",
       "source_location": "L132",
       "id": "config_loader_saveconfig",
-      "community": 54
+      "community": 55
     },
     {
       "label": "video_scaler.hpp",
@@ -6409,7 +6417,7 @@
       "source_file": "traps/toolkit/src/hal/api/video_scaler.hpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_hal_api_video_scaler_hpp",
-      "community": 88
+      "community": 89
     },
     {
       "label": "IVideoScaler()",
@@ -6417,7 +6425,7 @@
       "source_file": "traps/toolkit/src/hal/api/video_scaler.hpp",
       "source_location": "L27",
       "id": "video_scaler_ivideoscaler",
-      "community": 88
+      "community": 89
     },
     {
       "label": "classifier_hal.hpp",
@@ -6425,7 +6433,7 @@
       "source_file": "traps/toolkit/src/hal/api/classifier_hal.hpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_hal_api_classifier_hal_hpp",
-      "community": 89
+      "community": 90
     },
     {
       "label": "IClassifierHAL()",
@@ -6433,7 +6441,7 @@
       "source_file": "traps/toolkit/src/hal/api/classifier_hal.hpp",
       "source_location": "L38",
       "id": "classifier_hal_iclassifierhal",
-      "community": 89
+      "community": 90
     },
     {
       "label": "inference_hal.hpp",
@@ -6441,7 +6449,7 @@
       "source_file": "traps/toolkit/src/hal/api/inference_hal.hpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_hal_api_inference_hal_hpp",
-      "community": 90
+      "community": 91
     },
     {
       "label": "IInferenceHAL()",
@@ -6449,7 +6457,7 @@
       "source_file": "traps/toolkit/src/hal/api/inference_hal.hpp",
       "source_location": "L38",
       "id": "inference_hal_iinferencehal",
-      "community": 90
+      "community": 91
     },
     {
       "label": "config_loader.hpp",
@@ -6457,7 +6465,7 @@
       "source_file": "traps/toolkit/src/hal/api/config_loader.hpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_hal_api_config_loader_hpp",
-      "community": 113
+      "community": 114
     },
     {
       "label": "types.hpp",
@@ -6465,7 +6473,7 @@
       "source_file": "traps/toolkit/src/hal/api/types.hpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_hal_api_types_hpp",
-      "community": 114
+      "community": 115
     },
     {
       "label": "camera_hal.hpp",
@@ -6473,7 +6481,7 @@
       "source_file": "traps/toolkit/src/hal/api/camera_hal.hpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_hal_api_camera_hal_hpp",
-      "community": 91
+      "community": 92
     },
     {
       "label": "ICameraHAL()",
@@ -6481,7 +6489,7 @@
       "source_file": "traps/toolkit/src/hal/api/camera_hal.hpp",
       "source_location": "L41",
       "id": "camera_hal_icamerahal",
-      "community": 91
+      "community": 92
     },
     {
       "label": "ramen.hpp",
@@ -7049,7 +7057,7 @@
       "source_file": "traps/toolkit/src/actors/wifi-provisioning/wifi_provisioning_actor.hpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_actors_wifi_provisioning_wifi_provisioning_actor_hpp",
-      "community": 115
+      "community": 116
     },
     {
       "label": "software_jpeg_encoder.hpp",
@@ -7057,7 +7065,7 @@
       "source_file": "traps/toolkit/src/actors/jpeg-encoder/software_jpeg_encoder.hpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_actors_jpeg_encoder_software_jpeg_encoder_hpp",
-      "community": 72
+      "community": 73
     },
     {
       "label": "SoftwareJpegEncoder",
@@ -7065,7 +7073,7 @@
       "source_file": "traps/toolkit/src/actors/jpeg-encoder/software_jpeg_encoder.hpp",
       "source_location": "L29",
       "id": "software_jpeg_encoder_softwarejpegencoder",
-      "community": 72
+      "community": 73
     },
     {
       "label": ".SoftwareJpegEncoder()",
@@ -7073,7 +7081,7 @@
       "source_file": "traps/toolkit/src/actors/jpeg-encoder/software_jpeg_encoder.hpp",
       "source_location": "L31",
       "id": "software_jpeg_encoder_softwarejpegencoder_softwarejpegencoder",
-      "community": 72
+      "community": 73
     },
     {
       "label": "hardware_jpeg_encoder.hpp",
@@ -7081,7 +7089,7 @@
       "source_file": "traps/toolkit/src/actors/jpeg-encoder/hardware_jpeg_encoder.hpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_actors_jpeg_encoder_hardware_jpeg_encoder_hpp",
-      "community": 32
+      "community": 33
     },
     {
       "label": "HardwareJpegEncoder()",
@@ -7089,7 +7097,7 @@
       "source_file": "traps/toolkit/src/actors/jpeg-encoder/hardware_jpeg_encoder.cpp",
       "source_location": "L29",
       "id": "hardware_jpeg_encoder_hardwarejpegencoder",
-      "community": 32
+      "community": 33
     },
     {
       "label": "software_jpeg_encoder.cpp",
@@ -7097,7 +7105,7 @@
       "source_file": "traps/toolkit/src/actors/jpeg-encoder/software_jpeg_encoder.cpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_actors_jpeg_encoder_software_jpeg_encoder_cpp",
-      "community": 46
+      "community": 47
     },
     {
       "label": "init()",
@@ -7105,7 +7113,7 @@
       "source_file": "traps/toolkit/src/actors/jpeg-encoder/software_jpeg_encoder.cpp",
       "source_location": "L24",
       "id": "software_jpeg_encoder_init",
-      "community": 46
+      "community": 47
     },
     {
       "label": "clamp_uint8()",
@@ -7113,7 +7121,7 @@
       "source_file": "traps/toolkit/src/actors/jpeg-encoder/software_jpeg_encoder.cpp",
       "source_location": "L62",
       "id": "software_jpeg_encoder_clamp_uint8",
-      "community": 46
+      "community": 47
     },
     {
       "label": "nv12_to_rgb_row()",
@@ -7121,7 +7129,7 @@
       "source_file": "traps/toolkit/src/actors/jpeg-encoder/software_jpeg_encoder.cpp",
       "source_location": "L68",
       "id": "software_jpeg_encoder_nv12_to_rgb_row",
-      "community": 46
+      "community": 47
     },
     {
       "label": "encode()",
@@ -7129,7 +7137,7 @@
       "source_file": "traps/toolkit/src/actors/jpeg-encoder/software_jpeg_encoder.cpp",
       "source_location": "L93",
       "id": "software_jpeg_encoder_encode",
-      "community": 46
+      "community": 47
     },
     {
       "label": "hardware_jpeg_encoder.cpp",
@@ -7137,7 +7145,7 @@
       "source_file": "traps/toolkit/src/actors/jpeg-encoder/hardware_jpeg_encoder.cpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_actors_jpeg_encoder_hardware_jpeg_encoder_cpp",
-      "community": 32
+      "community": 33
     },
     {
       "label": "init()",
@@ -7145,7 +7153,7 @@
       "source_file": "traps/toolkit/src/actors/jpeg-encoder/hardware_jpeg_encoder.cpp",
       "source_location": "L35",
       "id": "hardware_jpeg_encoder_init",
-      "community": 32
+      "community": 33
     },
     {
       "label": "shutdown()",
@@ -7153,7 +7161,7 @@
       "source_file": "traps/toolkit/src/actors/jpeg-encoder/hardware_jpeg_encoder.cpp",
       "source_location": "L78",
       "id": "hardware_jpeg_encoder_shutdown",
-      "community": 32
+      "community": 33
     },
     {
       "label": "create_mpp_encoder()",
@@ -7161,7 +7169,7 @@
       "source_file": "traps/toolkit/src/actors/jpeg-encoder/hardware_jpeg_encoder.cpp",
       "source_location": "L92",
       "id": "hardware_jpeg_encoder_create_mpp_encoder",
-      "community": 32
+      "community": 33
     },
     {
       "label": "configure_encoder()",
@@ -7169,7 +7177,7 @@
       "source_file": "traps/toolkit/src/actors/jpeg-encoder/hardware_jpeg_encoder.cpp",
       "source_location": "L126",
       "id": "hardware_jpeg_encoder_configure_encoder",
-      "community": 32
+      "community": 33
     },
     {
       "label": "encode()",
@@ -7177,7 +7185,7 @@
       "source_file": "traps/toolkit/src/actors/jpeg-encoder/hardware_jpeg_encoder.cpp",
       "source_location": "L160",
       "id": "hardware_jpeg_encoder_encode",
-      "community": 32
+      "community": 33
     },
     {
       "label": "cleanup()",
@@ -7185,7 +7193,7 @@
       "source_file": "traps/toolkit/src/actors/jpeg-encoder/hardware_jpeg_encoder.cpp",
       "source_location": "L254",
       "id": "hardware_jpeg_encoder_cleanup",
-      "community": 32
+      "community": 33
     },
     {
       "label": "base_http_handler.cpp",
@@ -7361,7 +7369,7 @@
       "source_file": "traps/toolkit/src/actors/base-http-handler/base_http_handler.h",
       "source_location": "L1",
       "id": "traps_toolkit_src_actors_base_http_handler_base_http_handler_h",
-      "community": 92
+      "community": 93
     },
     {
       "label": "ct()",
@@ -7369,7 +7377,7 @@
       "source_file": "traps/toolkit/src/actors/base-http-handler/base_http_handler.h",
       "source_location": "L29",
       "id": "base_http_handler_ct",
-      "community": 92
+      "community": 93
     },
     {
       "label": "scene_camera_actor.hpp",
@@ -7377,7 +7385,7 @@
       "source_file": "traps/toolkit/src/actors/camera/scene_camera_actor.hpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_actors_camera_scene_camera_actor_hpp",
-      "community": 116
+      "community": 117
     },
     {
       "label": "camera_hal_actor.cpp",
@@ -7385,7 +7393,7 @@
       "source_file": "traps/toolkit/src/actors/camera/camera_hal_actor.cpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_actors_camera_camera_hal_actor_cpp",
-      "community": 47
+      "community": 48
     },
     {
       "label": "CameraHalActor()",
@@ -7393,7 +7401,7 @@
       "source_file": "traps/toolkit/src/actors/camera/camera_hal_actor.cpp",
       "source_location": "L22",
       "id": "camera_hal_actor_camerahalactor",
-      "community": 47
+      "community": 48
     },
     {
       "label": "init()",
@@ -7401,7 +7409,7 @@
       "source_file": "traps/toolkit/src/actors/camera/camera_hal_actor.cpp",
       "source_location": "L27",
       "id": "camera_hal_actor_init",
-      "community": 47
+      "community": 48
     },
     {
       "label": "shutdown()",
@@ -7409,7 +7417,7 @@
       "source_file": "traps/toolkit/src/actors/camera/camera_hal_actor.cpp",
       "source_location": "L42",
       "id": "camera_hal_actor_shutdown",
-      "community": 47
+      "community": 48
     },
     {
       "label": "tick()",
@@ -7417,7 +7425,7 @@
       "source_file": "traps/toolkit/src/actors/camera/camera_hal_actor.cpp",
       "source_location": "L47",
       "id": "camera_hal_actor_tick",
-      "community": 47
+      "community": 48
     },
     {
       "label": "camera_factory.cpp",
@@ -7425,7 +7433,7 @@
       "source_file": "traps/toolkit/src/actors/camera/camera_factory.cpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_actors_camera_camera_factory_cpp",
-      "community": 93
+      "community": 94
     },
     {
       "label": "create()",
@@ -7433,7 +7441,7 @@
       "source_file": "traps/toolkit/src/actors/camera/camera_factory.cpp",
       "source_location": "L39",
       "id": "camera_factory_create",
-      "community": 93
+      "community": 94
     },
     {
       "label": "camera_hal_actor.hpp",
@@ -7441,7 +7449,7 @@
       "source_file": "traps/toolkit/src/actors/camera/camera_hal_actor.hpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_actors_camera_camera_hal_actor_hpp",
-      "community": 117
+      "community": 118
     },
     {
       "label": "scene_camera_actor.cpp",
@@ -7449,7 +7457,7 @@
       "source_file": "traps/toolkit/src/actors/camera/scene_camera_actor.cpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_actors_camera_scene_camera_actor_cpp",
-      "community": 22
+      "community": 23
     },
     {
       "label": "now_ms()",
@@ -7457,7 +7465,7 @@
       "source_file": "traps/toolkit/src/actors/camera/scene_camera_actor.cpp",
       "source_location": "L31",
       "id": "scene_camera_actor_now_ms",
-      "community": 22
+      "community": 23
     },
     {
       "label": "decode_png_to_rgba()",
@@ -7465,7 +7473,7 @@
       "source_file": "traps/toolkit/src/actors/camera/scene_camera_actor.cpp",
       "source_location": "L39",
       "id": "scene_camera_actor_decode_png_to_rgba",
-      "community": 22
+      "community": 23
     },
     {
       "label": "rgba_to_nv12()",
@@ -7473,7 +7481,7 @@
       "source_file": "traps/toolkit/src/actors/camera/scene_camera_actor.cpp",
       "source_location": "L123",
       "id": "scene_camera_actor_rgba_to_nv12",
-      "community": 22
+      "community": 23
     },
     {
       "label": "nv12_letterbox()",
@@ -7481,7 +7489,7 @@
       "source_file": "traps/toolkit/src/actors/camera/scene_camera_actor.cpp",
       "source_location": "L167",
       "id": "scene_camera_actor_nv12_letterbox",
-      "community": 22
+      "community": 23
     },
     {
       "label": "nv12_scale_nearest()",
@@ -7489,7 +7497,7 @@
       "source_file": "traps/toolkit/src/actors/camera/scene_camera_actor.cpp",
       "source_location": "L225",
       "id": "scene_camera_actor_nv12_scale_nearest",
-      "community": 22
+      "community": 23
     },
     {
       "label": "load_frame_file()",
@@ -7497,7 +7505,7 @@
       "source_file": "traps/toolkit/src/actors/camera/scene_camera_actor.cpp",
       "source_location": "L258",
       "id": "scene_camera_actor_load_frame_file",
-      "community": 22
+      "community": 23
     },
     {
       "label": "load_scene()",
@@ -7505,7 +7513,7 @@
       "source_file": "traps/toolkit/src/actors/camera/scene_camera_actor.cpp",
       "source_location": "L314",
       "id": "scene_camera_actor_load_scene",
-      "community": 22
+      "community": 23
     },
     {
       "label": "init()",
@@ -7513,7 +7521,7 @@
       "source_file": "traps/toolkit/src/actors/camera/scene_camera_actor.cpp",
       "source_location": "L370",
       "id": "scene_camera_actor_init",
-      "community": 22
+      "community": 23
     },
     {
       "label": "tick()",
@@ -7521,7 +7529,7 @@
       "source_file": "traps/toolkit/src/actors/camera/scene_camera_actor.cpp",
       "source_location": "L432",
       "id": "scene_camera_actor_tick",
-      "community": 22
+      "community": 23
     },
     {
       "label": "shutdown()",
@@ -7529,7 +7537,7 @@
       "source_file": "traps/toolkit/src/actors/camera/scene_camera_actor.cpp",
       "source_location": "L474",
       "id": "scene_camera_actor_shutdown",
-      "community": 22
+      "community": 23
     },
     {
       "label": "camera_actor.hpp",
@@ -7537,7 +7545,7 @@
       "source_file": "traps/toolkit/src/actors/camera/camera_actor.hpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_actors_camera_camera_actor_hpp",
-      "community": 94
+      "community": 95
     },
     {
       "label": "CameraActor()",
@@ -7545,7 +7553,7 @@
       "source_file": "traps/toolkit/src/actors/camera/camera_actor.hpp",
       "source_location": "L47",
       "id": "camera_actor_cameraactor",
-      "community": 94
+      "community": 95
     },
     {
       "label": "crop_encoder_actor.hpp",
@@ -7553,7 +7561,7 @@
       "source_file": "traps/toolkit/src/actors/crop-encoder/crop_encoder_actor.hpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_actors_crop_encoder_crop_encoder_actor_hpp",
-      "community": 118
+      "community": 119
     },
     {
       "label": "cropper_actor.cpp",
@@ -7561,7 +7569,7 @@
       "source_file": "traps/toolkit/src/actors/cropper/cropper_actor.cpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_actors_cropper_cropper_actor_cpp",
-      "community": 55
+      "community": 56
     },
     {
       "label": "extract_nv12_roi()",
@@ -7569,7 +7577,7 @@
       "source_file": "traps/toolkit/src/actors/cropper/cropper_actor.cpp",
       "source_location": "L32",
       "id": "cropper_actor_extract_nv12_roi",
-      "community": 55
+      "community": 56
     },
     {
       "label": "nv12_to_jpeg()",
@@ -7577,7 +7585,7 @@
       "source_file": "traps/toolkit/src/actors/cropper/cropper_actor.cpp",
       "source_location": "L70",
       "id": "cropper_actor_nv12_to_jpeg",
-      "community": 55
+      "community": 56
     },
     {
       "label": "encode_crop()",
@@ -7585,7 +7593,7 @@
       "source_file": "traps/toolkit/src/actors/cropper/cropper_actor.cpp",
       "source_location": "L143",
       "id": "cropper_actor_encode_crop",
-      "community": 55
+      "community": 56
     },
     {
       "label": "cropper_actor.hpp",
@@ -7593,7 +7601,7 @@
       "source_file": "traps/toolkit/src/actors/cropper/cropper_actor.hpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_actors_cropper_cropper_actor_hpp",
-      "community": 119
+      "community": 120
     },
     {
       "label": "best_shot_keeper_actor.hpp",
@@ -7601,7 +7609,7 @@
       "source_file": "traps/toolkit/src/actors/best-shot/best_shot_keeper_actor.hpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_actors_best_shot_best_shot_keeper_actor_hpp",
-      "community": 120
+      "community": 121
     },
     {
       "label": "tracker_actor.cpp",
@@ -7609,7 +7617,7 @@
       "source_file": "traps/toolkit/src/actors/tracker/tracker_actor.cpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_actors_tracker_tracker_actor_cpp",
-      "community": 43
+      "community": 44
     },
     {
       "label": "init()",
@@ -7617,7 +7625,7 @@
       "source_file": "traps/toolkit/src/actors/tracker/tracker_actor.cpp",
       "source_location": "L25",
       "id": "tracker_actor_init",
-      "community": 43
+      "community": 44
     },
     {
       "label": "iou()",
@@ -7625,7 +7633,7 @@
       "source_file": "traps/toolkit/src/actors/tracker/tracker_actor.cpp",
       "source_location": "L74",
       "id": "tracker_actor_iou",
-      "community": 43
+      "community": 44
     },
     {
       "label": "centroid_dist()",
@@ -7633,7 +7641,7 @@
       "source_file": "traps/toolkit/src/actors/tracker/tracker_actor.cpp",
       "source_location": "L87",
       "id": "tracker_actor_centroid_dist",
-      "community": 43
+      "community": 44
     },
     {
       "label": "lores_to_full()",
@@ -7641,7 +7649,7 @@
       "source_file": "traps/toolkit/src/actors/tracker/tracker_actor.cpp",
       "source_location": "L97",
       "id": "tracker_actor_lores_to_full",
-      "community": 43
+      "community": 44
     },
     {
       "label": "update()",
@@ -7649,7 +7657,7 @@
       "source_file": "traps/toolkit/src/actors/tracker/tracker_actor.cpp",
       "source_location": "L142",
       "id": "tracker_actor_update",
-      "community": 43
+      "community": 44
     },
     {
       "label": "tracker_actor.hpp",
@@ -7657,7 +7665,7 @@
       "source_file": "traps/toolkit/src/actors/tracker/tracker_actor.hpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_actors_tracker_tracker_actor_hpp",
-      "community": 121
+      "community": 122
     },
     {
       "label": "base_storage.hpp",
@@ -7665,7 +7673,7 @@
       "source_file": "traps/toolkit/src/actors/base-storage/base_storage.hpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_actors_base_storage_base_storage_hpp",
-      "community": 73
+      "community": 74
     },
     {
       "label": "BaseStorage",
@@ -7673,7 +7681,7 @@
       "source_file": "traps/toolkit/src/actors/base-storage/base_storage.hpp",
       "source_location": "L38",
       "id": "base_storage_basestorage",
-      "community": 73
+      "community": 74
     },
     {
       "label": ".BaseStorage()",
@@ -7681,7 +7689,7 @@
       "source_file": "traps/toolkit/src/actors/base-storage/base_storage.hpp",
       "source_location": "L40",
       "id": "base_storage_basestorage_basestorage",
-      "community": 73
+      "community": 74
     },
     {
       "label": "base_trap_handler.hpp",
@@ -7689,7 +7697,7 @@
       "source_file": "traps/toolkit/src/actors/base-trap-handler/base_trap_handler.hpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_actors_base_trap_handler_base_trap_handler_hpp",
-      "community": 95
+      "community": 96
     },
     {
       "label": "BaseTrapHandler",
@@ -7697,7 +7705,7 @@
       "source_file": "traps/toolkit/src/actors/base-trap-handler/base_trap_handler.hpp",
       "source_location": "L30",
       "id": "base_trap_handler_basetraphandler",
-      "community": 95
+      "community": 96
     },
     {
       "label": "event_publisher_actor.hpp",
@@ -7705,7 +7713,7 @@
       "source_file": "traps/toolkit/src/actors/event-publisher/event_publisher_actor.hpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_actors_event_publisher_event_publisher_actor_hpp",
-      "community": 27
+      "community": 28
     },
     {
       "label": "EventPublisherActor()",
@@ -7713,7 +7721,7 @@
       "source_file": "traps/toolkit/src/actors/event-publisher/event_publisher_actor.cpp",
       "source_location": "L29",
       "id": "event_publisher_actor_eventpublisheractor",
-      "community": 27
+      "community": 28
     },
     {
       "label": "event_publisher_actor.cpp",
@@ -7721,7 +7729,7 @@
       "source_file": "traps/toolkit/src/actors/event-publisher/event_publisher_actor.cpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_actors_event_publisher_event_publisher_actor_cpp",
-      "community": 27
+      "community": 28
     },
     {
       "label": "onStart()",
@@ -7729,7 +7737,7 @@
       "source_file": "traps/toolkit/src/actors/event-publisher/event_publisher_actor.cpp",
       "source_location": "L37",
       "id": "event_publisher_actor_onstart",
-      "community": 27
+      "community": 28
     },
     {
       "label": "onStop()",
@@ -7737,7 +7745,7 @@
       "source_file": "traps/toolkit/src/actors/event-publisher/event_publisher_actor.cpp",
       "source_location": "L47",
       "id": "event_publisher_actor_onstop",
-      "community": 27
+      "community": 28
     },
     {
       "label": "onMessageAny()",
@@ -7745,7 +7753,7 @@
       "source_file": "traps/toolkit/src/actors/event-publisher/event_publisher_actor.cpp",
       "source_location": "L59",
       "id": "event_publisher_actor_onmessageany",
-      "community": 27
+      "community": 28
     },
     {
       "label": "getPublisherName()",
@@ -7753,7 +7761,7 @@
       "source_file": "traps/toolkit/src/actors/event-publisher/event_publisher_actor.cpp",
       "source_location": "L69",
       "id": "event_publisher_actor_getpublishername",
-      "community": 27
+      "community": 28
     },
     {
       "label": "setSseActor()",
@@ -7761,7 +7769,7 @@
       "source_file": "traps/toolkit/src/actors/event-publisher/event_publisher_actor.cpp",
       "source_location": "L77",
       "id": "event_publisher_actor_setsseactor",
-      "community": 27
+      "community": 28
     },
     {
       "label": "publishEvent()",
@@ -7769,7 +7777,7 @@
       "source_file": "traps/toolkit/src/actors/event-publisher/event_publisher_actor.cpp",
       "source_location": "L86",
       "id": "event_publisher_actor_publishevent",
-      "community": 27
+      "community": 28
     },
     {
       "label": "nowMs()",
@@ -7777,7 +7785,7 @@
       "source_file": "traps/toolkit/src/actors/event-publisher/event_publisher_actor.cpp",
       "source_location": "L114",
       "id": "event_publisher_actor_nowms",
-      "community": 27
+      "community": 28
     },
     {
       "label": "classifier_actor.hpp",
@@ -7785,7 +7793,7 @@
       "source_file": "traps/toolkit/src/actors/classifier/classifier_actor.hpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_actors_classifier_classifier_actor_hpp",
-      "community": 122
+      "community": 123
     },
     {
       "label": "actuator_actor.cpp",
@@ -7793,7 +7801,7 @@
       "source_file": "traps/toolkit/src/actors/actuator/actuator_actor.cpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_actors_actuator_actuator_actor_cpp",
-      "community": 19
+      "community": 20
     },
     {
       "label": "gpio_export()",
@@ -7801,7 +7809,7 @@
       "source_file": "traps/toolkit/src/actors/actuator/actuator_actor.cpp",
       "source_location": "L31",
       "id": "actuator_actor_gpio_export",
-      "community": 19
+      "community": 20
     },
     {
       "label": "gpio_unexport()",
@@ -7809,7 +7817,7 @@
       "source_file": "traps/toolkit/src/actors/actuator/actuator_actor.cpp",
       "source_location": "L38",
       "id": "actuator_actor_gpio_unexport",
-      "community": 19
+      "community": 20
     },
     {
       "label": "gpio_set_dir()",
@@ -7817,7 +7825,7 @@
       "source_file": "traps/toolkit/src/actors/actuator/actuator_actor.cpp",
       "source_location": "L45",
       "id": "actuator_actor_gpio_set_dir",
-      "community": 19
+      "community": 20
     },
     {
       "label": "gpio_write()",
@@ -7825,7 +7833,7 @@
       "source_file": "traps/toolkit/src/actors/actuator/actuator_actor.cpp",
       "source_location": "L54",
       "id": "actuator_actor_gpio_write",
-      "community": 19
+      "community": 20
     },
     {
       "label": "setup_gpio()",
@@ -7833,7 +7841,7 @@
       "source_file": "traps/toolkit/src/actors/actuator/actuator_actor.cpp",
       "source_location": "L65",
       "id": "actuator_actor_setup_gpio",
-      "community": 19
+      "community": 20
     },
     {
       "label": "cleanup_gpio()",
@@ -7841,7 +7849,7 @@
       "source_file": "traps/toolkit/src/actors/actuator/actuator_actor.cpp",
       "source_location": "L84",
       "id": "actuator_actor_cleanup_gpio",
-      "community": 19
+      "community": 20
     },
     {
       "label": "init()",
@@ -7849,7 +7857,7 @@
       "source_file": "traps/toolkit/src/actors/actuator/actuator_actor.cpp",
       "source_location": "L89",
       "id": "actuator_actor_init",
-      "community": 19
+      "community": 20
     },
     {
       "label": "shutdown()",
@@ -7857,7 +7865,7 @@
       "source_file": "traps/toolkit/src/actors/actuator/actuator_actor.cpp",
       "source_location": "L131",
       "id": "actuator_actor_shutdown",
-      "community": 19
+      "community": 20
     },
     {
       "label": "activate()",
@@ -7865,7 +7873,7 @@
       "source_file": "traps/toolkit/src/actors/actuator/actuator_actor.cpp",
       "source_location": "L145",
       "id": "actuator_actor_activate",
-      "community": 19
+      "community": 20
     },
     {
       "label": "deactivate()",
@@ -7873,7 +7881,7 @@
       "source_file": "traps/toolkit/src/actors/actuator/actuator_actor.cpp",
       "source_location": "L176",
       "id": "actuator_actor_deactivate",
-      "community": 19
+      "community": 20
     },
     {
       "label": "activation_timer()",
@@ -7881,7 +7889,7 @@
       "source_file": "traps/toolkit/src/actors/actuator/actuator_actor.cpp",
       "source_location": "L192",
       "id": "actuator_actor_activation_timer",
-      "community": 19
+      "community": 20
     },
     {
       "label": "actuator_actor.hpp",
@@ -7889,7 +7897,7 @@
       "source_file": "traps/toolkit/src/actors/actuator/actuator_actor.hpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_actors_actuator_actuator_actor_hpp",
-      "community": 96
+      "community": 97
     },
     {
       "label": "ActuatorActor()",
@@ -7897,7 +7905,7 @@
       "source_file": "traps/toolkit/src/actors/actuator/actuator_actor.hpp",
       "source_location": "L58",
       "id": "actuator_actor_actuatoractor",
-      "community": 96
+      "community": 97
     },
     {
       "label": "inference_actor.hpp",
@@ -7905,7 +7913,7 @@
       "source_file": "traps/toolkit/src/actors/inference/inference_actor.hpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_actors_inference_inference_actor_hpp",
-      "community": 123
+      "community": 124
     },
     {
       "label": "inference_actor.cpp",
@@ -7913,7 +7921,7 @@
       "source_file": "traps/toolkit/src/actors/inference/inference_actor.cpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_actors_inference_inference_actor_cpp",
-      "community": 48
+      "community": 49
     },
     {
       "label": "InferenceActor()",
@@ -7921,7 +7929,7 @@
       "source_file": "traps/toolkit/src/actors/inference/inference_actor.cpp",
       "source_location": "L22",
       "id": "inference_actor_inferenceactor",
-      "community": 48
+      "community": 49
     },
     {
       "label": "init()",
@@ -7929,7 +7937,7 @@
       "source_file": "traps/toolkit/src/actors/inference/inference_actor.cpp",
       "source_location": "L27",
       "id": "inference_actor_init",
-      "community": 48
+      "community": 49
     },
     {
       "label": "shutdown()",
@@ -7937,7 +7945,7 @@
       "source_file": "traps/toolkit/src/actors/inference/inference_actor.cpp",
       "source_location": "L46",
       "id": "inference_actor_shutdown",
-      "community": 48
+      "community": 49
     },
     {
       "label": "last_inference_us()",
@@ -7945,7 +7953,7 @@
       "source_file": "traps/toolkit/src/actors/inference/inference_actor.cpp",
       "source_location": "L53",
       "id": "inference_actor_last_inference_us",
-      "community": 48
+      "community": 49
     },
     {
       "label": "decision_actor.hpp",
@@ -7953,7 +7961,7 @@
       "source_file": "traps/toolkit/src/actors/decision/decision_actor.hpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_actors_decision_decision_actor_hpp",
-      "community": 124
+      "community": 125
     },
     {
       "label": "decision_actor.cpp",
@@ -7961,7 +7969,7 @@
       "source_file": "traps/toolkit/src/actors/decision/decision_actor.cpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_actors_decision_decision_actor_cpp",
-      "community": 56
+      "community": 57
     },
     {
       "label": "should_trigger()",
@@ -7969,7 +7977,7 @@
       "source_file": "traps/toolkit/src/actors/decision/decision_actor.cpp",
       "source_location": "L24",
       "id": "decision_actor_should_trigger",
-      "community": 56
+      "community": 57
     },
     {
       "label": "evaluate_tracked()",
@@ -7977,7 +7985,7 @@
       "source_file": "traps/toolkit/src/actors/decision/decision_actor.cpp",
       "source_location": "L50",
       "id": "decision_actor_evaluate_tracked",
-      "community": 56
+      "community": 57
     },
     {
       "label": "evaluate_detections()",
@@ -7985,7 +7993,7 @@
       "source_file": "traps/toolkit/src/actors/decision/decision_actor.cpp",
       "source_location": "L64",
       "id": "decision_actor_evaluate_detections",
-      "community": 56
+      "community": 57
     },
     {
       "label": "overlay_actor.hpp",
@@ -7993,7 +8001,7 @@
       "source_file": "traps/toolkit/src/actors/overlay/overlay_actor.hpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_actors_overlay_overlay_actor_hpp",
-      "community": 125
+      "community": 126
     },
     {
       "label": "overlay_actor.cpp",
@@ -8001,7 +8009,7 @@
       "source_file": "traps/toolkit/src/actors/overlay/overlay_actor.cpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_actors_overlay_overlay_actor_cpp",
-      "community": 49
+      "community": 50
     },
     {
       "label": "rgb_to_yuv()",
@@ -8009,7 +8017,7 @@
       "source_file": "traps/toolkit/src/actors/overlay/overlay_actor.cpp",
       "source_location": "L51",
       "id": "overlay_actor_rgb_to_yuv",
-      "community": 49
+      "community": 50
     },
     {
       "label": "draw_overlays()",
@@ -8017,7 +8025,7 @@
       "source_file": "traps/toolkit/src/actors/overlay/overlay_actor.cpp",
       "source_location": "L60",
       "id": "overlay_actor_draw_overlays",
-      "community": 49
+      "community": 50
     },
     {
       "label": "draw_rect()",
@@ -8025,7 +8033,7 @@
       "source_file": "traps/toolkit/src/actors/overlay/overlay_actor.cpp",
       "source_location": "L110",
       "id": "overlay_actor_draw_rect",
-      "community": 49
+      "community": 50
     },
     {
       "label": "draw_text()",
@@ -8033,7 +8041,7 @@
       "source_file": "traps/toolkit/src/actors/overlay/overlay_actor.cpp",
       "source_location": "L191",
       "id": "overlay_actor_draw_text",
-      "community": 49
+      "community": 50
     },
     {
       "label": "civetweb.h",
@@ -8041,7 +8049,7 @@
       "source_file": "traps/toolkit/src/actors/http-sse/civetweb.h",
       "source_location": "L1",
       "id": "traps_toolkit_src_actors_http_sse_civetweb_h",
-      "community": 126
+      "community": 127
     },
     {
       "label": "http_sse_actor.h",
@@ -11089,7 +11097,7 @@
       "source_file": "traps/toolkit/src/actors/mjpeg-bridge/hires_mjpeg_bridge.hpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_actors_mjpeg_bridge_hires_mjpeg_bridge_hpp",
-      "community": 127
+      "community": 128
     },
     {
       "label": "mjpeg_bridge_actor.hpp",
@@ -11097,7 +11105,7 @@
       "source_file": "traps/toolkit/src/actors/mjpeg-bridge/mjpeg_bridge_actor.hpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_actors_mjpeg_bridge_mjpeg_bridge_actor_hpp",
-      "community": 23
+      "community": 24
     },
     {
       "label": "MjpegBridgeActor()",
@@ -11105,7 +11113,7 @@
       "source_file": "traps/toolkit/src/actors/mjpeg-bridge/mjpeg_bridge_actor.cpp",
       "source_location": "L32",
       "id": "mjpeg_bridge_actor_mjpegbridgeactor",
-      "community": 23
+      "community": 24
     },
     {
       "label": ".MjpegBridgeActor()",
@@ -11113,7 +11121,7 @@
       "source_file": "traps/toolkit/src/actors/mjpeg-bridge/mjpeg_bridge_actor.hpp",
       "source_location": "L62",
       "id": "mjpeg_bridge_actor_mjpegbridgeactor_mjpegbridgeactor",
-      "community": 23
+      "community": 24
     },
     {
       "label": "mjpeg_bridge_actor.cpp",
@@ -11121,7 +11129,7 @@
       "source_file": "traps/toolkit/src/actors/mjpeg-bridge/mjpeg_bridge_actor.cpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_actors_mjpeg_bridge_mjpeg_bridge_actor_cpp",
-      "community": 23
+      "community": 24
     },
     {
       "label": "onStart()",
@@ -11129,7 +11137,7 @@
       "source_file": "traps/toolkit/src/actors/mjpeg-bridge/mjpeg_bridge_actor.cpp",
       "source_location": "L66",
       "id": "mjpeg_bridge_actor_onstart",
-      "community": 23
+      "community": 24
     },
     {
       "label": "onStop()",
@@ -11137,7 +11145,7 @@
       "source_file": "traps/toolkit/src/actors/mjpeg-bridge/mjpeg_bridge_actor.cpp",
       "source_location": "L70",
       "id": "mjpeg_bridge_actor_onstop",
-      "community": 23
+      "community": 24
     },
     {
       "label": "onMessageAny()",
@@ -11145,7 +11153,7 @@
       "source_file": "traps/toolkit/src/actors/mjpeg-bridge/mjpeg_bridge_actor.cpp",
       "source_location": "L76",
       "id": "mjpeg_bridge_actor_onmessageany",
-      "community": 23
+      "community": 24
     },
     {
       "label": "push_frame()",
@@ -11153,7 +11161,7 @@
       "source_file": "traps/toolkit/src/actors/mjpeg-bridge/mjpeg_bridge_actor.cpp",
       "source_location": "L91",
       "id": "mjpeg_bridge_actor_push_frame",
-      "community": 23
+      "community": 24
     },
     {
       "label": "pop_newest()",
@@ -11161,7 +11169,7 @@
       "source_file": "traps/toolkit/src/actors/mjpeg-bridge/mjpeg_bridge_actor.cpp",
       "source_location": "L115",
       "id": "mjpeg_bridge_actor_pop_newest",
-      "community": 23
+      "community": 24
     },
     {
       "label": "try_get()",
@@ -11169,7 +11177,7 @@
       "source_file": "traps/toolkit/src/actors/mjpeg-bridge/mjpeg_bridge_actor.cpp",
       "source_location": "L136",
       "id": "mjpeg_bridge_actor_try_get",
-      "community": 23
+      "community": 24
     },
     {
       "label": "encode_jpeg()",
@@ -11177,7 +11185,7 @@
       "source_file": "traps/toolkit/src/actors/mjpeg-bridge/mjpeg_bridge_actor.cpp",
       "source_location": "L142",
       "id": "mjpeg_bridge_actor_encode_jpeg",
-      "community": 23
+      "community": 24
     },
     {
       "label": "motion_sensor_actor.hpp",
@@ -11185,7 +11193,7 @@
       "source_file": "traps/toolkit/src/actors/motion-sensor/motion_sensor_actor.hpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_actors_motion_sensor_motion_sensor_actor_hpp",
-      "community": 128
+      "community": 129
     },
     {
       "label": "motion_sensor_actor.cpp",
@@ -11193,7 +11201,7 @@
       "source_file": "traps/toolkit/src/actors/motion-sensor/motion_sensor_actor.cpp",
       "source_location": "L1",
       "id": "traps_toolkit_src_actors_motion_sensor_motion_sensor_actor_cpp",
-      "community": 20
+      "community": 21
     },
     {
       "label": "gpio_export()",
@@ -11201,7 +11209,7 @@
       "source_file": "traps/toolkit/src/actors/motion-sensor/motion_sensor_actor.cpp",
       "source_location": "L35",
       "id": "motion_sensor_actor_gpio_export",
-      "community": 20
+      "community": 21
     },
     {
       "label": "gpio_unexport()",
@@ -11209,7 +11217,7 @@
       "source_file": "traps/toolkit/src/actors/motion-sensor/motion_sensor_actor.cpp",
       "source_location": "L42",
       "id": "motion_sensor_actor_gpio_unexport",
-      "community": 20
+      "community": 21
     },
     {
       "label": "gpio_set_dir()",
@@ -11217,7 +11225,7 @@
       "source_file": "traps/toolkit/src/actors/motion-sensor/motion_sensor_actor.cpp",
       "source_location": "L49",
       "id": "motion_sensor_actor_gpio_set_dir",
-      "community": 20
+      "community": 21
     },
     {
       "label": "gpio_set_edge()",
@@ -11225,7 +11233,7 @@
       "source_file": "traps/toolkit/src/actors/motion-sensor/motion_sensor_actor.cpp",
       "source_location": "L58",
       "id": "motion_sensor_actor_gpio_set_edge",
-      "community": 20
+      "community": 21
     },
     {
       "label": "gpio_read()",
@@ -11233,7 +11241,7 @@
       "source_file": "traps/toolkit/src/actors/motion-sensor/motion_sensor_actor.cpp",
       "source_location": "L67",
       "id": "motion_sensor_actor_gpio_read",
-      "community": 20
+      "community": 21
     },
     {
       "label": "setup_gpio()",
@@ -11241,7 +11249,7 @@
       "source_file": "traps/toolkit/src/actors/motion-sensor/motion_sensor_actor.cpp",
       "source_location": "L79",
       "id": "motion_sensor_actor_setup_gpio",
-      "community": 20
+      "community": 21
     },
     {
       "label": "read_gpio()",
@@ -11249,7 +11257,7 @@
       "source_file": "traps/toolkit/src/actors/motion-sensor/motion_sensor_actor.cpp",
       "source_location": "L105",
       "id": "motion_sensor_actor_read_gpio",
-      "community": 20
+      "community": 21
     },
     {
       "label": "cleanup_gpio()",
@@ -11257,7 +11265,7 @@
       "source_file": "traps/toolkit/src/actors/motion-sensor/motion_sensor_actor.cpp",
       "source_location": "L110",
       "id": "motion_sensor_actor_cleanup_gpio",
-      "community": 20
+      "community": 21
     },
     {
       "label": "init()",
@@ -11265,7 +11273,7 @@
       "source_file": "traps/toolkit/src/actors/motion-sensor/motion_sensor_actor.cpp",
       "source_location": "L114",
       "id": "motion_sensor_actor_init",
-      "community": 20
+      "community": 21
     },
     {
       "label": "shutdown()",
@@ -11273,7 +11281,7 @@
       "source_file": "traps/toolkit/src/actors/motion-sensor/motion_sensor_actor.cpp",
       "source_location": "L147",
       "id": "motion_sensor_actor_shutdown",
-      "community": 20
+      "community": 21
     },
     {
       "label": "poll_loop()",
@@ -11281,7 +11289,7 @@
       "source_file": "traps/toolkit/src/actors/motion-sensor/motion_sensor_actor.cpp",
       "source_location": "L161",
       "id": "motion_sensor_actor_poll_loop",
-      "community": 20
+      "community": 21
     },
     {
       "label": "train_yolo26n.py",
@@ -11289,7 +11297,7 @@
       "source_file": "models/detection/insects/yolo26n/train_yolo26n.py",
       "source_location": "L1",
       "id": "models_detection_insects_yolo26n_train_yolo26n_py",
-      "community": 57
+      "community": 58
     },
     {
       "label": "resolve_data_yaml()",
@@ -11297,7 +11305,7 @@
       "source_file": "models/detection/insects/yolo26n/train_yolo26n.py",
       "source_location": "L46",
       "id": "train_yolo26n_resolve_data_yaml",
-      "community": 57
+      "community": 58
     },
     {
       "label": "main()",
@@ -11305,14 +11313,14 @@
       "source_file": "models/detection/insects/yolo26n/train_yolo26n.py",
       "source_location": "L97",
       "id": "train_yolo26n_main",
-      "community": 57
+      "community": 58
     },
     {
       "label": "Resolve the data.yaml path and rewrite its train/val/test paths to absolute.",
       "file_type": "rationale",
       "source_file": "models/detection/insects/yolo26n/train_yolo26n.py",
       "source_location": "L47",
-      "community": 57,
+      "community": 58,
       "id": "train_yolo26n_rationale_47"
     },
     {
@@ -11321,7 +11329,7 @@
       "source_file": "models/detection/insects/yolo26n/nbg_output/generated/vnn_post_process.c",
       "source_location": "L1",
       "id": "models_detection_insects_yolo26n_nbg_output_generated_vnn_post_process_c",
-      "community": 38
+      "community": 39
     },
     {
       "label": "save_output_data()",
@@ -11329,7 +11337,7 @@
       "source_file": "models/detection/insects/yolo26n/nbg_output/generated/vnn_post_process.c",
       "source_location": "L32",
       "id": "vnn_post_process_save_output_data",
-      "community": 38
+      "community": 39
     },
     {
       "label": "get_top()",
@@ -11337,7 +11345,7 @@
       "source_file": "models/detection/insects/yolo26n/nbg_output/generated/vnn_post_process.c",
       "source_location": "L51",
       "id": "vnn_post_process_get_top",
-      "community": 38
+      "community": 39
     },
     {
       "label": "show_top5()",
@@ -11345,7 +11353,7 @@
       "source_file": "models/detection/insects/yolo26n/nbg_output/generated/vnn_post_process.c",
       "source_location": "L92",
       "id": "vnn_post_process_show_top5",
-      "community": 38
+      "community": 39
     },
     {
       "label": "vnn_PostProcessNbgOutput()",
@@ -11353,7 +11361,7 @@
       "source_file": "models/detection/insects/yolo26n/nbg_output/generated/vnn_post_process.c",
       "source_location": "L147",
       "id": "vnn_post_process_vnn_postprocessnbgoutput",
-      "community": 38
+      "community": 39
     },
     {
       "label": "vnn_GetPostProcessMap()",
@@ -11361,7 +11369,7 @@
       "source_file": "models/detection/insects/yolo26n/nbg_output/generated/vnn_post_process.c",
       "source_location": "L162",
       "id": "vnn_post_process_vnn_getpostprocessmap",
-      "community": 38
+      "community": 39
     },
     {
       "label": "vnn_GetPostProcessMapCount()",
@@ -11369,7 +11377,7 @@
       "source_file": "models/detection/insects/yolo26n/nbg_output/generated/vnn_post_process.c",
       "source_location": "L167",
       "id": "vnn_post_process_vnn_getpostprocessmapcount",
-      "community": 38
+      "community": 39
     },
     {
       "label": "vnn_nbgoutput.c",
@@ -11377,7 +11385,7 @@
       "source_file": "models/detection/insects/yolo26n/nbg_output/generated/vnn_nbgoutput.c",
       "source_location": "L1",
       "id": "models_detection_insects_yolo26n_nbg_output_generated_vnn_nbgoutput_c",
-      "community": 58
+      "community": 59
     },
     {
       "label": "load_data()",
@@ -11385,7 +11393,7 @@
       "source_file": "models/detection/insects/yolo26n/nbg_output/generated/vnn_nbgoutput.c",
       "source_location": "L105",
       "id": "vnn_nbgoutput_load_data",
-      "community": 58
+      "community": 59
     },
     {
       "label": "vnn_CreateNbgOutput()",
@@ -11393,7 +11401,7 @@
       "source_file": "models/detection/insects/yolo26n/nbg_output/generated/vnn_nbgoutput.c",
       "source_location": "L144",
       "id": "vnn_nbgoutput_vnn_createnbgoutput",
-      "community": 58
+      "community": 59
     },
     {
       "label": "vnn_ReleaseNbgOutput()",
@@ -11401,7 +11409,7 @@
       "source_file": "models/detection/insects/yolo26n/nbg_output/generated/vnn_nbgoutput.c",
       "source_location": "L10161",
       "id": "vnn_nbgoutput_vnn_releasenbgoutput",
-      "community": 58
+      "community": 59
     },
     {
       "label": "vnn_pre_process.c",
@@ -11593,7 +11601,7 @@
       "source_file": "models/detection/insects/yolo26n/nbg_output/generated/vnn_nbgoutput.h",
       "source_location": "L1",
       "id": "models_detection_insects_yolo26n_nbg_output_generated_vnn_nbgoutput_h",
-      "community": 129
+      "community": 130
     },
     {
       "label": "main.c",
@@ -11601,7 +11609,7 @@
       "source_file": "models/detection/insects/yolo26n/nbg_output/generated/main.c",
       "source_location": "L1",
       "id": "models_detection_insects_yolo26n_nbg_output_generated_main_c",
-      "community": 18
+      "community": 19
     },
     {
       "label": "vnn_ReleaseNeuralNetwork()",
@@ -11609,7 +11617,7 @@
       "source_file": "models/detection/insects/yolo26n/nbg_output/generated/main.c",
       "source_location": "L41",
       "id": "main_vnn_releaseneuralnetwork",
-      "community": 18
+      "community": 19
     },
     {
       "label": "vnn_PostProcessNeuralNetwork()",
@@ -11617,7 +11625,7 @@
       "source_file": "models/detection/insects/yolo26n/nbg_output/generated/main.c",
       "source_location": "L53",
       "id": "main_vnn_postprocessneuralnetwork",
-      "community": 18
+      "community": 19
     },
     {
       "label": "get_perf_count()",
@@ -11625,7 +11633,7 @@
       "source_file": "models/detection/insects/yolo26n/nbg_output/generated/main.c",
       "source_location": "L62",
       "id": "main_get_perf_count",
-      "community": 18
+      "community": 19
     },
     {
       "label": "vnn_VerifyGraph()",
@@ -11633,7 +11641,7 @@
       "source_file": "models/detection/insects/yolo26n/nbg_output/generated/main.c",
       "source_location": "L81",
       "id": "main_vnn_verifygraph",
-      "community": 18
+      "community": 19
     },
     {
       "label": "vnn_ProcessGraph()",
@@ -11641,7 +11649,7 @@
       "source_file": "models/detection/insects/yolo26n/nbg_output/generated/main.c",
       "source_location": "L103",
       "id": "main_vnn_processgraph",
-      "community": 18
+      "community": 19
     },
     {
       "label": "vnn_PreProcessNeuralNetwork()",
@@ -11649,7 +11657,7 @@
       "source_file": "models/detection/insects/yolo26n/nbg_output/generated/main.c",
       "source_location": "L168",
       "id": "main_vnn_preprocessneuralnetwork",
-      "community": 18
+      "community": 19
     },
     {
       "label": "vnn_CreateNeuralNetwork()",
@@ -11657,7 +11665,7 @@
       "source_file": "models/detection/insects/yolo26n/nbg_output/generated/main.c",
       "source_location": "L186",
       "id": "main_vnn_createneuralnetwork",
-      "community": 18
+      "community": 19
     },
     {
       "label": "vnn_post_process.h",
@@ -11665,7 +11673,7 @@
       "source_file": "models/detection/insects/yolo26n/nbg_output/generated/vnn_post_process.h",
       "source_location": "L1",
       "id": "models_detection_insects_yolo26n_nbg_output_generated_vnn_post_process_h",
-      "community": 130
+      "community": 131
     },
     {
       "label": "vnn_global.h",
@@ -11673,7 +11681,7 @@
       "source_file": "models/detection/insects/yolo26n/nbg_output/generated/vnn_global.h",
       "source_location": "L1",
       "id": "models_detection_insects_yolo26n_nbg_output_generated_vnn_global_h",
-      "community": 131
+      "community": 132
     },
     {
       "label": "vnn_pre_process.h",
@@ -11681,7 +11689,7 @@
       "source_file": "models/detection/insects/yolo26n/nbg_output/generated/vnn_pre_process.h",
       "source_location": "L1",
       "id": "models_detection_insects_yolo26n_nbg_output_generated_vnn_pre_process_h",
-      "community": 132
+      "community": 133
     },
     {
       "label": "convert_rknn.py",
@@ -11689,7 +11697,7 @@
       "source_file": "models/detection/insects/yolo26n/convert/convert_rknn.py",
       "source_location": "L1",
       "id": "models_detection_insects_yolo26n_convert_convert_rknn_py",
-      "community": 97
+      "community": 98
     },
     {
       "label": "main()",
@@ -11697,7 +11705,7 @@
       "source_file": "models/detection/insects/yolo26n/convert/convert_rknn.py",
       "source_location": "L45",
       "id": "convert_rknn_main",
-      "community": 97
+      "community": 98
     },
     {
       "label": "convert_nbg.py",
@@ -11705,7 +11713,7 @@
       "source_file": "models/detection/insects/yolo26n/convert/convert_nbg.py",
       "source_location": "L1",
       "id": "models_detection_insects_yolo26n_convert_convert_nbg_py",
-      "community": 98
+      "community": 99
     },
     {
       "label": "main()",
@@ -11713,7 +11721,7 @@
       "source_file": "models/detection/insects/yolo26n/convert/convert_nbg.py",
       "source_location": "L46",
       "id": "convert_nbg_main",
-      "community": 98
+      "community": 99
     },
     {
       "label": "RunnerTests.swift",
@@ -11721,7 +11729,7 @@
       "source_file": "apps/ai_trap_manager/macos/RunnerTests/RunnerTests.swift",
       "source_location": "L1",
       "id": "apps_ai_trap_manager_macos_runnertests_runnertests_swift",
-      "community": 50
+      "community": 51
     },
     {
       "label": "RunnerTests",
@@ -11729,7 +11737,7 @@
       "source_file": "apps/ai_trap_manager/ios/RunnerTests/RunnerTests.swift",
       "source_location": "L5",
       "id": "runnertests_runnertests",
-      "community": 50
+      "community": 51
     },
     {
       "label": "XCTestCase",
@@ -11737,7 +11745,7 @@
       "source_file": "",
       "source_location": "",
       "id": "xctestcase",
-      "community": 50
+      "community": 51
     },
     {
       "label": ".testExample()",
@@ -11745,7 +11753,7 @@
       "source_file": "apps/ai_trap_manager/ios/RunnerTests/RunnerTests.swift",
       "source_location": "L7",
       "id": "runnertests_runnertests_testexample",
-      "community": 50
+      "community": 51
     },
     {
       "label": "MainFlutterWindow.swift",
@@ -11753,7 +11761,7 @@
       "source_file": "apps/ai_trap_manager/macos/Runner/MainFlutterWindow.swift",
       "source_location": "L1",
       "id": "apps_ai_trap_manager_macos_runner_mainflutterwindow_swift",
-      "community": 59
+      "community": 60
     },
     {
       "label": "MainFlutterWindow",
@@ -11761,7 +11769,7 @@
       "source_file": "apps/ai_trap_manager/macos/Runner/MainFlutterWindow.swift",
       "source_location": "L4",
       "id": "mainflutterwindow_mainflutterwindow",
-      "community": 59
+      "community": 60
     },
     {
       "label": "NSWindow",
@@ -11769,7 +11777,7 @@
       "source_file": "",
       "source_location": "",
       "id": "nswindow",
-      "community": 59
+      "community": 60
     },
     {
       "label": ".awakeFromNib()",
@@ -11777,7 +11785,7 @@
       "source_file": "apps/ai_trap_manager/macos/Runner/MainFlutterWindow.swift",
       "source_location": "L5",
       "id": "mainflutterwindow_mainflutterwindow_awakefromnib",
-      "community": 59
+      "community": 60
     },
     {
       "label": "AppDelegate.swift",
@@ -11785,7 +11793,7 @@
       "source_file": "apps/ai_trap_manager/macos/Runner/AppDelegate.swift",
       "source_location": "L1",
       "id": "apps_ai_trap_manager_macos_runner_appdelegate_swift",
-      "community": 33
+      "community": 34
     },
     {
       "label": "AppDelegate",
@@ -11793,7 +11801,7 @@
       "source_file": "apps/ai_trap_manager/ios/Runner/AppDelegate.swift",
       "source_location": "L4",
       "id": "appdelegate_appdelegate",
-      "community": 33
+      "community": 34
     },
     {
       "label": "FlutterAppDelegate",
@@ -11801,7 +11809,7 @@
       "source_file": "",
       "source_location": "",
       "id": "flutterappdelegate",
-      "community": 33
+      "community": 34
     },
     {
       "label": ".applicationShouldTerminateAfterLastWindowClosed()",
@@ -11809,7 +11817,7 @@
       "source_file": "apps/ai_trap_manager/macos/Runner/AppDelegate.swift",
       "source_location": "L6",
       "id": "appdelegate_appdelegate_applicationshouldterminateafterlastwindowclosed",
-      "community": 33
+      "community": 34
     },
     {
       "label": ".applicationSupportsSecureRestorableState()",
@@ -11817,7 +11825,7 @@
       "source_file": "apps/ai_trap_manager/macos/Runner/AppDelegate.swift",
       "source_location": "L10",
       "id": "appdelegate_appdelegate_applicationsupportssecurerestorablestate",
-      "community": 33
+      "community": 34
     },
     {
       "label": "GeneratedPluginRegistrant.swift",
@@ -11825,7 +11833,7 @@
       "source_file": "apps/ai_trap_manager/macos/Flutter/GeneratedPluginRegistrant.swift",
       "source_location": "L1",
       "id": "apps_ai_trap_manager_macos_flutter_generatedpluginregistrant_swift",
-      "community": 99
+      "community": 100
     },
     {
       "label": "RegisterGeneratedPlugins()",
@@ -11833,7 +11841,7 @@
       "source_file": "apps/ai_trap_manager/macos/Flutter/GeneratedPluginRegistrant.swift",
       "source_location": "L15",
       "id": "generatedpluginregistrant_registergeneratedplugins",
-      "community": 99
+      "community": 100
     },
     {
       "label": "sqflite_darwin-dummy.m",
@@ -11841,7 +11849,7 @@
       "source_file": "apps/ai_trap_manager/macos/Pods/Target Support Files/sqflite_darwin/sqflite_darwin-dummy.m",
       "source_location": "L1",
       "id": "apps_ai_trap_manager_macos_pods_target_support_files_sqflite_darwin_sqflite_darwin_dummy_m",
-      "community": 74
+      "community": 75
     },
     {
       "label": "PodsDummy_sqflite_darwin",
@@ -11849,7 +11857,7 @@
       "source_file": "apps/ai_trap_manager/ios/Pods/Target Support Files/sqflite_darwin/sqflite_darwin-dummy.m",
       "source_location": "L2",
       "id": "sqflite_darwin_dummy_podsdummy_sqflite_darwin",
-      "community": 74
+      "community": 75
     },
     {
       "label": "sqflite_darwin-umbrella.h",
@@ -11857,7 +11865,7 @@
       "source_file": "apps/ai_trap_manager/macos/Pods/Target Support Files/sqflite_darwin/sqflite_darwin-umbrella.h",
       "source_location": "L1",
       "id": "apps_ai_trap_manager_macos_pods_target_support_files_sqflite_darwin_sqflite_darwin_umbrella_h",
-      "community": 133
+      "community": 134
     },
     {
       "label": "package_info_plus-umbrella.h",
@@ -11865,7 +11873,7 @@
       "source_file": "apps/ai_trap_manager/macos/Pods/Target Support Files/package_info_plus/package_info_plus-umbrella.h",
       "source_location": "L1",
       "id": "apps_ai_trap_manager_macos_pods_target_support_files_package_info_plus_package_info_plus_umbrella_h",
-      "community": 134
+      "community": 135
     },
     {
       "label": "package_info_plus-dummy.m",
@@ -11873,7 +11881,7 @@
       "source_file": "apps/ai_trap_manager/macos/Pods/Target Support Files/package_info_plus/package_info_plus-dummy.m",
       "source_location": "L1",
       "id": "apps_ai_trap_manager_macos_pods_target_support_files_package_info_plus_package_info_plus_dummy_m",
-      "community": 75
+      "community": 76
     },
     {
       "label": "PodsDummy_package_info_plus",
@@ -11881,7 +11889,7 @@
       "source_file": "apps/ai_trap_manager/ios/Pods/Target Support Files/package_info_plus/package_info_plus-dummy.m",
       "source_location": "L2",
       "id": "package_info_plus_dummy_podsdummy_package_info_plus",
-      "community": 75
+      "community": 76
     },
     {
       "label": "flutter_blue_plus_darwin-umbrella.h",
@@ -11889,7 +11897,7 @@
       "source_file": "apps/ai_trap_manager/macos/Pods/Target Support Files/flutter_blue_plus_darwin/flutter_blue_plus_darwin-umbrella.h",
       "source_location": "L1",
       "id": "apps_ai_trap_manager_macos_pods_target_support_files_flutter_blue_plus_darwin_flutter_blue_plus_darwin_umbrella_h",
-      "community": 135
+      "community": 136
     },
     {
       "label": "flutter_blue_plus_darwin-dummy.m",
@@ -11897,7 +11905,7 @@
       "source_file": "apps/ai_trap_manager/macos/Pods/Target Support Files/flutter_blue_plus_darwin/flutter_blue_plus_darwin-dummy.m",
       "source_location": "L1",
       "id": "apps_ai_trap_manager_macos_pods_target_support_files_flutter_blue_plus_darwin_flutter_blue_plus_darwin_dummy_m",
-      "community": 76
+      "community": 77
     },
     {
       "label": "PodsDummy_flutter_blue_plus_darwin",
@@ -11905,7 +11913,7 @@
       "source_file": "apps/ai_trap_manager/ios/Pods/Target Support Files/flutter_blue_plus_darwin/flutter_blue_plus_darwin-dummy.m",
       "source_location": "L2",
       "id": "flutter_blue_plus_darwin_dummy_podsdummy_flutter_blue_plus_darwin",
-      "community": 76
+      "community": 77
     },
     {
       "label": "Pods-Runner-umbrella.h",
@@ -11913,7 +11921,7 @@
       "source_file": "apps/ai_trap_manager/macos/Pods/Target Support Files/Pods-Runner/Pods-Runner-umbrella.h",
       "source_location": "L1",
       "id": "apps_ai_trap_manager_macos_pods_target_support_files_pods_runner_pods_runner_umbrella_h",
-      "community": 136
+      "community": 137
     },
     {
       "label": "Pods-Runner-dummy.m",
@@ -11921,7 +11929,7 @@
       "source_file": "apps/ai_trap_manager/macos/Pods/Target Support Files/Pods-Runner/Pods-Runner-dummy.m",
       "source_location": "L1",
       "id": "apps_ai_trap_manager_macos_pods_target_support_files_pods_runner_pods_runner_dummy_m",
-      "community": 77
+      "community": 78
     },
     {
       "label": "PodsDummy_Pods_Runner",
@@ -11929,7 +11937,7 @@
       "source_file": "apps/ai_trap_manager/ios/Pods/Target Support Files/Pods-Runner/Pods-Runner-dummy.m",
       "source_location": "L2",
       "id": "pods_runner_dummy_podsdummy_pods_runner",
-      "community": 77
+      "community": 78
     },
     {
       "label": "shared_preferences_foundation-dummy.m",
@@ -11937,7 +11945,7 @@
       "source_file": "apps/ai_trap_manager/macos/Pods/Target Support Files/shared_preferences_foundation/shared_preferences_foundation-dummy.m",
       "source_location": "L1",
       "id": "apps_ai_trap_manager_macos_pods_target_support_files_shared_preferences_foundation_shared_preferences_foundation_dummy_m",
-      "community": 78
+      "community": 79
     },
     {
       "label": "PodsDummy_shared_preferences_foundation",
@@ -11945,7 +11953,7 @@
       "source_file": "apps/ai_trap_manager/ios/Pods/Target Support Files/shared_preferences_foundation/shared_preferences_foundation-dummy.m",
       "source_location": "L2",
       "id": "shared_preferences_foundation_dummy_podsdummy_shared_preferences_foundation",
-      "community": 78
+      "community": 79
     },
     {
       "label": "shared_preferences_foundation-umbrella.h",
@@ -11953,7 +11961,7 @@
       "source_file": "apps/ai_trap_manager/macos/Pods/Target Support Files/shared_preferences_foundation/shared_preferences_foundation-umbrella.h",
       "source_location": "L1",
       "id": "apps_ai_trap_manager_macos_pods_target_support_files_shared_preferences_foundation_shared_preferences_foundation_umbrella_h",
-      "community": 137
+      "community": 138
     },
     {
       "label": "Pods-RunnerTests-dummy.m",
@@ -11961,7 +11969,7 @@
       "source_file": "apps/ai_trap_manager/macos/Pods/Target Support Files/Pods-RunnerTests/Pods-RunnerTests-dummy.m",
       "source_location": "L1",
       "id": "apps_ai_trap_manager_macos_pods_target_support_files_pods_runnertests_pods_runnertests_dummy_m",
-      "community": 79
+      "community": 80
     },
     {
       "label": "PodsDummy_Pods_RunnerTests",
@@ -11969,7 +11977,7 @@
       "source_file": "apps/ai_trap_manager/ios/Pods/Target Support Files/Pods-RunnerTests/Pods-RunnerTests-dummy.m",
       "source_location": "L2",
       "id": "pods_runnertests_dummy_podsdummy_pods_runnertests",
-      "community": 79
+      "community": 80
     },
     {
       "label": "Pods-RunnerTests-umbrella.h",
@@ -11977,7 +11985,7 @@
       "source_file": "apps/ai_trap_manager/macos/Pods/Target Support Files/Pods-RunnerTests/Pods-RunnerTests-umbrella.h",
       "source_location": "L1",
       "id": "apps_ai_trap_manager_macos_pods_target_support_files_pods_runnertests_pods_runnertests_umbrella_h",
-      "community": 138
+      "community": 139
     },
     {
       "label": "video_player_avfoundation-dummy.m",
@@ -11985,7 +11993,7 @@
       "source_file": "apps/ai_trap_manager/macos/Pods/Target Support Files/video_player_avfoundation/video_player_avfoundation-dummy.m",
       "source_location": "L1",
       "id": "apps_ai_trap_manager_macos_pods_target_support_files_video_player_avfoundation_video_player_avfoundation_dummy_m",
-      "community": 80
+      "community": 81
     },
     {
       "label": "PodsDummy_video_player_avfoundation",
@@ -11993,7 +12001,7 @@
       "source_file": "apps/ai_trap_manager/ios/Pods/Target Support Files/video_player_avfoundation/video_player_avfoundation-dummy.m",
       "source_location": "L2",
       "id": "video_player_avfoundation_dummy_podsdummy_video_player_avfoundation",
-      "community": 80
+      "community": 81
     },
     {
       "label": "video_player_avfoundation-umbrella.h",
@@ -12001,7 +12009,7 @@
       "source_file": "apps/ai_trap_manager/macos/Pods/Target Support Files/video_player_avfoundation/video_player_avfoundation-umbrella.h",
       "source_location": "L1",
       "id": "apps_ai_trap_manager_macos_pods_target_support_files_video_player_avfoundation_video_player_avfoundation_umbrella_h",
-      "community": 139
+      "community": 140
     },
     {
       "label": "wakelock_plus-dummy.m",
@@ -12009,7 +12017,7 @@
       "source_file": "apps/ai_trap_manager/macos/Pods/Target Support Files/wakelock_plus/wakelock_plus-dummy.m",
       "source_location": "L1",
       "id": "apps_ai_trap_manager_macos_pods_target_support_files_wakelock_plus_wakelock_plus_dummy_m",
-      "community": 81
+      "community": 82
     },
     {
       "label": "PodsDummy_wakelock_plus",
@@ -12017,7 +12025,7 @@
       "source_file": "apps/ai_trap_manager/ios/Pods/Target Support Files/wakelock_plus/wakelock_plus-dummy.m",
       "source_location": "L2",
       "id": "wakelock_plus_dummy_podsdummy_wakelock_plus",
-      "community": 81
+      "community": 82
     },
     {
       "label": "wakelock_plus-umbrella.h",
@@ -12025,7 +12033,7 @@
       "source_file": "apps/ai_trap_manager/macos/Pods/Target Support Files/wakelock_plus/wakelock_plus-umbrella.h",
       "source_location": "L1",
       "id": "apps_ai_trap_manager_macos_pods_target_support_files_wakelock_plus_wakelock_plus_umbrella_h",
-      "community": 140
+      "community": 141
     },
     {
       "label": "RunnerTests.swift",
@@ -12033,7 +12041,7 @@
       "source_file": "apps/ai_trap_manager/ios/RunnerTests/RunnerTests.swift",
       "source_location": "L1",
       "id": "apps_ai_trap_manager_ios_runnertests_runnertests_swift",
-      "community": 50
+      "community": 51
     },
     {
       "label": "Runner-Bridging-Header.h",
@@ -12041,7 +12049,7 @@
       "source_file": "apps/ai_trap_manager/ios/Runner/Runner-Bridging-Header.h",
       "source_location": "L1",
       "id": "apps_ai_trap_manager_ios_runner_runner_bridging_header_h",
-      "community": 141
+      "community": 142
     },
     {
       "label": "GeneratedPluginRegistrant.h",
@@ -12049,7 +12057,7 @@
       "source_file": "apps/ai_trap_manager/ios/Runner/GeneratedPluginRegistrant.h",
       "source_location": "L1",
       "id": "apps_ai_trap_manager_ios_runner_generatedpluginregistrant_h",
-      "community": 142
+      "community": 143
     },
     {
       "label": "AppDelegate.swift",
@@ -12057,7 +12065,7 @@
       "source_file": "apps/ai_trap_manager/ios/Runner/AppDelegate.swift",
       "source_location": "L1",
       "id": "apps_ai_trap_manager_ios_runner_appdelegate_swift",
-      "community": 33
+      "community": 34
     },
     {
       "label": "FlutterImplicitEngineDelegate",
@@ -12065,7 +12073,7 @@
       "source_file": "",
       "source_location": "",
       "id": "flutterimplicitenginedelegate",
-      "community": 33
+      "community": 34
     },
     {
       "label": ".application()",
@@ -12073,7 +12081,7 @@
       "source_file": "apps/ai_trap_manager/ios/Runner/AppDelegate.swift",
       "source_location": "L6",
       "id": "appdelegate_appdelegate_application",
-      "community": 33
+      "community": 34
     },
     {
       "label": ".didInitializeImplicitFlutterEngine()",
@@ -12081,7 +12089,7 @@
       "source_file": "apps/ai_trap_manager/ios/Runner/AppDelegate.swift",
       "source_location": "L13",
       "id": "appdelegate_appdelegate_didinitializeimplicitflutterengine",
-      "community": 33
+      "community": 34
     },
     {
       "label": "GeneratedPluginRegistrant.m",
@@ -12089,7 +12097,7 @@
       "source_file": "apps/ai_trap_manager/ios/Runner/GeneratedPluginRegistrant.m",
       "source_location": "L1",
       "id": "apps_ai_trap_manager_ios_runner_generatedpluginregistrant_m",
-      "community": 82
+      "community": 83
     },
     {
       "label": "GeneratedPluginRegistrant",
@@ -12097,7 +12105,7 @@
       "source_file": "apps/ai_trap_manager/ios/Runner/GeneratedPluginRegistrant.m",
       "source_location": "L45",
       "id": "generatedpluginregistrant_generatedpluginregistrant",
-      "community": 82
+      "community": 83
     },
     {
       "label": "-registerWithRegistry",
@@ -12105,7 +12113,7 @@
       "source_file": "apps/ai_trap_manager/ios/Runner/GeneratedPluginRegistrant.m",
       "source_location": "L47",
       "id": "generatedpluginregistrant_generatedpluginregistrant_registerwithregistry",
-      "community": 82
+      "community": 83
     },
     {
       "label": "SceneDelegate.swift",
@@ -12113,7 +12121,7 @@
       "source_file": "apps/ai_trap_manager/ios/Runner/SceneDelegate.swift",
       "source_location": "L1",
       "id": "apps_ai_trap_manager_ios_runner_scenedelegate_swift",
-      "community": 83
+      "community": 84
     },
     {
       "label": "SceneDelegate",
@@ -12121,7 +12129,7 @@
       "source_file": "apps/ai_trap_manager/ios/Runner/SceneDelegate.swift",
       "source_location": "L4",
       "id": "scenedelegate_scenedelegate",
-      "community": 83
+      "community": 84
     },
     {
       "label": "FlutterSceneDelegate",
@@ -12129,7 +12137,7 @@
       "source_file": "",
       "source_location": "",
       "id": "flutterscenedelegate",
-      "community": 83
+      "community": 84
     },
     {
       "label": "flutter_lldb_helper.py",
@@ -12137,7 +12145,7 @@
       "source_file": "apps/ai_trap_manager/ios/Flutter/ephemeral/flutter_lldb_helper.py",
       "source_location": "L1",
       "id": "apps_ai_trap_manager_ios_flutter_ephemeral_flutter_lldb_helper_py",
-      "community": 60
+      "community": 61
     },
     {
       "label": "handle_new_rx_page()",
@@ -12145,7 +12153,7 @@
       "source_file": "apps/ai_trap_manager/ios/Flutter/ephemeral/flutter_lldb_helper.py",
       "source_location": "L7",
       "id": "flutter_lldb_helper_handle_new_rx_page",
-      "community": 60
+      "community": 61
     },
     {
       "label": "__lldb_init_module()",
@@ -12153,14 +12161,14 @@
       "source_file": "apps/ai_trap_manager/ios/Flutter/ephemeral/flutter_lldb_helper.py",
       "source_location": "L24",
       "id": "flutter_lldb_helper_lldb_init_module",
-      "community": 60
+      "community": 61
     },
     {
       "label": "Intercept NOTIFY_DEBUGGER_ABOUT_RX_PAGES and touch the pages.",
       "file_type": "rationale",
       "source_file": "apps/ai_trap_manager/ios/Flutter/ephemeral/flutter_lldb_helper.py",
       "source_location": "L8",
-      "community": 60,
+      "community": 61,
       "id": "flutter_lldb_helper_rationale_8"
     },
     {
@@ -12169,7 +12177,7 @@
       "source_file": "apps/ai_trap_manager/ios/Pods/Target Support Files/sqflite_darwin/sqflite_darwin-dummy.m",
       "source_location": "L1",
       "id": "apps_ai_trap_manager_ios_pods_target_support_files_sqflite_darwin_sqflite_darwin_dummy_m",
-      "community": 74
+      "community": 75
     },
     {
       "label": "sqflite_darwin-umbrella.h",
@@ -12177,7 +12185,7 @@
       "source_file": "apps/ai_trap_manager/ios/Pods/Target Support Files/sqflite_darwin/sqflite_darwin-umbrella.h",
       "source_location": "L1",
       "id": "apps_ai_trap_manager_ios_pods_target_support_files_sqflite_darwin_sqflite_darwin_umbrella_h",
-      "community": 143
+      "community": 144
     },
     {
       "label": "package_info_plus-umbrella.h",
@@ -12185,7 +12193,7 @@
       "source_file": "apps/ai_trap_manager/ios/Pods/Target Support Files/package_info_plus/package_info_plus-umbrella.h",
       "source_location": "L1",
       "id": "apps_ai_trap_manager_ios_pods_target_support_files_package_info_plus_package_info_plus_umbrella_h",
-      "community": 144
+      "community": 145
     },
     {
       "label": "package_info_plus-dummy.m",
@@ -12193,7 +12201,7 @@
       "source_file": "apps/ai_trap_manager/ios/Pods/Target Support Files/package_info_plus/package_info_plus-dummy.m",
       "source_location": "L1",
       "id": "apps_ai_trap_manager_ios_pods_target_support_files_package_info_plus_package_info_plus_dummy_m",
-      "community": 75
+      "community": 76
     },
     {
       "label": "flutter_blue_plus_darwin-umbrella.h",
@@ -12201,7 +12209,7 @@
       "source_file": "apps/ai_trap_manager/ios/Pods/Target Support Files/flutter_blue_plus_darwin/flutter_blue_plus_darwin-umbrella.h",
       "source_location": "L1",
       "id": "apps_ai_trap_manager_ios_pods_target_support_files_flutter_blue_plus_darwin_flutter_blue_plus_darwin_umbrella_h",
-      "community": 145
+      "community": 146
     },
     {
       "label": "flutter_blue_plus_darwin-dummy.m",
@@ -12209,7 +12217,7 @@
       "source_file": "apps/ai_trap_manager/ios/Pods/Target Support Files/flutter_blue_plus_darwin/flutter_blue_plus_darwin-dummy.m",
       "source_location": "L1",
       "id": "apps_ai_trap_manager_ios_pods_target_support_files_flutter_blue_plus_darwin_flutter_blue_plus_darwin_dummy_m",
-      "community": 76
+      "community": 77
     },
     {
       "label": "Pods-Runner-umbrella.h",
@@ -12217,7 +12225,7 @@
       "source_file": "apps/ai_trap_manager/ios/Pods/Target Support Files/Pods-Runner/Pods-Runner-umbrella.h",
       "source_location": "L1",
       "id": "apps_ai_trap_manager_ios_pods_target_support_files_pods_runner_pods_runner_umbrella_h",
-      "community": 146
+      "community": 147
     },
     {
       "label": "Pods-Runner-dummy.m",
@@ -12225,7 +12233,7 @@
       "source_file": "apps/ai_trap_manager/ios/Pods/Target Support Files/Pods-Runner/Pods-Runner-dummy.m",
       "source_location": "L1",
       "id": "apps_ai_trap_manager_ios_pods_target_support_files_pods_runner_pods_runner_dummy_m",
-      "community": 77
+      "community": 78
     },
     {
       "label": "shared_preferences_foundation-dummy.m",
@@ -12233,7 +12241,7 @@
       "source_file": "apps/ai_trap_manager/ios/Pods/Target Support Files/shared_preferences_foundation/shared_preferences_foundation-dummy.m",
       "source_location": "L1",
       "id": "apps_ai_trap_manager_ios_pods_target_support_files_shared_preferences_foundation_shared_preferences_foundation_dummy_m",
-      "community": 78
+      "community": 79
     },
     {
       "label": "shared_preferences_foundation-umbrella.h",
@@ -12241,7 +12249,7 @@
       "source_file": "apps/ai_trap_manager/ios/Pods/Target Support Files/shared_preferences_foundation/shared_preferences_foundation-umbrella.h",
       "source_location": "L1",
       "id": "apps_ai_trap_manager_ios_pods_target_support_files_shared_preferences_foundation_shared_preferences_foundation_umbrella_h",
-      "community": 147
+      "community": 148
     },
     {
       "label": "Pods-RunnerTests-dummy.m",
@@ -12249,7 +12257,7 @@
       "source_file": "apps/ai_trap_manager/ios/Pods/Target Support Files/Pods-RunnerTests/Pods-RunnerTests-dummy.m",
       "source_location": "L1",
       "id": "apps_ai_trap_manager_ios_pods_target_support_files_pods_runnertests_pods_runnertests_dummy_m",
-      "community": 79
+      "community": 80
     },
     {
       "label": "Pods-RunnerTests-umbrella.h",
@@ -12257,7 +12265,7 @@
       "source_file": "apps/ai_trap_manager/ios/Pods/Target Support Files/Pods-RunnerTests/Pods-RunnerTests-umbrella.h",
       "source_location": "L1",
       "id": "apps_ai_trap_manager_ios_pods_target_support_files_pods_runnertests_pods_runnertests_umbrella_h",
-      "community": 148
+      "community": 149
     },
     {
       "label": "video_player_avfoundation-dummy.m",
@@ -12265,7 +12273,7 @@
       "source_file": "apps/ai_trap_manager/ios/Pods/Target Support Files/video_player_avfoundation/video_player_avfoundation-dummy.m",
       "source_location": "L1",
       "id": "apps_ai_trap_manager_ios_pods_target_support_files_video_player_avfoundation_video_player_avfoundation_dummy_m",
-      "community": 80
+      "community": 81
     },
     {
       "label": "video_player_avfoundation-umbrella.h",
@@ -12273,7 +12281,7 @@
       "source_file": "apps/ai_trap_manager/ios/Pods/Target Support Files/video_player_avfoundation/video_player_avfoundation-umbrella.h",
       "source_location": "L1",
       "id": "apps_ai_trap_manager_ios_pods_target_support_files_video_player_avfoundation_video_player_avfoundation_umbrella_h",
-      "community": 149
+      "community": 150
     },
     {
       "label": "wakelock_plus-dummy.m",
@@ -12281,7 +12289,7 @@
       "source_file": "apps/ai_trap_manager/ios/Pods/Target Support Files/wakelock_plus/wakelock_plus-dummy.m",
       "source_location": "L1",
       "id": "apps_ai_trap_manager_ios_pods_target_support_files_wakelock_plus_wakelock_plus_dummy_m",
-      "community": 81
+      "community": 82
     },
     {
       "label": "wakelock_plus-umbrella.h",
@@ -12289,7 +12297,7 @@
       "source_file": "apps/ai_trap_manager/ios/Pods/Target Support Files/wakelock_plus/wakelock_plus-umbrella.h",
       "source_location": "L1",
       "id": "apps_ai_trap_manager_ios_pods_target_support_files_wakelock_plus_wakelock_plus_umbrella_h",
-      "community": 150
+      "community": 151
     },
     {
       "label": "Find the built trap binary in the build directory.",
@@ -34113,7 +34121,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.hpp",
-      "source_location": "L57",
+      "source_location": "L60",
       "weight": 1.0,
       "_src": "traps_toolkit_src_hal_platforms_cubie_a7s_camera_hal_a7s_hpp",
       "_tgt": "camera_hal_a7s_camerahala7s",
@@ -34125,7 +34133,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.cpp",
-      "source_location": "L89",
+      "source_location": "L91",
       "weight": 1.0,
       "_src": "traps_toolkit_src_hal_platforms_cubie_a7s_camera_hal_a7s_cpp",
       "_tgt": "camera_hal_a7s_camerahala7s",
@@ -34137,7 +34145,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.cpp",
-      "source_location": "L90",
+      "source_location": "L92",
       "weight": 1.0,
       "_src": "camera_hal_a7s_camerahala7s",
       "_tgt": "camera_hal_a7s_shutdown",
@@ -34401,7 +34409,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.cpp",
-      "source_location": "L40",
+      "source_location": "L42",
       "weight": 1.0,
       "_src": "traps_toolkit_src_hal_platforms_cubie_a7s_camera_hal_a7s_cpp",
       "_tgt": "camera_hal_a7s_v4l2_fmt_name",
@@ -34413,7 +34421,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.cpp",
-      "source_location": "L52",
+      "source_location": "L54",
       "weight": 1.0,
       "_src": "traps_toolkit_src_hal_platforms_cubie_a7s_camera_hal_a7s_cpp",
       "_tgt": "camera_hal_a7s_try_open_v4l2",
@@ -34425,7 +34433,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.cpp",
-      "source_location": "L75",
+      "source_location": "L77",
       "weight": 1.0,
       "_src": "traps_toolkit_src_hal_platforms_cubie_a7s_camera_hal_a7s_cpp",
       "_tgt": "camera_hal_a7s_is_mplane",
@@ -34437,7 +34445,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.cpp",
-      "source_location": "L82",
+      "source_location": "L84",
       "weight": 1.0,
       "_src": "traps_toolkit_src_hal_platforms_cubie_a7s_camera_hal_a7s_cpp",
       "_tgt": "camera_hal_a7s_capture_buf_type",
@@ -34449,7 +34457,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.cpp",
-      "source_location": "L94",
+      "source_location": "L96",
       "weight": 1.0,
       "_src": "traps_toolkit_src_hal_platforms_cubie_a7s_camera_hal_a7s_cpp",
       "_tgt": "camera_hal_a7s_init",
@@ -34461,7 +34469,19 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.cpp",
-      "source_location": "L130",
+      "source_location": "L142",
+      "weight": 1.0,
+      "_src": "traps_toolkit_src_hal_platforms_cubie_a7s_camera_hal_a7s_cpp",
+      "_tgt": "camera_hal_a7s_configure_media_pipeline",
+      "source": "traps_toolkit_src_hal_platforms_cubie_a7s_camera_hal_a7s_cpp",
+      "target": "camera_hal_a7s_configure_media_pipeline",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.cpp",
+      "source_location": "L376",
       "weight": 1.0,
       "_src": "traps_toolkit_src_hal_platforms_cubie_a7s_camera_hal_a7s_cpp",
       "_tgt": "camera_hal_a7s_init_v4l2",
@@ -34473,7 +34493,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.cpp",
-      "source_location": "L355",
+      "source_location": "L613",
       "weight": 1.0,
       "_src": "traps_toolkit_src_hal_platforms_cubie_a7s_camera_hal_a7s_cpp",
       "_tgt": "camera_hal_a7s_init_v4l2_mmap",
@@ -34485,7 +34505,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.cpp",
-      "source_location": "L475",
+      "source_location": "L733",
       "weight": 1.0,
       "_src": "traps_toolkit_src_hal_platforms_cubie_a7s_camera_hal_a7s_cpp",
       "_tgt": "camera_hal_a7s_set_v4l2_controls",
@@ -34497,7 +34517,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.cpp",
-      "source_location": "L517",
+      "source_location": "L775",
       "weight": 1.0,
       "_src": "traps_toolkit_src_hal_platforms_cubie_a7s_camera_hal_a7s_cpp",
       "_tgt": "camera_hal_a7s_acquire_frames",
@@ -34509,7 +34529,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.cpp",
-      "source_location": "L646",
+      "source_location": "L904",
       "weight": 1.0,
       "_src": "traps_toolkit_src_hal_platforms_cubie_a7s_camera_hal_a7s_cpp",
       "_tgt": "camera_hal_a7s_release_frames",
@@ -34521,7 +34541,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.cpp",
-      "source_location": "L652",
+      "source_location": "L910",
       "weight": 1.0,
       "_src": "traps_toolkit_src_hal_platforms_cubie_a7s_camera_hal_a7s_cpp",
       "_tgt": "camera_hal_a7s_shutdown",
@@ -34533,7 +34553,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.cpp",
-      "source_location": "L694",
+      "source_location": "L952",
       "weight": 1.0,
       "_src": "traps_toolkit_src_hal_platforms_cubie_a7s_camera_hal_a7s_cpp",
       "_tgt": "camera_hal_a7s_scale_nv12_cpu",
@@ -34545,7 +34565,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.cpp",
-      "source_location": "L228",
+      "source_location": "L486",
       "weight": 1.0,
       "_src": "camera_hal_a7s_init_v4l2",
       "_tgt": "camera_hal_a7s_v4l2_fmt_name",
@@ -34557,7 +34577,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.cpp",
-      "source_location": "L133",
+      "source_location": "L379",
       "weight": 1.0,
       "_src": "camera_hal_a7s_init_v4l2",
       "_tgt": "camera_hal_a7s_try_open_v4l2",
@@ -34569,7 +34589,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.cpp",
-      "source_location": "L209",
+      "source_location": "L455",
       "weight": 1.0,
       "_src": "camera_hal_a7s_init_v4l2",
       "_tgt": "camera_hal_a7s_is_mplane",
@@ -34581,7 +34601,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.cpp",
-      "source_location": "L210",
+      "source_location": "L456",
       "weight": 1.0,
       "_src": "camera_hal_a7s_init_v4l2",
       "_tgt": "camera_hal_a7s_capture_buf_type",
@@ -34593,7 +34613,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.cpp",
-      "source_location": "L103",
+      "source_location": "L105",
       "weight": 1.0,
       "_src": "camera_hal_a7s_init",
       "_tgt": "camera_hal_a7s_init_v4l2",
@@ -34605,7 +34625,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.cpp",
-      "source_location": "L119",
+      "source_location": "L121",
       "weight": 1.0,
       "_src": "camera_hal_a7s_init",
       "_tgt": "camera_hal_a7s_shutdown",
@@ -34617,7 +34637,19 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.cpp",
-      "source_location": "L341",
+      "source_location": "L464",
+      "weight": 1.0,
+      "_src": "camera_hal_a7s_init_v4l2",
+      "_tgt": "camera_hal_a7s_configure_media_pipeline",
+      "source": "camera_hal_a7s_configure_media_pipeline",
+      "target": "camera_hal_a7s_init_v4l2",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.cpp",
+      "source_location": "L599",
       "weight": 1.0,
       "_src": "camera_hal_a7s_init_v4l2",
       "_tgt": "camera_hal_a7s_init_v4l2_mmap",
@@ -34629,7 +34661,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.cpp",
-      "source_location": "L346",
+      "source_location": "L604",
       "weight": 1.0,
       "_src": "camera_hal_a7s_init_v4l2",
       "_tgt": "camera_hal_a7s_set_v4l2_controls",
@@ -34641,7 +34673,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "traps/toolkit/src/hal/platforms/cubie-a7s/camera_hal_a7s.cpp",
-      "source_location": "L581",
+      "source_location": "L839",
       "weight": 1.0,
       "_src": "camera_hal_a7s_acquire_frames",
       "_tgt": "camera_hal_a7s_scale_nv12_cpu",

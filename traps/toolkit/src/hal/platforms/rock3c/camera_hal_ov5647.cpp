@@ -82,6 +82,61 @@ void CameraHalOv5647::unmap_dma_buf(void* addr, uint32_t size, int fd) {
     }
 }
 
+// ─── NV12 software scaling (bilinear) ─────────────────────────────────────────
+// Fallback when RGA hardware scaler is not available (e.g. when using MMAP
+// buffers that don't have dma-buf fds).
+
+static uint8_t clamp_u8(int v) {
+    return static_cast<uint8_t>(v < 0 ? 0 : v > 255 ? 255 : v);
+}
+
+static void scale_nv12_plane_sw(const uint8_t* src, int src_w, int src_h,
+                                 uint8_t* dst, int dst_w, int dst_h) {
+    for (int dy = 0; dy < dst_h; ++dy) {
+        float sy_f = static_cast<float>(dy) * src_h / dst_h;
+        int sy = static_cast<int>(sy_f);
+        if (sy >= src_h - 1) sy = src_h - 2;
+        float fy = sy_f - sy;
+
+        for (int dx = 0; dx < dst_w; ++dx) {
+            float sx_f = static_cast<float>(dx) * src_w / dst_w;
+            int sx = static_cast<int>(sx_f);
+            if (sx >= src_w - 1) sx = src_w - 2;
+            float fx = sx_f - sx;
+
+            int a = src[sy * src_w + sx];
+            int b = src[sy * src_w + sx + 1];
+            int c = src[(sy + 1) * src_w + sx];
+            int d = src[(sy + 1) * src_w + sx + 1];
+
+            float top   = a + (b - a) * fx;
+            float bot   = c + (d - c) * fx;
+            dst[dy * dst_w + dx] = clamp_u8(static_cast<int>(top + (bot - top) * fy + 0.5f));
+        }
+    }
+}
+
+static bool scale_nv12_sw(const uint8_t* src, int src_w, int src_h,
+                          uint8_t* dst, int dst_w, int dst_h) {
+    if (!src || !dst) return false;
+
+    // Scale Y plane (luma)
+    scale_nv12_plane_sw(src, src_w, src_h, dst, dst_w, dst_h);
+
+    // Scale UV plane (chroma) - NV12 has UV interleaved, half resolution
+    int src_uv_w = src_w;
+    int src_uv_h = src_h / 2;
+    int dst_uv_w = dst_w;
+    int dst_uv_h = dst_h / 2;
+
+    const uint8_t* src_uv = src + src_w * src_h;
+    uint8_t* dst_uv = dst + dst_w * dst_h;
+
+    scale_nv12_plane_sw(src_uv, src_uv_w, src_uv_h, dst_uv, dst_uv_w, dst_uv_h);
+
+    return true;
+}
+
 // ─── librga/im2d NV12 scaling ─────────────────────────────────────────────────
 
 bool CameraHalOv5647::scale_nv12(const FrameBuffer& src, FrameBuffer& dst,
@@ -90,29 +145,45 @@ bool CameraHalOv5647::scale_nv12(const FrameBuffer& src, FrameBuffer& dst,
         return false;
     }
 
-    // Wrap source as an rga_buffer_t using virtual address
-    rga_buffer_t src_buf = wrapbuffer_virtualaddr_t(
-        src.data, static_cast<int>(src.width), static_cast<int>(src.height),
-        static_cast<int>(src.width), static_cast<int>(src.height),
-        RK_FORMAT_YCbCr_420_SP);
+    // Try RGA hardware scaling first (requires dma-buf fds)
+    // When using MMAP fallback, src.dma_fd will be -1, so RGA won't work.
+    if (src.dma_fd >= 0 && dst.dma_fd >= 0) {
+        // Use dma-buf fd-based wrapping for RGA hardware scaler
+        rga_buffer_t src_buf = wrapbuffer_handle(
+            src.dma_fd, static_cast<int>(src.width), static_cast<int>(src.height),
+            static_cast<int>(src.width), static_cast<int>(src.height),
+            RK_FORMAT_YCbCr_420_SP);
 
-    // Wrap destination as an rga_buffer_t using virtual address
-    rga_buffer_t dst_buf = wrapbuffer_virtualaddr_t(
-        dst.data, dst_w, dst_h,
-        dst_w, dst_h,
-        RK_FORMAT_YCbCr_420_SP);
+        rga_buffer_t dst_buf = wrapbuffer_handle(
+            dst.dma_fd, dst_w, dst_h,
+            dst_w, dst_h,
+            RK_FORMAT_YCbCr_420_SP);
 
-    // Perform hardware-accelerated resize
-    IM_STATUS ret = imresize(src_buf, dst_buf);
-    if (ret != IM_STATUS_SUCCESS) {
-        std::cerr << "[CameraHalOv5647] imresize failed: " << ret
-                  << " (" << dst_w << "x" << dst_h << ")\n";
+        IM_STATUS ret = imresize(src_buf, dst_buf);
+        if (ret == IM_STATUS_SUCCESS) {
+            dst.width  = static_cast<uint32_t>(dst_w);
+            dst.height = static_cast<uint32_t>(dst_h);
+            dst.stride = static_cast<uint32_t>(dst_w);
+            dst.size   = static_cast<uint32_t>(dst_w * dst_h * 3 / 2);
+            return true;
+        }
+        std::cerr << "[CameraHalOv5647] RGA imresize failed: " << ret
+                  << " (" << dst_w << "x" << dst_h << "), falling back to SW\n";
+    }
+
+    // Software fallback for MMAP buffers or when RGA fails
+    if (!scale_nv12_sw(static_cast<const uint8_t*>(src.data),
+                       static_cast<int>(src.width),
+                       static_cast<int>(src.height),
+                       static_cast<uint8_t*>(dst.data),
+                       dst_w, dst_h)) {
+        std::cerr << "[CameraHalOv5647] SW scale failed (" << dst_w << "x" << dst_h << ")\n";
         return false;
     }
 
     dst.width  = static_cast<uint32_t>(dst_w);
     dst.height = static_cast<uint32_t>(dst_h);
-    dst.stride = static_cast<uint32_t>(dst_w);  // NV12: stride == width
+    dst.stride = static_cast<uint32_t>(dst_w);
     dst.size   = static_cast<uint32_t>(dst_w * dst_h * 3 / 2);
 
     return true;

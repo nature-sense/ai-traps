@@ -283,6 +283,13 @@ bool CameraHalOv5647::init_v4l2() {
                   << std::strerror(errno) << "\n";
         // Fallback: try MMAP instead
         std::cout << "[CameraHalOv5647] DMABUF not supported, falling back to MMAP\n";
+        // Clean up DMABUF buffers before switching to MMAP
+        for (auto& s : v4l2_buf_pool_) {
+            unmap_dma_buf(s.mapped, s.length, s.dma_fd);
+        }
+        v4l2_buf_pool_.clear();
+        close(v4l2_fd_);
+        v4l2_fd_ = -1;
         return init_v4l2_mmap(fmt, frame_size);
     }
     std::cout << "[CameraHalOv5647] REQBUFS (DMABUF): count=" << req.count << "\n";
@@ -334,9 +341,31 @@ bool CameraHalOv5647::init_v4l2() {
 }
 
 // ─── init_v4l2_mmap (fallback) ───────────────────────────────────────────────
+// Called when DMABUF is not supported. The V4L2 device fd may have been closed
+// by the caller, so we reopen it here.
 
 bool CameraHalOv5647::init_v4l2_mmap(const struct v4l2_format& fmt, __u32 frame_size) {
-    (void)fmt;
+    (void)frame_size;
+
+    // Reopen the device (may have been closed by DMABUF fallback path)
+    const char* dev_name = "/dev/video0";
+    v4l2_fd_ = open(dev_name, O_RDWR | O_NONBLOCK, 0);
+    if (v4l2_fd_ < 0) {
+        std::cerr << "[CameraHalOv5647] cannot open " << dev_name << " (MMAP fallback): "
+                  << std::strerror(errno) << "\n";
+        return false;
+    }
+    std::cout << "[CameraHalOv5647] reopened " << dev_name << " (fd=" << v4l2_fd_ << ") for MMAP\n";
+
+    // Re-apply format
+    struct v4l2_format local_fmt = fmt;
+    if (ioctl(v4l2_fd_, VIDIOC_S_FMT, &local_fmt) < 0) {
+        std::cerr << "[CameraHalOv5647] VIDIOC_S_FMT (MMAP fallback) failed: "
+                  << std::strerror(errno) << "\n";
+        close(v4l2_fd_);
+        v4l2_fd_ = -1;
+        return false;
+    }
 
     // Request MMAP buffers
     struct v4l2_requestbuffers req;

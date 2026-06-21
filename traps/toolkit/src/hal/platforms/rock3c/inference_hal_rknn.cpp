@@ -114,25 +114,56 @@ bool InferenceHalRKNN::init(const std::string& model_path, float conf_thresh) {
     }
 
     // ── Store model dimensions ───────────────────────────────────────────────
-    // Assume input 0 is the image input
-    if (input_attrs[0].fmt == RKNN_TENSOR_NHWC) {
-        model_in_h_ = input_attrs[0].dims[1];
-        model_in_w_ = input_attrs[0].dims[2];
-        model_in_c_ = input_attrs[0].dims[3];
+    // Assume input 0 is the image input. The dims layout depends on n_dims:
+    //   n_dims=4 → [N, H, W, C] for NHWC or [N, C, H, W] for NCHW
+    //   n_dims=3 → [H, W, C] for NHWC  or [C, H, W] for NCHW
+    // Model is yolo26n 320x320x3 (RGB) in NHWC format.
+    std::cout << "[InferenceHalRKNN] input_attrs[0]: n_dims="
+              << static_cast<int>(input_attrs[0].n_dims)
+              << " fmt=" << static_cast<int>(input_attrs[0].fmt)
+              << " dims=[" << input_attrs[0].dims[0] << ","
+              << input_attrs[0].dims[1] << ","
+              << input_attrs[0].dims[2] << ","
+              << input_attrs[0].dims[3] << "]\n";
+
+    if (input_attrs[0].n_dims == 4) {
+        // Full layout with batch: dims[0]=N, dims[1]=H/W/C depending on fmt
+        if (input_attrs[0].fmt == RKNN_TENSOR_NHWC) {
+            model_in_h_ = input_attrs[0].dims[1];
+            model_in_w_ = input_attrs[0].dims[2];
+            model_in_c_ = input_attrs[0].dims[3];
+        } else {
+            model_in_c_ = input_attrs[0].dims[1];
+            model_in_h_ = input_attrs[0].dims[2];
+            model_in_w_ = input_attrs[0].dims[3];
+        }
+    } else if (input_attrs[0].n_dims == 3) {
+        // No batch dimension: dims[0]=H/W/C depending on fmt
+        if (input_attrs[0].fmt == RKNN_TENSOR_NHWC) {
+            model_in_h_ = input_attrs[0].dims[0];
+            model_in_w_ = input_attrs[0].dims[1];
+            model_in_c_ = input_attrs[0].dims[2];
+        } else {
+            model_in_c_ = input_attrs[0].dims[0];
+            model_in_h_ = input_attrs[0].dims[1];
+            model_in_w_ = input_attrs[0].dims[2];
+        }
     } else {
-        model_in_c_ = input_attrs[0].dims[1];
-        model_in_h_ = input_attrs[0].dims[2];
-        model_in_w_ = input_attrs[0].dims[3];
+        std::cerr << "[InferenceHalRKNN] unexpected n_dims="
+                  << static_cast<int>(input_attrs[0].n_dims) << "\n";
+        shutdown();
+        return false;
     }
     std::cout << "[InferenceHalRKNN] model input: " << model_in_w_ << "x"
               << model_in_h_ << "x" << model_in_c_ << "\n";
 
-    // ── Set input tensor attributes ──────────────────────────────────────────
-    input_.index = 0;
-    input_.type  = RKNN_TENSOR_UINT8;
-    input_.fmt   = RKNN_TENSOR_NHWC;
-    input_.size  = model_in_w_ * model_in_h_ * model_in_c_ * sizeof(uint8_t);
-    input_.buf   = nullptr;  // set per-inference
+    // ── Set up persistent input descriptor (only .buf changes per frame) ────
+    input_.index       = 0;
+    input_.type        = RKNN_TENSOR_UINT8;
+    input_.fmt         = RKNN_TENSOR_NHWC;
+    input_.size        = static_cast<uint32_t>(model_in_w_ * model_in_h_ * model_in_c_);
+    input_.buf         = nullptr;
+    input_.pass_through = 0;
 
     initialised_ = true;
     std::cout << "[InferenceHalRKNN] ready (conf_thresh=" << conf_thresh_ << ")\n";
@@ -158,12 +189,17 @@ std::vector<Detection> InferenceHalRKNN::detect(const FrameBuffer& frame) {
 
     auto t1 = std::chrono::steady_clock::now();
 
-    // ── 2. Set input buffer ──────────────────────────────────────────────────
-    input_.buf = rgb_input.data();
-    rknn_inputs_set(ctx_, io_num_.n_input, &input_);
+    // ── 2. Set input buffer (persistent input_, just update buf ptr) ───────
+    int ret;
+    input_.buf = static_cast<void*>(rgb_input.data());
+    ret = rknn_inputs_set(ctx_, io_num_.n_input, &input_);
+    if (ret < 0) {
+        std::cerr << "[InferenceHalRKNN] rknn_inputs_set failed: " << ret << "\n";
+        return {};
+    }
 
     // ── 3. Run inference ─────────────────────────────────────────────────────
-    int ret = rknn_run(ctx_, nullptr);
+    ret = rknn_run(ctx_, nullptr);
     if (ret < 0) {
         std::cerr << "[InferenceHalRKNN] rknn_run failed: " << ret << "\n";
         return {};
@@ -171,14 +207,10 @@ std::vector<Detection> InferenceHalRKNN::detect(const FrameBuffer& frame) {
 
     auto t2 = std::chrono::steady_clock::now();
 
-    // ── 4. Get outputs ───────────────────────────────────────────────────────
-    std::vector<rknn_output> outputs(io_num_.n_output);
-    for (uint32_t i = 0; i < io_num_.n_output; ++i) {
-        outputs[i].index = i;
-        outputs[i].want_float = 1;
-    }
-
-    ret = rknn_outputs_get(ctx_, io_num_.n_output, outputs.data(), nullptr);
+    // ── 4. Get outputs (persistent output_) ─────────────────────────────────
+    output_.index = 0;
+    output_.want_float = 1;
+    ret = rknn_outputs_get(ctx_, 1, &output_, nullptr);
     if (ret < 0) {
         std::cerr << "[InferenceHalRKNN] rknn_outputs_get failed: " << ret << "\n";
         return {};
@@ -187,40 +219,64 @@ std::vector<Detection> InferenceHalRKNN::detect(const FrameBuffer& frame) {
     auto t3 = std::chrono::steady_clock::now();
 
     // ── 5. Post-process ──────────────────────────────────────────────────────
-    // Query output attributes to decide decoding strategy
-    std::vector<rknn_tensor_attr> out_attrs(io_num_.n_output);
-    for (uint32_t i = 0; i < io_num_.n_output; ++i) {
-        out_attrs[i].index = i;
-        rknn_query(ctx_, RKNN_QUERY_OUTPUT_ATTR, &out_attrs[i], sizeof(rknn_tensor_attr));
-    }
+    rknn_tensor_attr out_attr;
+    out_attr.index = 0;
+    rknn_query(ctx_, RKNN_QUERY_OUTPUT_ATTR, &out_attr, sizeof(out_attr));
+
+    std::cout << "[InferenceHalRKNN] out_attrs[0]: n_dims="
+              << static_cast<int>(out_attr.n_dims)
+              << " fmt=" << static_cast<int>(out_attr.fmt)
+              << " type=" << static_cast<int>(out_attr.type)
+              << " dims=[" << out_attr.dims[0] << ","
+              << out_attr.dims[1] << ","
+              << out_attr.dims[2] << ","
+              << out_attr.dims[3] << "]"
+              << " size=" << output_.size << "\n";
 
     std::vector<Detection> detections;
     detections.reserve(MAX_OUTPUT_BOXES);
 
-    const auto& attr = out_attrs[0];
-    float* output_data = static_cast<float*>(outputs[0].buf);
-    uint32_t output_elements = outputs[0].size / sizeof(float);
+    // If n_dims is 3 with NHWC where dims[0]=1 (batch), this is actually a
+    // 4D tensor with batch=1 stripped in the dims but present in layout.
+    // We can't read past the buffer — guard everything.
+    float* output_data = static_cast<float*>(output_.buf);
+    uint32_t max_bytes = output_.size;
+    uint32_t output_elements = max_bytes / sizeof(float);
 
-    // Flexible decoding logic
-    // Determine number of channels and anchors
+    // Determine number of channels and anchors from output dims
     int n_channels = 0;
     int n_anchors  = 0;
 
-    if (attr.n_dims == 3) {
-        // [1, C, N] or [1, N, C]
-        if (attr.dims[1] < attr.dims[2]) {
-            n_channels = attr.dims[1];
-            n_anchors  = attr.dims[2];
+    const auto& attr = out_attr;
+
+    if (attr.n_dims == 4) {
+        // 4D tensor: [N, C, H, W] for NCHW or [N, H, W, C] for NHWC
+        if (attr.fmt == RKNN_TENSOR_NHWC) {
+            n_channels = attr.dims[3];
+            n_anchors  = attr.dims[1] * attr.dims[2];
         } else {
+            // NCHW: [batches, channels, height, width]
+            // For yolo26n predecessor: [1, 5, 1, 2100] → channels=5, anchors=2100
+            n_channels = attr.dims[1];
+            n_anchors  = attr.dims[2] * attr.dims[3];
+        }
+    } else if (attr.n_dims == 3) {
+        if (attr.fmt == RKNN_TENSOR_NHWC) {
+            // NHWC with 3 dims: [H, W, C] — spatial output
             n_channels = attr.dims[2];
-            n_anchors  = attr.dims[1];
+            n_anchors  = attr.dims[0] * attr.dims[1];
+        } else {
+            // NCHW with 3 dims: could be [C, H, W] or [N, C, W] (batch + channels + flattened)
+            // If dims[0] == 1 and dims[1] is small (e.g. 5), treat as [N, C, W] format
+            if (attr.dims[0] == 1 && attr.dims[1] >= 5 && attr.dims[1] <= 85) {
+                n_channels = attr.dims[1];
+                n_anchors  = attr.dims[2];
+            } else {
+                n_channels = attr.dims[0];
+                n_anchors  = attr.dims[1] * attr.dims[2];
+            }
         }
     } else if (attr.n_dims == 2) {
-        // [1, N*C]
-        // This is harder, assume YOLO11 default anchors if we can't tell
-        // For YOLO11n 320x320, it's often 2100 anchors.
-        // Let's try to infer from common YOLO channel counts.
-        // 4*16 (DFL) + 1 (class) = 65
         if (output_elements % 65 == 0) {
             n_channels = 65;
             n_anchors = output_elements / 65;
@@ -230,39 +286,77 @@ std::vector<Detection> InferenceHalRKNN::detect(const FrameBuffer& frame) {
         }
     }
 
+    std::cout << "[InferenceHalRKNN] inferred n_channels=" << n_channels
+              << " n_anchors=" << n_anchors
+              << " elements=" << output_elements << "\n";
+
     if (n_channels == 5) {
-        // Pre-decoded format: [x1, y1, x2, y2, confidence] (pixel coordinates)
+        // ── Pre-decoded 5-channel format ─────────────────────────────────────
+        //   yolov8n: dims=[1,5,2100] (n_dims=3 NCHW) → ch0=x1...ch4=conf
+        //   yolo26n: dims=[1,5,1,2100] (n_dims=4 NCHW) → same
+        //   yolo26n pref: dims=[1,5,1,2100] (n_dims=4 NCHW) → same
+        //
+        // Layout: data is channel-interleaved: [ch0_0..ch0_N-1, ch1_0..ch1_N-1, ...]
+        // For n_dims=3/4 NCHW: anchor_stride = n_anchors
+        // For n_dims=2 or NHWC: anchor_stride = 1 (per-anchor contiguous)
+        //
+        // Values: may be pixel coords (0..320) or normalized [0,1].
+        // Auto-detect and normalize if needed.
         const float inv_w = 1.0f / model_in_w_;
         const float inv_h = 1.0f / model_in_h_;
+        bool channel_wise = true;  // data[0..N-1]=x1, data[N..2N-1]=y1, etc.
+
+        // When fmt is NHWC or n_dims=2, data is per-anchor contiguous
+        if (attr.fmt == RKNN_TENSOR_NHWC || attr.n_dims == 2) {
+            channel_wise = false;
+        }
+
+        // Also check for [5, N] NHWC layout (n_dims=2)
+        if (attr.n_dims == 2 && attr.dims[0] == 5) {
+            channel_wise = false;
+        }
 
         for (int i = 0; i < n_anchors; ++i) {
             float x1, y1, x2, y2, conf;
-            if (attr.dims[1] == 5) { // [1, 5, N]
-                x1 = output_data[i];
-                y1 = output_data[i + n_anchors];
-                x2 = output_data[i + 2 * n_anchors];
-                y2 = output_data[i + 3 * n_anchors];
-                conf = output_data[i + 4 * n_anchors];
-            } else { // [1, N, 5]
-                x1 = output_data[i * 5];
-                y1 = output_data[i * 5 + 1];
-                x2 = output_data[i * 5 + 2];
-                y2 = output_data[i * 5 + 3];
-                conf = output_data[i * 5 + 4];
+
+            if (channel_wise) {
+                x1   = output_data[i];
+                y1   = output_data[n_anchors + i];
+                x2   = output_data[2 * n_anchors + i];
+                y2   = output_data[3 * n_anchors + i];
+                conf = output_data[4 * n_anchors + i];
+            } else {
+                int base = i * 5;
+                x1   = output_data[base];
+                y1   = output_data[base + 1];
+                x2   = output_data[base + 2];
+                y2   = output_data[base + 3];
+                conf = output_data[base + 4];
             }
 
             if (conf < conf_thresh_) continue;
+            if (!std::isfinite(x1) || !std::isfinite(y1) ||
+                !std::isfinite(x2) || !std::isfinite(y2))
+                continue;
 
             float box_x = std::min(x1, x2);
             float box_y = std::min(y1, y2);
             float box_w = std::abs(x2 - x1);
             float box_h = std::abs(y2 - y1);
 
+            // Normalize from pixel coords if values > 1.0
+            if (box_x > 1.5f || box_y > 1.5f) {
+                box_x *= inv_w;
+                box_y *= inv_h;
+                if (box_w > 1.5f) box_w *= inv_w;
+                if (box_h > 1.5f) box_h *= inv_h;
+            }
+
             Detection det;
-            det.x = box_x * inv_w;
-            det.y = box_y * inv_h;
-            det.w = box_w * inv_w;
-            det.h = box_h * inv_h;
+            det.x = std::max(0.0f, std::min(1.0f, box_x));
+            det.y = std::max(0.0f, std::min(1.0f, box_y));
+            det.w = std::max(0.0f, std::min(1.0f, box_w));
+            det.h = std::max(0.0f, std::min(1.0f, box_h));
             det.confidence = conf;
             det.class_id = 0;
             detections.push_back(det);
@@ -356,7 +450,7 @@ std::vector<Detection> InferenceHalRKNN::detect(const FrameBuffer& frame) {
     auto t4 = std::chrono::steady_clock::now();
 
     // ── 7. Release outputs ───────────────────────────────────────────────────
-    rknn_outputs_release(ctx_, io_num_.n_output, outputs.data());
+    rknn_outputs_release(ctx_, 1, &output_);
 
     // ── Timing ───────────────────────────────────────────────────────────────
     last_inference_us_ = std::chrono::duration_cast<std::chrono::microseconds>(

@@ -76,10 +76,10 @@ private:
 
     float conf_thresh_ = 0.5f;
 
-    // RKNN tensor I/O descriptors (set once in init)
+    // RKNN tensor I/O descriptors (persistent — set once in init, reused per frame)
     rknn_input_output_num io_num_{};
-    rknn_input  input_{};
-    rknn_output output_{};
+    rknn_input   input_{};   // set once, only .buf updated per frame
+    rknn_output  output_{};  // reused per frame (avoids heap alloc per detect())
 
     bool initialised_ = false;
 

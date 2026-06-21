@@ -19,15 +19,98 @@
 #include <iostream>
 #include <cstring>
 #include <cstdlib>
-#include <fcntl.h>
-#include <unistd.h>
-#include <sys/ioctl.h>
-#include <sys/mman.h>
-#include <linux/videodev2.h>
-#include <linux/dma-heap.h>
-#include <sys/ioctl.h>
+#include <dlfcn.h>
+
+// D-Robotics SP (Smart Platform) camera API function pointers.
+// Loaded at runtime via dlopen from libspcdev.so (at /usr/lib/ on board).
+// This avoids compile-time link dependency on the RDK X5 SDK libs.
+//
+// SP API from sp_vio.h:
+//   sp_init_vio_module() / sp_release_vio_module()
+//   sp_open_camera_v3()  / sp_open_vps()
+//   sp_vio_get_frame()   / sp_vio_get_yuv()
+//   sp_vio_close()
+
+// NV12 frame size: Y plane (w*h) + UV plane (w*h/2)
+#define NV12_FRAME_SIZE(w, h)  ((w) * (h) * 3 / 2)
 
 namespace ct {
+
+// ─── SP API function pointer typedefs ────────────────────────────────────────
+typedef void* (*SPInitVioModuleFn)();
+typedef void  (*SPReleaseVioModuleFn)(void* obj);
+typedef int32_t (*SPOpenCameraV3Fn)(void* obj, int32_t pipe, int32_t video_idx,
+    int32_t chn_num, void* params, int32_t* in_w, int32_t* in_h,
+    int32_t* crop_x, int32_t* crop_y, int32_t* crop_w, int32_t* crop_h,
+    int32_t* rotate);
+typedef int32_t (*SPOpenVpsFn)(void* obj, int32_t pipe, int32_t chn_num,
+    int32_t proc_mode, int32_t src_w, int32_t src_h,
+    int32_t* dst_w, int32_t* dst_h,
+    int32_t* crop_x, int32_t* crop_y, int32_t* crop_w, int32_t* crop_h,
+    int32_t* rotate);
+typedef int32_t (*SPVioGetFrameFn)(void* obj, char* buf, int32_t w, int32_t h,
+    int32_t timeout);
+typedef int32_t (*SPVioGetYuvFn)(void* obj, char* buf, int32_t w, int32_t h,
+    int32_t timeout);
+typedef int32_t (*SPVioCloseFn)(void* obj);
+
+// NV12 frame size macro (same as sp_vio.h FRAME_BUFFER_SIZE)
+#define SP_HOST_AUTO_DETECT (-1)
+#define SP_VPS_SCALE 1
+
+// ─── Global SP API state (loaded once) ───────────────────────────────────────
+static struct SpApi {
+    void* handle = nullptr;
+    SPInitVioModuleFn     sp_init_vio_module  = nullptr;
+    SPReleaseVioModuleFn  sp_release_vio_module = nullptr;
+    SPOpenCameraV3Fn      sp_open_camera_v3   = nullptr;
+    SPOpenVpsFn           sp_open_vps         = nullptr;
+    SPVioGetFrameFn       sp_vio_get_frame    = nullptr;
+    SPVioGetYuvFn         sp_vio_get_yuv      = nullptr;
+    SPVioCloseFn          sp_vio_close        = nullptr;
+    bool loaded = false;
+} s_sp;
+
+static bool load_sp_api() {
+    if (s_sp.loaded) return true;
+
+    s_sp.handle = dlopen("libspcdev.so", RTLD_NOW | RTLD_GLOBAL);
+    if (!s_sp.handle) {
+        std::cerr << "[CameraHalRdkX5] Failed to load libspcdev.so: "
+                  << dlerror() << "\n";
+        return false;
+    }
+
+    auto load_sym = [](void* h, const char* name) -> void* {
+        void* sym = dlsym(h, name);
+        if (!sym) {
+            std::cerr << "[CameraHalRdkX5] Symbol not found: " << name
+                      << " (" << dlerror() << ")\n";
+        }
+        return sym;
+    };
+
+    s_sp.sp_init_vio_module   = reinterpret_cast<SPInitVioModuleFn>(load_sym(s_sp.handle, "sp_init_vio_module"));
+    s_sp.sp_release_vio_module = reinterpret_cast<SPReleaseVioModuleFn>(load_sym(s_sp.handle, "sp_release_vio_module"));
+    s_sp.sp_open_camera_v3    = reinterpret_cast<SPOpenCameraV3Fn>(load_sym(s_sp.handle, "sp_open_camera_v3"));
+    s_sp.sp_open_vps          = reinterpret_cast<SPOpenVpsFn>(load_sym(s_sp.handle, "sp_open_vps"));
+    s_sp.sp_vio_get_frame     = reinterpret_cast<SPVioGetFrameFn>(load_sym(s_sp.handle, "sp_vio_get_frame"));
+    s_sp.sp_vio_get_yuv       = reinterpret_cast<SPVioGetYuvFn>(load_sym(s_sp.handle, "sp_vio_get_yuv"));
+    s_sp.sp_vio_close         = reinterpret_cast<SPVioCloseFn>(load_sym(s_sp.handle, "sp_vio_close"));
+
+    if (!s_sp.sp_init_vio_module || !s_sp.sp_release_vio_module ||
+        !s_sp.sp_open_camera_v3 || !s_sp.sp_open_vps ||
+        !s_sp.sp_vio_get_frame || !s_sp.sp_vio_get_yuv ||
+        !s_sp.sp_vio_close) {
+        dlclose(s_sp.handle);
+        s_sp.handle = nullptr;
+        return false;
+    }
+
+    s_sp.loaded = true;
+    std::cout << "[CameraHalRdkX5] SP API loaded from libspcdev.so\n";
+    return true;
+}
 
 // ─── Constructor / Destructor ─────────────────────────────────────────────────
 CameraHalRdkX5::CameraHalRdkX5() = default;
@@ -43,6 +126,12 @@ bool CameraHalRdkX5::init(const PipelineConfig& cfg) {
         return true;
     }
 
+    // Load SP API at runtime
+    if (!load_sp_api()) {
+        std::cerr << "[CameraHalRdkX5] SP API loading failed\n";
+        return false;
+    }
+
     cfg_ = cfg;
 
     std::cout << "[CameraHalRdkX5] Initialising RDK X5 camera pipeline\n";
@@ -50,17 +139,17 @@ bool CameraHalRdkX5::init(const PipelineConfig& cfg) {
     std::cout << "[CameraHalRdkX5]   Medium: " << cfg.camera.med_w << "x" << cfg.camera.med_h << "\n";
     std::cout << "[CameraHalRdkX5]   Lores:  " << cfg.camera.lores_w << "x" << cfg.camera.lores_h << "\n";
     std::cout << "[CameraHalRdkX5]   FPS:    " << cfg.camera.fps << "\n";
-    std::cout << "[CameraHalRdkX5]   Device: " << cfg.camera.device << "\n";
 
-    // 1. Initialise V4L2 capture
-    if (!init_v4l2()) {
-        std::cerr << "[CameraHalRdkX5] V4L2 initialisation failed\n";
+    // 1. Initialise the VIO module (inits VIN→ISP pipeline)
+    if (!init_camera_pipeline()) {
+        std::cerr << "[CameraHalRdkX5] Camera pipeline initialisation failed\n";
         return false;
     }
 
-    // 2. Initialise VSE channels for multi-stream scaling
-    if (!init_vse_channels()) {
-        std::cerr << "[CameraHalRdkX5] VSE channel initialisation failed\n";
+    // 2. Initialise VPS channels for multi-stream scaling
+    if (!init_vps_channels()) {
+        std::cerr << "[CameraHalRdkX5] VPS channel initialisation failed\n";
+        shutdown();
         return false;
     }
 
@@ -69,267 +158,168 @@ bool CameraHalRdkX5::init(const PipelineConfig& cfg) {
     return true;
 }
 
-// ─── init_v4l2 ────────────────────────────────────────────────────────────────
-bool CameraHalRdkX5::init_v4l2() {
-    // Open the V4L2 capture device
-    // On RDK X5, the camera pipeline is accessed via /dev/video* with HBN framework
-    v4l2_fd_ = open(cfg_.camera.device.c_str(), O_RDWR);
-    if (v4l2_fd_ < 0) {
-        std::cerr << "[CameraHalRdkX5] Cannot open " << cfg_.camera.device
-                  << ": " << strerror(errno) << "\n";
+// ─── init_camera_pipeline ─────────────────────────────────────────────────────
+bool CameraHalRdkX5::init_camera_pipeline() {
+    // 1. Initialise the VIO module
+    vio_module_ = s_sp.sp_init_vio_module();
+    if (!vio_module_) {
+        std::cerr << "[CameraHalRdkX5] sp_init_vio_module() failed\n";
         return false;
     }
+    std::cout << "[CameraHalRdkX5] VIO module initialised\n";
 
-    // Query device capabilities
-    struct v4l2_capability cap{};
-    if (ioctl(v4l2_fd_, VIDIOC_QUERYCAP, &cap) < 0) {
-        std::cerr << "[CameraHalRdkX5] VIDIOC_QUERYCAP failed: " << strerror(errno) << "\n";
-        return false;
-    }
-
-    std::cout << "[CameraHalRdkX5] V4L2 device: " << cap.card << "\n";
-    std::cout << "[CameraHalRdkX5]   Driver: " << cap.driver << "\n";
-
-    // Set format: NV12 at full resolution
-    struct v4l2_format fmt{};
-    fmt.type = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
-    fmt.fmt.pix_mp.width       = static_cast<__u32>(cfg_.camera.full_w);
-    fmt.fmt.pix_mp.height      = static_cast<__u32>(cfg_.camera.full_h);
-    fmt.fmt.pix_mp.pixelformat = V4L2_PIX_FMT_NV12;
-    fmt.fmt.pix_mp.field       = V4L2_FIELD_NONE;
-    fmt.fmt.pix_mp.num_planes  = 1;
-
-    if (ioctl(v4l2_fd_, VIDIOC_S_FMT, &fmt) < 0) {
-        std::cerr << "[CameraHalRdkX5] VIDIOC_S_FMT failed: " << strerror(errno) << "\n";
-        return false;
-    }
-
-    std::cout << "[CameraHalRdkX5] Format set: "
-              << fmt.fmt.pix_mp.width << "x" << fmt.fmt.pix_mp.height
-              << " NV12\n";
-
-    // Set frame rate
-    struct v4l2_streamparm parm{};
-    parm.type = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
-    parm.parm.capture.timeperframe.numerator   = 1;
-    parm.parm.capture.timeperframe.denominator = static_cast<__u32>(cfg_.camera.fps);
-    ioctl(v4l2_fd_, VIDIOC_S_PARM, &parm);
-
-    // Request DMABUF buffers (preferred for zero-copy)
-    struct v4l2_requestbuffers req{};
-    req.count   = 4;
-    req.type    = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
-    req.memory  = V4L2_MEMORY_DMABUF;
-
-    if (ioctl(v4l2_fd_, VIDIOC_REQBUFS, &req) < 0) {
-        // Fall back to MMAP if DMABUF is not supported
-        std::cerr << "[CameraHalRdkX5] DMABUF not supported, falling back to MMAP\n";
-        use_dmabuf_ = false;
-
-        req.count  = 4;
-        req.type   = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
-        req.memory = V4L2_MEMORY_MMAP;
-
-        if (ioctl(v4l2_fd_, VIDIOC_REQBUFS, &req) < 0) {
-            std::cerr << "[CameraHalRdkX5] VIDIOC_REQBUFS (MMAP) failed: "
-                      << strerror(errno) << "\n";
-            return false;
-        }
-    } else {
-        use_dmabuf_ = true;
-    }
-
-    // Query and mmap buffers
-    v4l2_buf_pool_.resize(req.count);
-    for (uint32_t i = 0; i < req.count; ++i) {
-        struct v4l2_plane planes[VIDEO_MAX_PLANES]{};
-        struct v4l2_buffer buf{};
-        buf.type    = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
-        buf.memory  = use_dmabuf_ ? V4L2_MEMORY_DMABUF : V4L2_MEMORY_MMAP;
-        buf.index   = i;
-        buf.length  = 1;
-        buf.m.planes = planes;
-
-        if (ioctl(v4l2_fd_, VIDIOC_QUERYBUF, &buf) < 0) {
-            std::cerr << "[CameraHalRdkX5] VIDIOC_QUERYBUF " << i
-                      << " failed: " << strerror(errno) << "\n";
-            return false;
-        }
-
-        v4l2_buf_pool_[i].index  = i;
-        v4l2_buf_pool_[i].length = planes[0].length;
-
-        if (!use_dmabuf_) {
-            // MMAP path: map the buffer
-            v4l2_buf_pool_[i].data = mmap(nullptr, planes[0].length,
-                                          PROT_READ | PROT_WRITE, MAP_SHARED,
-                                          v4l2_fd_, planes[0].m.mem_offset);
-            if (v4l2_buf_pool_[i].data == MAP_FAILED) {
-                std::cerr << "[CameraHalRdkX5] mmap buffer " << i
-                          << " failed: " << strerror(errno) << "\n";
-                return false;
-            }
-            v4l2_buf_pool_[i].dma_fd = -1;
-        } else {
-            // DMABUF path: allocate a dma-buf and export it
-            // TODO: Implement dma-heap allocation for RDK X5
-            v4l2_buf_pool_[i].data   = nullptr;
-            v4l2_buf_pool_[i].dma_fd = -1;
-        }
-    }
-
-    // Queue all buffers
-    for (uint32_t i = 0; i < req.count; ++i) {
-        struct v4l2_plane planes[VIDEO_MAX_PLANES]{};
-        struct v4l2_buffer buf{};
-        buf.type    = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
-        buf.memory  = use_dmabuf_ ? V4L2_MEMORY_DMABUF : V4L2_MEMORY_MMAP;
-        buf.index   = i;
-        buf.length  = 1;
-        buf.m.planes = planes;
-
-        if (use_dmabuf_) {
-            planes[0].m.fd     = v4l2_buf_pool_[i].dma_fd;
-            planes[0].length   = v4l2_buf_pool_[i].length;
-        }
-
-        if (ioctl(v4l2_fd_, VIDIOC_QBUF, &buf) < 0) {
-            std::cerr << "[CameraHalRdkX5] VIDIOC_QBUF " << i
-                      << " failed: " << strerror(errno) << "\n";
-            return false;
-        }
-        v4l2_buf_pool_[i].queued = true;
-    }
-
-    // Start streaming
-    enum v4l2_buf_type buf_type = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
-    if (ioctl(v4l2_fd_, VIDIOC_STREAMON, &buf_type) < 0) {
-        std::cerr << "[CameraHalRdkX5] VIDIOC_STREAMON failed: "
-                  << strerror(errno) << "\n";
-        return false;
-    }
-
-    std::cout << "[CameraHalRdkX5] V4L2 streaming started\n";
-    return true;
-}
-
-// ─── init_vse_channels ────────────────────────────────────────────────────────
-bool CameraHalRdkX5::init_vse_channels() {
-    // On the RDK X5, the VSE is accessed via V4L2 subdevices or dedicated
-    // device nodes (e.g., /dev/video4, /dev/video5, /dev/video7).
+    // 2. Configure sensor parameters
+    //    On RDK X5, the sensor is auto-detected by the hobot_isi_sensor kernel
+    //    module. We provide the desired resolution and FPS.
     //
-    // VSE Channel 0: Full-res pass-through (same as camera input)
-    // VSE Channel 1: Medium-res (640×480)
-    // VSE Channel 3: Lores (320×320)
-    //
-    // TODO: Determine the correct VSE device node paths for RDK X5.
-    //       Reference: v4l2-ctl -d /dev/video4 --set-fmt-video=...
-    //
-    // For now, we pre-allocate DMA buffers for the VSE outputs and will
-    // configure the VSE channels once the device nodes are known.
+    // sp_sensors_parameters struct (from sp_vio.h):
+    //   { int32_t raw_height; int32_t raw_width; int32_t fps; }
+    struct {
+        int32_t raw_height;
+        int32_t raw_width;
+        int32_t fps;
+    } sensor_params{};
+    sensor_params.raw_height = static_cast<int32_t>(cfg_.camera.full_h);
+    sensor_params.raw_width  = static_cast<int32_t>(cfg_.camera.full_w);
+    sensor_params.fps        = static_cast<int32_t>(cfg_.camera.fps);
 
-    // Allocate VSE output buffers
-    if (!alloc_vse_buffer(vse_full_, cfg_.camera.full_w, cfg_.camera.full_h)) {
-        std::cerr << "[CameraHalRdkX5] Failed to allocate VSE full buffer\n";
+    // 3. Open the camera with V3 API
+    //    pipe_id = 0, video_index = SP_HOST_AUTO_DETECT (-1)
+    //    chn_num = 1 (single input channel from VIN)
+    int32_t input_width  = 0;
+    int32_t input_height = 0;
+    int32_t crop_x = 0, crop_y = 0, crop_w = 0, crop_h = 0, rotate = 0;
+
+    int32_t ret = s_sp.sp_open_camera_v3(
+        vio_module_,
+        0,                          // pipe_id
+        SP_HOST_AUTO_DETECT,        // video_index (auto-detect sensor)
+        1,                          // chn_num
+        &sensor_params,
+        &input_width,
+        &input_height,
+        &crop_x, &crop_y, &crop_w, &crop_h,
+        &rotate);
+
+    if (ret != 0) {
+        std::cerr << "[CameraHalRdkX5] sp_open_camera_v3() failed: " << ret << "\n";
+        s_sp.sp_release_vio_module(vio_module_);
+        vio_module_ = nullptr;
         return false;
     }
 
-    if (!alloc_vse_buffer(vse_medium_, cfg_.camera.med_w, cfg_.camera.med_h)) {
-        std::cerr << "[CameraHalRdkX5] Failed to allocate VSE medium buffer\n";
-        return false;
+    std::cout << "[CameraHalRdkX5] Camera opened: sensor "
+              << input_width << "x" << input_height
+              << " @" << cfg_.camera.fps << " fps\n";
+
+    // Update full-res to the actual sensor resolution
+    if (input_width > 0 && input_height > 0) {
+        cfg_.camera.full_w = static_cast<int>(input_width);
+        cfg_.camera.full_h = static_cast<int>(input_height);
     }
 
-    if (!alloc_vse_buffer(vse_lores_, cfg_.camera.lores_w, cfg_.camera.lores_h)) {
-        std::cerr << "[CameraHalRdkX5] Failed to allocate VSE lores buffer\n";
+    // Allocate the full-res VPS output buffer
+    if (!alloc_vps_buffer(vps_full_, cfg_.camera.full_w, cfg_.camera.full_h)) {
+        std::cerr << "[CameraHalRdkX5] Failed to allocate full-res VPS buffer\n";
+        s_sp.sp_vio_close(vio_module_);
+        s_sp.sp_release_vio_module(vio_module_);
+        vio_module_ = nullptr;
         return false;
     }
-
-    std::cout << "[CameraHalRdkX5] VSE buffers allocated:\n";
-    std::cout << "[CameraHalRdkX5]   Full:   " << vse_full_.output_w << "x"
-              << vse_full_.output_h << " (fd=" << vse_full_.dma_fd << ")\n";
-    std::cout << "[CameraHalRdkX5]   Medium: " << vse_medium_.output_w << "x"
-              << vse_medium_.output_h << " (fd=" << vse_medium_.dma_fd << ")\n";
-    std::cout << "[CameraHalRdkX5]   Lores:  " << vse_lores_.output_w << "x"
-              << vse_lores_.output_h << " (fd=" << vse_lores_.dma_fd << ")\n";
 
     return true;
 }
 
-// ─── alloc_vse_buffer ─────────────────────────────────────────────────────────
-bool CameraHalRdkX5::alloc_vse_buffer(VseChannel& ch, int width, int height) {
-    // NV12 frame size: Y plane (w*h) + UV plane (w*h/2)
-    uint32_t frame_size = static_cast<uint32_t>(width * height * 3 / 2);
+// ─── init_vps_channels ────────────────────────────────────────────────────────
+bool CameraHalRdkX5::init_vps_channels() {
+    // ── Medium-res VPS channel ──────────────────────────────────────────────
+    int32_t med_w = static_cast<int32_t>(cfg_.camera.med_w);
+    int32_t med_h = static_cast<int32_t>(cfg_.camera.med_h);
+    int32_t crop_x = 0, crop_y = 0, crop_w = 0, crop_h = 0, rotate = 0;
 
-    // Allocate DMA-BUF from dma-heap
-    // On RDK X5, the dma-heap device may be at /dev/dma_heap/system
-    // or a platform-specific path.
-    int dma_heap_fd = open("/dev/dma_heap/system", O_RDWR);
-    if (dma_heap_fd < 0) {
-        // Fall back to anonymous mmap for preparatory stub
-        std::cerr << "[CameraHalRdkX5] dma-heap not available, "
-                  << "allocating system memory for VSE buffer\n";
-        ch.mapped = std::aligned_alloc(4096, frame_size);
-        if (!ch.mapped) {
-            std::cerr << "[CameraHalRdkX5] Failed to allocate " << frame_size
-                      << " bytes for VSE buffer\n";
-            return false;
-        }
-        ch.dma_fd  = -1;
-        ch.size    = frame_size;
-        ch.output_w = width;
-        ch.output_h = height;
-        return true;
-    }
+    int32_t ret = s_sp.sp_open_vps(
+        vio_module_,
+        0,                          // pipe_id
+        1,                          // chn_num
+        SP_VPS_SCALE,               // proc_mode
+        cfg_.camera.full_w,
+        cfg_.camera.full_h,
+        &med_w, &med_h,
+        &crop_x, &crop_y, &crop_w, &crop_h,
+        &rotate);
 
-    struct dma_heap_allocation_data alloc{};
-    alloc.len  = frame_size;
-    alloc.fd_flags = O_RDWR | O_CLOEXEC;
-    alloc.heap_flags = 0;
-
-    if (ioctl(dma_heap_fd, DMA_HEAP_IOCTL_ALLOC, &alloc) < 0) {
-        std::cerr << "[CameraHalRdkX5] DMA_HEAP_IOCTL_ALLOC failed: "
-                  << strerror(errno) << "\n";
-        close(dma_heap_fd);
+    if (ret != 0) {
+        std::cerr << "[CameraHalRdkX5] sp_open_vps(medium) failed: " << ret << "\n";
         return false;
     }
 
-    close(dma_heap_fd);
+    cfg_.camera.med_w = static_cast<int>(med_w);
+    cfg_.camera.med_h = static_cast<int>(med_h);
 
-    // Map the DMA-BUF into userspace
-    ch.dma_fd = alloc.fd;
-    ch.mapped = mmap(nullptr, frame_size, PROT_READ | PROT_WRITE,
-                     MAP_SHARED, ch.dma_fd, 0);
-    if (ch.mapped == MAP_FAILED) {
-        std::cerr << "[CameraHalRdkX5] mmap DMA-BUF failed: "
-                  << strerror(errno) << "\n";
-        close(ch.dma_fd);
-        ch.dma_fd = -1;
+    if (!alloc_vps_buffer(vps_medium_, med_w, med_h)) {
+        std::cerr << "[CameraHalRdkX5] Failed to allocate medium VPS buffer\n";
         return false;
     }
 
-    ch.size     = frame_size;
-    ch.output_w = width;
-    ch.output_h = height;
+    // ── Lores VPS channel ──────────────────────────────────────────────────
+    int32_t lo_w = static_cast<int32_t>(cfg_.camera.lores_w);
+    int32_t lo_h = static_cast<int32_t>(cfg_.camera.lores_h);
+
+    ret = s_sp.sp_open_vps(
+        vio_module_,
+        0,                          // pipe_id
+        2,                          // chn_num (second VPS channel)
+        SP_VPS_SCALE,
+        cfg_.camera.full_w,
+        cfg_.camera.full_h,
+        &lo_w, &lo_h,
+        &crop_x, &crop_y, &crop_w, &crop_h,
+        &rotate);
+
+    if (ret != 0) {
+        std::cerr << "[CameraHalRdkX5] sp_open_vps(lores) failed: " << ret << "\n";
+        return false;
+    }
+
+    cfg_.camera.lores_w = static_cast<int>(lo_w);
+    cfg_.camera.lores_h = static_cast<int>(lo_h);
+
+    if (!alloc_vps_buffer(vps_lores_, lo_w, lo_h)) {
+        std::cerr << "[CameraHalRdkX5] Failed to allocate lores VPS buffer\n";
+        return false;
+    }
+
+    std::cout << "[CameraHalRdkX5] VPS channels initialised:\n";
+    std::cout << "[CameraHalRdkX5]   Full:   " << vps_full_.width << "x" << vps_full_.height << "\n";
+    std::cout << "[CameraHalRdkX5]   Medium: " << vps_medium_.width << "x" << vps_medium_.height << "\n";
+    std::cout << "[CameraHalRdkX5]   Lores:  " << vps_lores_.width << "x" << vps_lores_.height << "\n";
+
     return true;
 }
 
-// ─── free_vse_buffer ──────────────────────────────────────────────────────────
-void CameraHalRdkX5::free_vse_buffer(VseChannel& ch) {
-    if (ch.mapped && ch.mapped != MAP_FAILED) {
-        munmap(ch.mapped, ch.size);
-        ch.mapped = nullptr;
+// ─── alloc_vps_buffer / free_vps_buffer ───────────────────────────────────────
+bool CameraHalRdkX5::alloc_vps_buffer(VpsBuffer& buf, int width, int height) {
+    uint32_t frame_size = NV12_FRAME_SIZE(width, height);
+
+    buf.data = std::aligned_alloc(4096, frame_size);
+    if (!buf.data) {
+        std::cerr << "[CameraHalRdkX5] Failed to allocate " << frame_size << " bytes\n";
+        return false;
     }
-    if (ch.dma_fd >= 0) {
-        close(ch.dma_fd);
-        ch.dma_fd = -1;
+
+    buf.width  = static_cast<uint32_t>(width);
+    buf.height = static_cast<uint32_t>(height);
+    buf.size   = frame_size;
+    std::memset(buf.data, 0, frame_size);
+    return true;
+}
+
+void CameraHalRdkX5::free_vps_buffer(VpsBuffer& buf) {
+    if (buf.data) {
+        std::free(buf.data);
+        buf.data = nullptr;
     }
-    if (ch.fd >= 0) {
-        close(ch.fd);
-        ch.fd = -1;
-    }
-    ch.size     = 0;
-    ch.output_w = 0;
-    ch.output_h = 0;
+    buf.width = buf.height = buf.size = 0;
 }
 
 // ─── acquire_frames ───────────────────────────────────────────────────────────
@@ -337,88 +327,80 @@ bool CameraHalRdkX5::acquire_frames(FrameBuffer& full, FrameBuffer& medium,
                                     FrameBuffer& lores) {
     if (!initialised_) return false;
 
-    // 1. Dequeue a frame from V4L2
-    struct v4l2_plane planes[VIDEO_MAX_PLANES]{};
-    struct v4l2_buffer buf{};
-    buf.type    = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
-    buf.memory  = use_dmabuf_ ? V4L2_MEMORY_DMABUF : V4L2_MEMORY_MMAP;
-    buf.length  = 1;
-    buf.m.planes = planes;
+    // Get full-res frame
+    int32_t ret = s_sp.sp_vio_get_frame(
+        vio_module_,
+        static_cast<char*>(vps_full_.data),
+        static_cast<int32_t>(vps_full_.width),
+        static_cast<int32_t>(vps_full_.height),
+        1000);
 
-    if (ioctl(v4l2_fd_, VIDIOC_DQBUF, &buf) < 0) {
-        std::cerr << "[CameraHalRdkX5] VIDIOC_DQBUF failed: "
-                  << strerror(errno) << "\n";
+    if (ret != 0) {
+        std::cerr << "[CameraHalRdkX5] sp_vio_get_frame(full) failed: " << ret << "\n";
         return false;
     }
 
-    // 2. Configure VSE channels to scale from the captured frame
-    //    TODO: Implement actual VSE hardware configuration via V4L2 subdev
-    //    or dedicated VSE ioctls. For now, this is a preparatory stub that
-    //    copies the raw camera frame to all three outputs.
-    //
-    //    In production, the VSE would be configured once at init time and
-    //    triggered per-frame via a single ioctl that processes all channels
-    //    simultaneously in hardware.
-    //
-    //    Reference (from D-Robotics multimedia samples):
-    //      ./pipelines/single_pipe_vin_isp_vse -s 0
-    //
-    //    VSE channel setup (conceptual):
-    //      v4l2-ctl -d /dev/video4 --set-fmt-video=width=640,height=480,pixelformat=NV12
-    //      v4l2-ctl -d /dev/video5 --set-fmt-video=width=320,height=320,pixelformat=NV12
+    // Get medium-res frame from VPS
+    ret = s_sp.sp_vio_get_yuv(
+        vio_module_,
+        static_cast<char*>(vps_medium_.data),
+        static_cast<int32_t>(vps_medium_.width),
+        static_cast<int32_t>(vps_medium_.height),
+        1000);
 
-    // For the preparatory stub, we populate the frame buffers with the
-    // VSE output buffer pointers. The actual VSE hardware scaling will
-    // be implemented once the device is available for testing.
+    if (ret != 0) {
+        std::cerr << "[CameraHalRdkX5] sp_vio_get_yuv(medium) failed: " << ret << "\n";
+        return false;
+    }
 
-    // Full-res: point to VSE channel 0 buffer
-    frame_full_.data         = vse_full_.mapped;
-    frame_full_.width        = static_cast<uint32_t>(vse_full_.output_w);
-    frame_full_.height       = static_cast<uint32_t>(vse_full_.output_h);
-    frame_full_.stride       = static_cast<uint32_t>(vse_full_.output_w);
-    frame_full_.size         = vse_full_.size;
-    frame_full_.timestamp_ms = static_cast<int64_t>(buf.timestamp.tv_sec * 1000 +
-                                                     buf.timestamp.tv_usec / 1000);
-    frame_full_.dma_fd       = vse_full_.dma_fd;
+    // Get lores frame from VPS
+    ret = s_sp.sp_vio_get_yuv(
+        vio_module_,
+        static_cast<char*>(vps_lores_.data),
+        static_cast<int32_t>(vps_lores_.width),
+        static_cast<int32_t>(vps_lores_.height),
+        1000);
 
-    // Medium-res: point to VSE channel 1 buffer
-    frame_medium_.data         = vse_medium_.mapped;
-    frame_medium_.width        = static_cast<uint32_t>(vse_medium_.output_w);
-    frame_medium_.height       = static_cast<uint32_t>(vse_medium_.output_h);
-    frame_medium_.stride       = static_cast<uint32_t>(vse_medium_.output_w);
-    frame_medium_.size         = vse_medium_.size;
-    frame_medium_.timestamp_ms = frame_full_.timestamp_ms;
-    frame_medium_.dma_fd       = vse_medium_.dma_fd;
+    if (ret != 0) {
+        std::cerr << "[CameraHalRdkX5] sp_vio_get_yuv(lores) failed: " << ret << "\n";
+        return false;
+    }
 
-    // Lores: point to VSE channel 3 buffer
-    frame_lores_.data         = vse_lores_.mapped;
-    frame_lores_.width        = static_cast<uint32_t>(vse_lores_.output_w);
-    frame_lores_.height       = static_cast<uint32_t>(vse_lores_.output_h);
-    frame_lores_.stride       = static_cast<uint32_t>(vse_lores_.output_w);
-    frame_lores_.size         = vse_lores_.size;
-    frame_lores_.timestamp_ms = frame_full_.timestamp_ms;
-    frame_lores_.dma_fd       = vse_lores_.dma_fd;
+    // Populate FrameBuffer structs
+    frame_full_.data         = vps_full_.data;
+    frame_full_.width        = vps_full_.width;
+    frame_full_.height       = vps_full_.height;
+    frame_full_.stride       = vps_full_.width;
+    frame_full_.size         = vps_full_.size;
+    frame_full_.timestamp_ms = 0;
+    frame_full_.dma_fd       = -1;
 
-    // 3. Return the frame buffers to the caller
+    frame_medium_.data         = vps_medium_.data;
+    frame_medium_.width        = vps_medium_.width;
+    frame_medium_.height       = vps_medium_.height;
+    frame_medium_.stride       = vps_medium_.width;
+    frame_medium_.size         = vps_medium_.size;
+    frame_medium_.timestamp_ms = 0;
+    frame_medium_.dma_fd       = -1;
+
+    frame_lores_.data         = vps_lores_.data;
+    frame_lores_.width        = vps_lores_.width;
+    frame_lores_.height       = vps_lores_.height;
+    frame_lores_.stride       = vps_lores_.width;
+    frame_lores_.size         = vps_lores_.size;
+    frame_lores_.timestamp_ms = 0;
+    frame_lores_.dma_fd       = -1;
+
     full   = frame_full_;
     medium = frame_medium_;
     lores  = frame_lores_;
-
-    // 4. Re-queue the V4L2 buffer for the next frame
-    if (ioctl(v4l2_fd_, VIDIOC_QBUF, &buf) < 0) {
-        std::cerr << "[CameraHalRdkX5] VIDIOC_QBUF failed: "
-                  << strerror(errno) << "\n";
-        return false;
-    }
 
     return true;
 }
 
 // ─── release_frames ───────────────────────────────────────────────────────────
 void CameraHalRdkX5::release_frames() {
-    // VSE output buffers are persistent (pre-allocated in init).
-    // The V4L2 capture buffer was already re-queued in acquire_frames().
-    // No additional release is needed.
+    // Buffers are persistent; SP pipeline handles re-queue internally.
 }
 
 // ─── shutdown ─────────────────────────────────────────────────────────────────
@@ -427,30 +409,15 @@ void CameraHalRdkX5::shutdown() {
 
     std::cout << "[CameraHalRdkX5] Shutting down\n";
 
-    // Stop V4L2 streaming
-    if (v4l2_fd_ >= 0) {
-        enum v4l2_buf_type buf_type = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
-        ioctl(v4l2_fd_, VIDIOC_STREAMOFF, &buf_type);
-
-        // Unmap V4L2 buffers
-        for (auto& slot : v4l2_buf_pool_) {
-            if (slot.data && slot.data != MAP_FAILED) {
-                munmap(slot.data, slot.length);
-            }
-            if (slot.dma_fd >= 0) {
-                close(slot.dma_fd);
-            }
-        }
-        v4l2_buf_pool_.clear();
-
-        close(v4l2_fd_);
-        v4l2_fd_ = -1;
+    if (vio_module_) {
+        s_sp.sp_vio_close(vio_module_);
+        s_sp.sp_release_vio_module(vio_module_);
+        vio_module_ = nullptr;
     }
 
-    // Free VSE output buffers
-    free_vse_buffer(vse_full_);
-    free_vse_buffer(vse_medium_);
-    free_vse_buffer(vse_lores_);
+    free_vps_buffer(vps_full_);
+    free_vps_buffer(vps_medium_);
+    free_vps_buffer(vps_lores_);
 
     initialised_ = false;
     std::cout << "[CameraHalRdkX5] Shutdown complete\n";

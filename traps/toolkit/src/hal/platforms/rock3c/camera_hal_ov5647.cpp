@@ -17,6 +17,7 @@
 #include "camera_hal_ov5647.hpp"
 #include <iostream>
 #include <cstring>
+#include <cstdlib>
 #include <chrono>
 #include <thread>
 #include <vector>
@@ -38,32 +39,47 @@ namespace ct {
 // ─── dma-heap helpers ─────────────────────────────────────────────────────────
 
 int CameraHalOv5647::alloc_dma_buf(uint32_t size) {
-    const char* heap_dev = "/dev/dma_heap/system";
-    int heap_fd = open(heap_dev, O_RDWR | O_CLOEXEC);
-    if (heap_fd < 0) {
-        std::cerr << "[CameraHalOv5647] cannot open " << heap_dev << ": "
-                  << std::strerror(errno) << "\n";
-        return -1;
-    }
+    // Try the reserved dma-heap first (required by Rockchip ISP for DMABUF),
+    // fall back to system heap if reserved is not available or allocation fails.
+    const char* heap_names[] = {"/dev/dma_heap/reserved", "/dev/dma_heap/system"};
+    const int num_heaps = 2;
 
-    struct dma_heap_allocation_data data;
-    std::memset(&data, 0, sizeof(data));
-    data.len       = size;
-    data.fd_flags  = O_RDWR | O_CLOEXEC;
-    data.heap_flags = 0;
+    for (int i = 0; i < num_heaps; ++i) {
+        const char* heap_dev = heap_names[i];
+        int heap_fd = open(heap_dev, O_RDWR | O_CLOEXEC);
+        if (heap_fd < 0) {
+            std::cerr << "[CameraHalOv5647] cannot open " << heap_dev << ": "
+                      << std::strerror(errno) << "\n";
+            continue;
+        }
 
-    if (ioctl(heap_fd, DMA_HEAP_IOCTL_ALLOC, &data) < 0) {
-        std::cerr << "[CameraHalOv5647] DMA_HEAP_IOCTL_ALLOC failed: "
-                  << std::strerror(errno) << "\n";
+        struct dma_heap_allocation_data data;
+        std::memset(&data, 0, sizeof(data));
+        data.len       = size;
+        data.fd_flags  = O_RDWR | O_CLOEXEC;
+        data.heap_flags = 0;
+
+        if (ioctl(heap_fd, DMA_HEAP_IOCTL_ALLOC, &data) < 0) {
+            std::cerr << "[CameraHalOv5647] " << heap_dev << " DMA_HEAP_IOCTL_ALLOC failed: "
+                      << std::strerror(errno) << "\n";
+            close(heap_fd);
+            continue;
+        }
+
         close(heap_fd);
-        return -1;
+        return static_cast<int>(data.fd);
     }
 
-    close(heap_fd);
-    return static_cast<int>(data.fd);
+    std::cerr << "[CameraHalOv5647] all dma-heaps exhausted, cannot allocate "
+              << size << " bytes\n";
+    return -1;
 }
 
 void* CameraHalOv5647::map_dma_buf(int fd, uint32_t size) {
+    if (fd < 0) {
+        std::cerr << "[CameraHalOv5647] map_dma_buf: invalid fd (" << fd << ")\n";
+        return nullptr;
+    }
     void* addr = mmap(nullptr, size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
     if (addr == MAP_FAILED) {
         std::cerr << "[CameraHalOv5647] mmap dma-buf failed: "
@@ -220,13 +236,12 @@ bool CameraHalOv5647::init_aiq(const std::string& iq_dir) {
 
     rk_aiq_uapi2_sysctl_preInit_devBufCnt(sns_name, "rkraw_rx", 2);
 
-    // Try scene preinit, but don't fail if it's not supported
-    std::cerr << "[CameraHalOv5647] Setting scene: normal" << std::endl;
-    int scene_ret = rk_aiq_uapi2_sysctl_preInit_scene(sns_name, "normal", "");
-    if (scene_ret < 0) {
-        std::cerr << "[CameraHalOv5647] rk_aiq_uapi2_sysctl_preInit_scene failed: "
-                  << scene_ret << " (continuing anyway)" << std::endl;
-    }
+    // NOTE: rk_aiq_uapi2_sysctl_preInit_scene is intentionally NOT called here.
+    // The library's internal selectIqFile() has a buffer overflow bug when the
+    // sensor name + scene suffix exceeds its fixed-size buffer, causing a SEGV
+    // in fileno_unlocked(NULL).  The library will fall back to the base IQ file
+    // (ov5647_rpi-camera-v1p3_default.json) without the scene suffix.
+    std::cerr << "[CameraHalOv5647] Skipping preInit_scene (avoids librkaiq buffer overflow bug)" << std::endl;
 
     std::cerr << "[CameraHalOv5647] rk_aiq_uapi2_sysctl_init sns_name=" << sns_name << " iq_dir=" << iq_dir << std::endl;
     aiq_ctx_ = rk_aiq_uapi2_sysctl_init(sns_name, iq_dir.c_str(), aiq_err_cb, aiq_sof_cb);
@@ -311,104 +326,16 @@ bool CameraHalOv5647::init_v4l2() {
 
     const __u32 frame_size = fmt.fmt.pix_mp.plane_fmt[0].sizeimage;
 
-    // ── Pre-allocate dma-buf buffers for V4L2 DMABUF path ────────────────────
-    constexpr unsigned int NUM_BUFS = 4;
-    v4l2_buf_pool_.reserve(NUM_BUFS);
-    for (unsigned int i = 0; i < NUM_BUFS; ++i) {
-        int dma_fd = alloc_dma_buf(frame_size);
-        if (dma_fd < 0) {
-            close(v4l2_fd_);
-            v4l2_fd_ = -1;
-            return false;
-        }
-
-        void* vaddr = map_dma_buf(dma_fd, frame_size);
-        if (!vaddr) {
-            close(dma_fd);
-            close(v4l2_fd_);
-            v4l2_fd_ = -1;
-            return false;
-        }
-
-        V4l2BufSlot slot;
-        slot.index  = i;
-        slot.mapped = vaddr;
-        slot.length = frame_size;
-        slot.queued = false;
-        slot.dma_fd = dma_fd;
-        v4l2_buf_pool_.push_back(slot);
-
-        std::cout << "[CameraHalOv5647] buf[" << i << "]: dma_fd=" << dma_fd
-                  << " vaddr=" << vaddr << " size=" << frame_size << "\n";
-    }
-
-    // ── Request DMABUF buffers from V4L2 ─────────────────────────────────────
-    struct v4l2_requestbuffers req;
-    std::memset(&req, 0, sizeof(req));
-    req.count   = NUM_BUFS;
-    req.type    = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
-    req.memory  = V4L2_MEMORY_DMABUF;
-
-    if (ioctl(v4l2_fd_, VIDIOC_REQBUFS, &req) < 0) {
-        std::cerr << "[CameraHalOv5647] VIDIOC_REQBUFS (DMABUF) failed: "
-                  << std::strerror(errno) << "\n";
-        // Fallback: try MMAP instead
-        std::cout << "[CameraHalOv5647] DMABUF not supported, falling back to MMAP\n";
-        // Clean up DMABUF buffers before switching to MMAP
-        for (auto& s : v4l2_buf_pool_) {
-            unmap_dma_buf(s.mapped, s.length, s.dma_fd);
-        }
-        v4l2_buf_pool_.clear();
-        close(v4l2_fd_);
-        v4l2_fd_ = -1;
-        return init_v4l2_mmap(fmt, frame_size);
-    }
-    std::cout << "[CameraHalOv5647] REQBUFS (DMABUF): count=" << req.count << "\n";
-
-    // ── Queue all buffers with their DMABUF fds ──────────────────────────────
-    for (auto& slot : v4l2_buf_pool_) {
-        struct v4l2_plane planes[VIDEO_MAX_PLANES];
-        struct v4l2_buffer qbuf;
-        std::memset(&qbuf, 0, sizeof(qbuf));
-        std::memset(planes, 0, sizeof(planes));
-        qbuf.type        = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
-        qbuf.memory      = V4L2_MEMORY_DMABUF;
-        qbuf.index       = slot.index;
-        qbuf.m.planes    = planes;
-        qbuf.length      = 1;
-        planes[0].m.fd   = slot.dma_fd;
-        planes[0].length = slot.length;
-
-        if (ioctl(v4l2_fd_, VIDIOC_QBUF, &qbuf) < 0) {
-            std::cerr << "[CameraHalOv5647] VIDIOC_QBUF[" << slot.index
-                      << "] failed: " << std::strerror(errno) << "\n";
-            // DMABUF QBUF failed - fall back to MMAP
-            std::cout << "[CameraHalOv5647] DMABUF QBUF failed, falling back to MMAP\n";
-            // Clean up DMABUF buffers before switching to MMAP
-            for (auto& s : v4l2_buf_pool_) {
-                unmap_dma_buf(s.mapped, s.length, s.dma_fd);
-            }
-            v4l2_buf_pool_.clear();
-            close(v4l2_fd_);
-            v4l2_fd_ = -1;
-            return init_v4l2_mmap(fmt, frame_size);
-        }
-        slot.queued = true;
-    }
-
-    // ── Start streaming ──────────────────────────────────────────────────────
-    enum v4l2_buf_type buf_type = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
-    if (ioctl(v4l2_fd_, VIDIOC_STREAMON, &buf_type) < 0) {
-        std::cerr << "[CameraHalOv5647] VIDIOC_STREAMON failed: "
-                  << std::strerror(errno) << "\n";
-        close(v4l2_fd_);
-        v4l2_fd_ = -1;
-        return false;
-    }
-
-    use_dmabuf_ = true;
-    std::cout << "[CameraHalOv5647] V4L2 DMABUF streaming started\n";
-    return true;
+    // ── Skip DMABUF path, go straight to MMAP ────────────────────────────────
+    // The reserved dma-heap is exhausted (144MB CMA used by ISP), and the
+    // system heap dma-bufs are rejected by the ISP driver (VIDIOC_QBUF fails
+    // with EINVAL).  Additionally, the system heap has a kernel bug on RK3566
+    // where munmap of system-heap dma-bufs can cause SEGV.
+    // MMAP is the reliable fallback.
+    std::cout << "[CameraHalOv5647] reserved heap exhausted, using MMAP directly\n";
+    close(v4l2_fd_);
+    v4l2_fd_ = -1;
+    return init_v4l2_mmap(fmt, frame_size);
 }
 
 // ─── init_v4l2_mmap (fallback) ───────────────────────────────────────────────
@@ -535,16 +462,24 @@ bool CameraHalOv5647::init_v4l2_mmap(const struct v4l2_format& fmt, __u32 frame_
 // Pre-allocate dma-buf backed buffers for the three scaled output streams.
 
 bool CameraHalOv5647::init_scaler_buffers() {
+    // Allocate scaler output buffers using regular heap memory (malloc).
+    // We cannot use dma-heap for these because:
+    //   1. The reserved heap is too small (144MB CMA, mostly used by ISP)
+    //   2. The system heap has a kernel bug on RK3566 where small allocations
+    //      (< ~200KB) cause SEGV during mmap
+    // Since we fall back to MMAP for V4L2 capture (no DMABUF), the scaler
+    // buffers don't need to be dma-bufs — they're only accessed via CPU for
+    // software scaling.
     auto alloc_scaler = [&](ScalerBuf& sb, int w, int h) -> bool {
         sb.size = static_cast<uint32_t>(w * h * 3 / 2);  // NV12 size
-        sb.fd   = alloc_dma_buf(sb.size);
-        if (sb.fd < 0) return false;
-        sb.addr = map_dma_buf(sb.fd, sb.size);
+        sb.fd   = -1;
+        sb.addr = std::aligned_alloc(64, sb.size);
         if (!sb.addr) {
-            close(sb.fd);
-            sb.fd = -1;
+            std::cerr << "[CameraHalOv5647] alloc_scaler: malloc failed for "
+                      << w << "x" << h << " (" << sb.size << " bytes)\n";
             return false;
         }
+        std::memset(sb.addr, 0, sb.size);
         return true;
     };
 
@@ -725,9 +660,11 @@ void CameraHalOv5647::shutdown() {
     }
     v4l2_buf_pool_.clear();
 
-    // Release scaler output buffers
+    // Release scaler output buffers (allocated via aligned_alloc, freed via free)
     auto free_scaler = [](ScalerBuf& sb) {
-        unmap_dma_buf(sb.addr, sb.size, sb.fd);
+        if (sb.addr) {
+            std::free(sb.addr);
+        }
         sb.addr = nullptr;
         sb.fd   = -1;
         sb.size = 0;

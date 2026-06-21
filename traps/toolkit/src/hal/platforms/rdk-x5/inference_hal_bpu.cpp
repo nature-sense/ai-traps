@@ -24,10 +24,15 @@
 #include <cmath>
 #include <algorithm>
 
+#include "dnn/hb_dnn.h"
+#include "dnn/hb_sys.h"
+
 namespace ct {
 
 // ─── Constructor / Destructor ─────────────────────────────────────────────────
-InferenceHalBPU::InferenceHalBPU() = default;
+InferenceHalBPU::InferenceHalBPU()
+    : input_tensor_{}
+    , output_tensors_() {}
 
 InferenceHalBPU::~InferenceHalBPU() {
     shutdown();
@@ -42,163 +47,295 @@ bool InferenceHalBPU::init(const std::string& model_path, float confidence_thres
 
     conf_thresh_ = confidence_threshold;
 
-    // 1. Load the BPU model file (.bin format)
-    std::ifstream file(model_path, std::ios::binary | std::ios::ate);
-    if (!file.is_open()) {
-        std::cerr << "[InferenceHalBPU] Cannot open model file: " << model_path << "\n";
-        std::cerr << "[InferenceHalBPU] NOTE: This is a preparatory stub. "
-                  << "A valid .bin model file is required.\n";
-        std::cerr << "[InferenceHalBPU] Use the D-Robotics Model Zoo to obtain "
-                  << "pre-optimized .bin models.\n";
-        std::cerr << "[InferenceHalBPU] Installation: pip install bpu_infer_lib_x5 "
-                  << "-i http://sdk.d-robotics.cc:8080/simple/ "
-                  << "--trusted-host sdk.d-robotics.cc\n";
+    // 1. Load the compiled BPU binary via hbDNNInitializeFromFiles
+    const char* path_ptr = model_path.c_str();
+    int ret = hbDNNInitializeFromFiles(&packed_dnn_handle_, &path_ptr, 1);
+    if (ret != 0) {
+        std::cerr << "[InferenceHalBPU] CRITICAL: hbDNNInitializeFromFiles failed with code: "
+                  << ret << " for model: " << model_path << std::endl;
         return false;
     }
 
-    model_size_ = static_cast<size_t>(file.tellg());
-    file.seekg(0, std::ios::beg);
-
-    model_data_ = std::malloc(model_size_);
-    if (!model_data_) {
-        std::cerr << "[InferenceHalBPU] Failed to allocate " << model_size_
-                  << " bytes for model\n";
+    // 2. Query the model name(s) inside the packed container
+    const char** model_names = nullptr;
+    int model_count = 0;
+    hbDNNGetModelNameList(&model_names, &model_count, packed_dnn_handle_);
+    if (model_count == 0 || model_names == nullptr) {
+        std::cerr << "[InferenceHalBPU] No models found in packed container\n";
+        hbDNNRelease(packed_dnn_handle_);
+        packed_dnn_handle_ = nullptr;
         return false;
     }
 
-    file.read(static_cast<char*>(model_data_), static_cast<std::streamsize>(model_size_));
-    file.close();
+    // 3. Extract the individual model handle
+    ret = hbDNNGetModelHandle(&dnn_handle_, packed_dnn_handle_, model_names[0]);
+    if (ret != 0 || dnn_handle_ == nullptr) {
+        std::cerr << "[InferenceHalBPU] hbDNNGetModelHandle failed for: "
+                  << model_names[0] << std::endl;
+        hbDNNRelease(packed_dnn_handle_);
+        packed_dnn_handle_ = nullptr;
+        return false;
+    }
 
     std::cout << "[InferenceHalBPU] Loaded BPU model: " << model_path
-              << " (" << model_size_ << " bytes)\n";
+              << " | identity: " << model_names[0] << std::endl;
 
-    // 2. Initialise BPU inference context
-    //    TODO: Implement bpu_infer_lib integration.
-    //    This requires:
-    //      - Including the bpu_infer_lib headers (C++ API)
-    //      - Creating an Infer object:
-    //          bpu_infer_lib::Infer inf;
-    //          inf.load_model(model_data_, model_size_);
-    //      - Querying model input/output tensor shapes
-    //      - Pre-allocating input/output buffers
-    //
-    //    Python reference:
-    //      import bpu_infer_lib
-    //      inf = bpu_infer_lib.Infer()
-    //      inf.load_model("insect_detector.bin")
-    //      inf.set_input(frame_320x320)
-    //      inf.forward()
-    //      results = inf.get_output()
-    //
-    //    The BPU accepts NV12 input directly for many models,
-    //    eliminating the need for NV12→RGB conversion.
-    //
-    std::cerr << "[InferenceHalBPU] BPU integration is a PREPARATORY STUB.\n";
-    std::cerr << "[InferenceHalBPU] TODO: Implement bpu_infer_lib::Infer integration.\n";
+    // 4. Allocate the input tensor based on model properties
+    hbDNNGetInputTensorProperties(&input_tensor_.properties, dnn_handle_, 0);
 
-    // Free the model data since we can't use it yet
-    std::free(model_data_);
-    model_data_ = nullptr;
-    model_size_ = 0;
+    // Determine model input dimensions from the tensor properties
+    // For NV12 models, the aligned size includes both Y and UV planes
+    model_in_w_ = input_tensor_.properties.validShape.dimensionSize[2];    // width
+    model_in_h_ = input_tensor_.properties.validShape.dimensionSize[1];    // height
+    std::cout << "[InferenceHalBPU] Model input: " << model_in_w_ << "x" << model_in_h_
+              << " (aligned: " << input_tensor_.properties.alignedByteSize << " bytes)"
+              << std::endl;
 
-    return false;
+    // Allocate cached memory for the input tensor (accessible by both CPU and BPU)
+    ret = hbSysAllocCachedMem(&input_tensor_.sysMem,
+                              input_tensor_.properties.alignedByteSize);
+    if (ret != 0) {
+        std::cerr << "[InferenceHalBPU] hbSysAllocCachedMem (input) failed: " << ret << std::endl;
+        hbDNNRelease(packed_dnn_handle_);
+        packed_dnn_handle_ = nullptr;
+        dnn_handle_ = nullptr;
+        return false;
+    }
+
+    // 5. Query and allocate output tensors
+    ret = hbDNNGetOutputCount(&output_count_, dnn_handle_);
+    if (ret != 0 || output_count_ == 0) {
+        std::cerr << "[InferenceHalBPU] No output tensors found\n";
+        hbSysFreeMem(&input_tensor_.sysMem);
+        hbDNNRelease(packed_dnn_handle_);
+        packed_dnn_handle_ = nullptr;
+        dnn_handle_ = nullptr;
+        return false;
+    }
+
+    output_tensors_.resize(output_count_);
+    for (int i = 0; i < output_count_; ++i) {
+        hbDNNGetOutputTensorProperties(&output_tensors_[i].properties, dnn_handle_, i);
+        ret = hbSysAllocCachedMem(&output_tensors_[i].sysMem,
+                                   output_tensors_[i].properties.alignedByteSize);
+        if (ret != 0) {
+            std::cerr << "[InferenceHalBPU] hbSysAllocCachedMem (output " << i
+                      << ") failed: " << ret << std::endl;
+            // Free already-allocated outputs
+            for (int j = 0; j < i; ++j) {
+                hbSysFreeMem(&output_tensors_[j].sysMem);
+            }
+            hbSysFreeMem(&input_tensor_.sysMem);
+            hbDNNRelease(packed_dnn_handle_);
+            packed_dnn_handle_ = nullptr;
+            dnn_handle_ = nullptr;
+            return false;
+        }
+    }
+
+    std::cout << "[InferenceHalBPU] API Initialised. Model: " << model_names[0]
+              << " | Input: " << model_in_w_ << "x" << model_in_h_
+              << " | Outputs: " << output_count_ << std::endl;
+
+    initialised_ = true;
+    return true;
 }
 
 // ─── detect ───────────────────────────────────────────────────────────────────
 std::vector<Detection> InferenceHalBPU::detect(const FrameBuffer& frame) {
-    // TODO: Implement BPU inference
-    // This requires:
-    //   1. Preprocessing: NV12 → model input format
-    //      (BPU may accept NV12 directly, or need RGB/BGR)
-    //   2. Set input tensor: inf.set_input(frame_data)
-    //   3. Run inference: inf.forward()
-    //   4. Read output tensors: inf.get_output()
-    //   5. Decode detections based on model architecture
-    //   6. Apply NMS and confidence thresholding
-    //
-    // NOTE: Preparatory stub — returns empty detections.
-    (void)frame;
+    if (!initialised_ || dnn_handle_ == nullptr) {
+        std::cerr << "[InferenceHalBPU] detect() called but not initialised\n";
+        return {};
+    }
 
-    std::cerr << "[InferenceHalBPU] detect() called but NOT IMPLEMENTED "
-              << "(preparatory stub)\n";
-    return {};
+    auto t_start = std::chrono::high_resolution_clock::now();
+
+    // 1. Resize the incoming NV12 frame to the model's expected input size
+    std::vector<uint8_t> resized_input;
+    if (!resize_nv12(frame, resized_input, model_in_w_, model_in_h_)) {
+        std::cerr << "[InferenceHalBPU] Frame resize failed\n";
+        return {};
+    }
+
+    // 2. Copy resized NV12 data into the BPU input tensor memory
+    //    The BPU expects NV12 format in a single contiguous buffer:
+    //    [Y plane: W*H bytes] [UV plane: W*H/2 bytes]
+    size_t expected_size = input_tensor_.properties.alignedByteSize;
+    size_t actual_size = static_cast<size_t>(model_in_w_ * model_in_h_ * 3 / 2);
+
+    if (resized_input.size() < actual_size) {
+        std::cerr << "[InferenceHalBPU] Resized frame too small: "
+                  << resized_input.size() << " < " << actual_size << std::endl;
+        return {};
+    }
+
+    // Copy to input tensor memory and flush cache so BPU can see it
+    std::memcpy(input_tensor_.sysMem.virAddr, resized_input.data(),
+                std::min(actual_size, expected_size));
+    hbSysFlushMem(&input_tensor_.sysMem, HB_SYS_MEM_CACHE_CLEAN);
+
+    // 3. Prepare inference task
+    hbDNNTaskHandle_t task_handle = nullptr;
+    hbDNNTensor* input_ptr = &input_tensor_;
+    hbDNNTensor* output_ptrs = output_tensors_.data();
+
+    int ret = hbDNNInfer(&task_handle,
+                          &output_ptrs,
+                          const_cast<const hbDNNTensor**>(&input_ptr),
+                          dnn_handle_,
+                          1);  // Inference with 1 task at a time
+    if (ret != 0) {
+        std::cerr << "[InferenceHalBPU] hbDNNInfer failed: " << ret << std::endl;
+        return {};
+    }
+
+    // 4. Wait for inference to complete
+    ret = hbDNNWaitTaskDone(task_handle, 0);  // 0 = block indefinitely
+    if (ret != 0) {
+        std::cerr << "[InferenceHalBPU] hbDNNWaitTaskDone failed: " << ret << std::endl;
+        hbDNNReleaseTask(task_handle);
+        return {};
+    }
+
+    // 5. Flush output cache so CPU can read results
+    for (int i = 0; i < output_count_; ++i) {
+        hbSysFlushMem(&output_tensors_[i].sysMem, HB_SYS_MEM_CACHE_INVALIDATE);
+    }
+
+    // 6. Release the task handle
+    hbDNNReleaseTask(task_handle);
+
+    // 7. Decode the output tensors into Detection structs
+    auto detections = decode_yolo_output();
+
+    // 8. Apply NMS
+    detections = nms(detections);
+
+    auto t_end = std::chrono::high_resolution_clock::now();
+    last_inference_us_ = std::chrono::duration_cast<std::chrono::microseconds>(
+                             t_end - t_start).count();
+
+    if (!detections.empty()) {
+        std::cout << "[InferenceHalBPU] Detected " << detections.size()
+                  << " objects in " << last_inference_us_ / 1000 << " ms"
+                  << std::endl;
+    }
+
+    return detections;
 }
 
-// ─── nv12_to_rgb ──────────────────────────────────────────────────────────────
-bool InferenceHalBPU::nv12_to_rgb(const FrameBuffer& frame, std::vector<uint8_t>& rgb_out) {
-    // Convert NV12 frame to RGB planar (for BPU models that don't accept NV12)
-    // NV12 layout:
-    //   Y plane: width * height bytes
-    //   UV plane: width * height / 2 bytes (interleaved U, V at half resolution)
-    //
-    // RGB output: width * height * 3 bytes (planar or interleaved)
+// ─── resize_nv12 ──────────────────────────────────────────────────────────────
+bool InferenceHalBPU::resize_nv12(const FrameBuffer& src, std::vector<uint8_t>& dst,
+                                   int dst_w, int dst_h) {
+    const int src_w = static_cast<int>(src.width);
+    const int src_h = static_cast<int>(src.height);
 
-    const uint32_t w = frame.width;
-    const uint32_t h = frame.height;
-
-    if (!frame.data || w == 0 || h == 0) {
+    if (!src.data || src_w == 0 || src_h == 0 || dst_w == 0 || dst_h == 0) {
         return false;
     }
 
-    rgb_out.resize(w * h * 3);
+    // NV12 total size = Y plane + UV plane
+    size_t dst_size = static_cast<size_t>(dst_w * dst_h * 3 / 2);
+    dst.resize(dst_size);
 
-    const uint8_t* y_plane = static_cast<const uint8_t*>(frame.data);
-    const uint8_t* uv_plane = y_plane + w * h;
+    const uint8_t* src_y = static_cast<const uint8_t*>(src.data);
+    const uint8_t* src_uv = src_y + src_w * src_h;
 
-    for (uint32_t row = 0; row < h; ++row) {
-        for (uint32_t col = 0; col < w; ++col) {
-            uint32_t y_idx = row * w + col;
-            uint32_t uv_idx = (row / 2) * w + (col / 2) * 2;
+    uint8_t* dst_y = dst.data();
+    uint8_t* dst_uv = dst_y + dst_w * dst_h;
 
-            float y  = static_cast<float>(y_plane[y_idx]);
-            float u  = static_cast<float>(uv_plane[uv_idx])     - 128.0f;
-            float v  = static_cast<float>(uv_plane[uv_idx + 1]) - 128.0f;
+    // Resize Y plane using nearest-neighbour
+    for (int row = 0; row < dst_h; ++row) {
+        int src_row = row * src_h / dst_h;
+        src_row = std::min(src_row, src_h - 1);
+        for (int col = 0; col < dst_w; ++col) {
+            int src_col = col * src_w / dst_w;
+            src_col = std::min(src_col, src_w - 1);
+            dst_y[row * dst_w + col] = src_y[src_row * src_w + src_col];
+        }
+    }
 
-            // BT.601 limited range
-            int r = static_cast<int>(y + 1.402f * v);
-            int g = static_cast<int>(y - 0.344f * u - 0.714f * v);
-            int b = static_cast<int>(y + 1.772f * u);
+    // Resize UV plane (half resolution in both directions)
+    int uv_dst_h = dst_h / 2;
+    int uv_dst_w = dst_w / 2;
+    int uv_src_h = src_h / 2;
+    int uv_src_w = src_w / 2;
 
-            r = std::clamp(r, 0, 255);
-            g = std::clamp(g, 0, 255);
-            b = std::clamp(b, 0, 255);
-
-            // RGB interleaved output
-            uint32_t rgb_idx = (row * w + col) * 3;
-            rgb_out[rgb_idx + 0] = static_cast<uint8_t>(r);
-            rgb_out[rgb_idx + 1] = static_cast<uint8_t>(g);
-            rgb_out[rgb_idx + 2] = static_cast<uint8_t>(b);
+    for (int row = 0; row < uv_dst_h; ++row) {
+        int src_row = std::min(row * uv_src_h / uv_dst_h, uv_src_h - 1);
+        for (int col = 0; col < uv_dst_w; ++col) {
+            int src_col = std::min(col * uv_src_w / uv_dst_w, uv_src_w - 1);
+            int src_idx = (src_row * uv_src_w + src_col) * 2;
+            int dst_idx = (row * uv_dst_w + col) * 2;
+            dst_uv[dst_idx]     = src_uv[src_idx];     // U
+            dst_uv[dst_idx + 1] = src_uv[src_idx + 1]; // V
         }
     }
 
     return true;
 }
 
-// ─── decode_outputs ───────────────────────────────────────────────────────────
-std::vector<Detection> InferenceHalBPU::decode_outputs(const float* raw_output,
-                                                        int num_outputs,
-                                                        int num_classes) {
-    // TODO: Implement YOLO output decoding for BPU models.
-    // The output format depends on the model architecture:
+// ─── decode_yolo_output ───────────────────────────────────────────────────────
+std::vector<Detection> InferenceHalBPU::decode_yolo_output() {
+    // YOLOv12n (and most YOLOv5/v8/v10/v12) detection models packaged for
+    // the Horizon BPU produce output in [1, N, 6] format where each row is:
+    //   [x_center, y_center, width, height, confidence, class_id]
     //
-    // YOLOv5: [batch, num_detections, 6] where 6 = [x, y, w, h, conf, class_id]
-    // YOLOv8/v11: [batch, num_classes + 4, grid_h, grid_w] with DFL (Distribution Focal Loss)
+    // Coordinates are normalised [0, 1] relative to the model input size.
     //
-    // BPU models may have a custom output format. This will need to be
-    // determined experimentally once hardware is available.
-    //
-    // NOTE: Preparatory stub — returns empty detections.
-    (void)raw_output;
-    (void)num_outputs;
-    (void)num_classes;
+    // The model may have multiple output tensors (e.g. three for FPN/PAN).
+    // We concatenate all outputs and filter by confidence threshold.
 
-    return {};
+    std::vector<Detection> detections;
+
+    for (int o = 0; o < output_count_; ++o) {
+        hbDNNTensor& out = output_tensors_[o];
+
+        // Get output shape: typically [1, N, 6]
+        int num_dims = out.properties.validShape.numDimensions;
+        int num_elements = 1;
+        for (int d = 0; d < num_dims; ++d) {
+            num_elements *= out.properties.validShape.dimensionSize[d];
+        }
+
+        // Expected format: each detection is 6 floats
+        constexpr int VALUES_PER_DET = 6;
+        int num_detections = num_elements / VALUES_PER_DET;
+
+        if (num_detections <= 0) continue;
+
+        const float* out_data = static_cast<const float*>(out.sysMem.virAddr);
+
+        for (int i = 0; i < num_detections; ++i) {
+            int idx = i * VALUES_PER_DET;
+            float x_center = out_data[idx + 0];
+            float y_center = out_data[idx + 1];
+            float width    = out_data[idx + 2];
+            float height   = out_data[idx + 3];
+            float conf     = out_data[idx + 4];
+            int class_id   = static_cast<int>(out_data[idx + 5]);
+
+            if (conf < conf_thresh_) continue;
+
+            Detection det;
+            det.class_id   = class_id;
+            det.confidence = conf;
+            // Convert [x_center, y_center, w, h] → [x, y, w, h] (top-left)
+            det.x = std::max(0.0f, x_center - width / 2.0f);
+            det.y = std::max(0.0f, y_center - height / 2.0f);
+            det.w = std::min(1.0f - det.x, width);
+            det.h = std::min(1.0f - det.y, height);
+
+            detections.push_back(det);
+        }
+    }
+
+    return detections;
 }
 
 // ─── nms ──────────────────────────────────────────────────────────────────────
 std::vector<Detection> InferenceHalBPU::nms(const std::vector<Detection>& detections,
                                              float iou_threshold) {
-    // Standard non-maximum suppression
     if (detections.empty()) return {};
 
     // Sort by confidence (descending)
@@ -220,7 +357,6 @@ std::vector<Detection> InferenceHalBPU::nms(const std::vector<Detection>& detect
             if (suppressed[j]) continue;
             if (sorted[i].class_id != sorted[j].class_id) continue;
 
-            // Calculate IoU
             float xi1 = sorted[i].x;
             float yi1 = sorted[i].y;
             float xi2 = sorted[i].x + sorted[i].w;
@@ -259,17 +395,27 @@ std::vector<Detection> InferenceHalBPU::nms(const std::vector<Detection>& detect
 void InferenceHalBPU::shutdown() {
     if (!initialised_) return;
 
-    // TODO: Release BPU inference resources
-    //   inf.release();
-    //   bpu_ctx_ = nullptr;
+    // Free output tensor memory
+    for (auto& out : output_tensors_) {
+        if (out.sysMem.virAddr != nullptr) {
+            hbSysFreeMem(&out.sysMem);
+        }
+    }
+    output_tensors_.clear();
 
-    if (model_data_) {
-        std::free(model_data_);
-        model_data_ = nullptr;
-        model_size_ = 0;
+    // Free input tensor memory
+    if (input_tensor_.sysMem.virAddr != nullptr) {
+        hbSysFreeMem(&input_tensor_.sysMem);
     }
 
-    bpu_ctx_ = nullptr;
+    // Release model handles
+    if (packed_dnn_handle_ != nullptr) {
+        hbDNNRelease(packed_dnn_handle_);
+        packed_dnn_handle_ = nullptr;
+    }
+
+    dnn_handle_ = nullptr;
+    output_count_ = 0;
     initialised_ = false;
 
     std::cout << "[InferenceHalBPU] Shutdown complete\n";

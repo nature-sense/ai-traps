@@ -21,7 +21,10 @@ platform_sources = files(
   'camera_hal_imx219.cpp',
   'camera_hal_imx415.cpp',
   'camera_hal_ov5647.cpp',
+  'camera_hal_v4l2_rkaiq.cpp',
+  'mpp_h264_encoder.cpp',
   'inference_hal_rknn.cpp',
+  'inference_hal_subprocess.cpp',
   'video_scaler_hal_rga.cpp',
 )
 
@@ -30,5 +33,4 @@ platform_inc = include_directories('.')
 
 # ── Platform dependencies ─────────────────────────────────────────────────────
 # These are discovered by the root meson.build and passed down.
-# platform_deps is populated by the root meson.build based on SDK detection.
 platform_deps = []

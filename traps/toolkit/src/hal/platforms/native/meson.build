@@ -16,16 +16,19 @@
 # Native (host) platform stub HAL sources and dependencies.
 # Included by the root meson.build when -Dplatform=host is set.
 
+# ── Include shared V4L2 camera HAL (platform-independent) ─────────────────────
+subdir('../common')
+
 # ── Platform source files ─────────────────────────────────────────────────────
 platform_sources = files(
   'camera_hal_native.cpp',
   'inference_hal_native.cpp',
   'classifier_hal_native.cpp',
   'video_scaler_native.cpp',
-)
+) + common_sources
 
 # ── Platform include directories ──────────────────────────────────────────────
-platform_inc = include_directories('.')
+platform_inc = include_directories('.') + common_inc
 
 # ── Platform dependencies ─────────────────────────────────────────────────────
 # Native platform uses system libraries only.

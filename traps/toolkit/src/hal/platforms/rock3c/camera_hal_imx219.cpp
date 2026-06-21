@@ -240,96 +240,26 @@ bool CameraHalImx219::init_v4l2() {
 
     const __u32 frame_size = fmt.fmt.pix_mp.plane_fmt[0].sizeimage;
 
-    // ── Pre-allocate dma-buf buffers for V4L2 DMABUF path ────────────────────
-    constexpr unsigned int NUM_BUFS = 4;
-    v4l2_buf_pool_.reserve(NUM_BUFS);
-    for (unsigned int i = 0; i < NUM_BUFS; ++i) {
-        int dma_fd = alloc_dma_buf(frame_size);
-        if (dma_fd < 0) {
-            close(v4l2_fd_);
-            v4l2_fd_ = -1;
-            return false;
-        }
-
-        void* vaddr = map_dma_buf(dma_fd, frame_size);
-        if (!vaddr) {
-            close(dma_fd);
-            close(v4l2_fd_);
-            v4l2_fd_ = -1;
-            return false;
-        }
-
-        V4l2BufSlot slot;
-        slot.index  = i;
-        slot.mapped = vaddr;
-        slot.length = frame_size;
-        slot.queued = false;
-        slot.dma_fd = dma_fd;
-        v4l2_buf_pool_.push_back(slot);
-
-        std::cout << "[CameraHalImx219] buf[" << i << "]: dma_fd=" << dma_fd
-                  << " vaddr=" << vaddr << " size=" << frame_size << "\n";
-    }
-
-    // ── Request DMABUF buffers from V4L2 ─────────────────────────────────────
-    struct v4l2_requestbuffers req;
-    std::memset(&req, 0, sizeof(req));
-    req.count   = NUM_BUFS;
-    req.type    = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
-    req.memory  = V4L2_MEMORY_DMABUF;
-
-    if (ioctl(v4l2_fd_, VIDIOC_REQBUFS, &req) < 0) {
-        std::cerr << "[CameraHalImx219] VIDIOC_REQBUFS (DMABUF) failed: "
-                  << std::strerror(errno) << "\n";
-        // Fallback: try MMAP instead
-        std::cout << "[CameraHalImx219] DMABUF not supported, falling back to MMAP\n";
-        return init_v4l2_mmap(fmt, frame_size);
-    }
-    std::cout << "[CameraHalImx219] REQBUFS (DMABUF): count=" << req.count << "\n";
-
-    // ── Queue all buffers with their DMABUF fds ──────────────────────────────
-    for (auto& slot : v4l2_buf_pool_) {
-        struct v4l2_plane planes[VIDEO_MAX_PLANES];
-        struct v4l2_buffer qbuf;
-        std::memset(&qbuf, 0, sizeof(qbuf));
-        std::memset(planes, 0, sizeof(planes));
-        qbuf.type        = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
-        qbuf.memory      = V4L2_MEMORY_DMABUF;
-        qbuf.index       = slot.index;
-        qbuf.m.planes    = planes;
-        qbuf.length      = 1;
-        planes[0].m.fd   = slot.dma_fd;
-        planes[0].length = slot.length;
-
-        if (ioctl(v4l2_fd_, VIDIOC_QBUF, &qbuf) < 0) {
-            std::cerr << "[CameraHalImx219] VIDIOC_QBUF[" << slot.index
-                      << "] failed: " << std::strerror(errno) << "\n";
-            close(v4l2_fd_);
-            v4l2_fd_ = -1;
-            return false;
-        }
-        slot.queued = true;
-    }
-
-    // ── Start streaming ──────────────────────────────────────────────────────
-    enum v4l2_buf_type buf_type = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
-    if (ioctl(v4l2_fd_, VIDIOC_STREAMON, &buf_type) < 0) {
-        std::cerr << "[CameraHalImx219] VIDIOC_STREAMON failed: "
-                  << std::strerror(errno) << "\n";
-        close(v4l2_fd_);
-        v4l2_fd_ = -1;
-        return false;
-    }
-
-    use_dmabuf_ = true;
-    std::cout << "[CameraHalImx219] V4L2 DMABUF streaming started\n";
-    return true;
+    // rkisp_v5 on kernel 6.1 doesn't support DMABUF import via dma-heap
+    // (VIDIOC_QBUF with DMABUF returns EINVAL). Use MMAP directly.
+    std::cout << "[CameraHalImx219] using MMAP buffer mode\n";
+    return init_v4l2_mmap(fmt, frame_size);
 }
 
 // ─── init_v4l2_mmap (fallback) ───────────────────────────────────────────────
 
 bool CameraHalImx219::init_v4l2_mmap(const struct v4l2_format& fmt, __u32 frame_size) {
     (void)fmt;
+    (void)frame_size;
+
+    // First, release any previously-allocated DMABUF buffers (from a failed
+    // DMABUF attempt) by doing a zero-count REQBUFS with DMABUF memory type.
+    struct v4l2_requestbuffers req_rel;
+    std::memset(&req_rel, 0, sizeof(req_rel));
+    req_rel.count   = 0;
+    req_rel.type    = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
+    req_rel.memory  = V4L2_MEMORY_DMABUF;
+    ioctl(v4l2_fd_, VIDIOC_REQBUFS, &req_rel);  // best-effort release
 
     // Request MMAP buffers
     struct v4l2_requestbuffers req;

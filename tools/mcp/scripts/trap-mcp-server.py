@@ -16,9 +16,12 @@
 
 
 """
-MCP Server for NatureSense AI Camera Trap REST API + BLE GATT Interface.
-Uses mDNS hostnames (e.g., rock-3c.local) to address traps for REST API,
-and BLE (via bleak) for local BLE GATT discovery and provisioning.
+MCP Server for NatureSense AI Camera Trap — WebSocket JSON-RPC + BLE GATT Interface.
+
+Uses a single WebSocket connection (ws://trapHost:8080/ws) to communicate with the
+trap's JSON-RPC over WebSocket endpoint (WsApiHandler on the C++ firmware side).
+
+Also provides BLE GATT tools (via bleak) for local BLE discovery and provisioning.
 
 Usage:
   This script is run by Cline as an MCP server via STDIN/STDOUT JSON-RPC.
@@ -29,7 +32,7 @@ Installation:
   chmod +x /Users/steve/.local/bin/trap-mcp-server.py
 
 Dependencies:
-  pip install mcp httpx bleak
+  pip install mcp websockets bleak
 
 MCP Config (cline_mcp_settings.json):
   {
@@ -64,7 +67,7 @@ import asyncio
 import json
 import subprocess
 import struct
-import httpx
+import websockets
 from mcp.server import Server
 from mcp.server.models import InitializationOptions
 import mcp.server.stdio
@@ -105,6 +108,103 @@ CMD_STATUS_NAMES = {
 }
 
 server = Server("naturesense-trap-mcp")
+
+# Default WebSocket port
+WS_PORT = 8080
+
+
+# Global JSON-RPC ID counter
+_rpc_id = 0
+
+
+def _next_id() -> int:
+    global _rpc_id
+    _rpc_id += 1
+    return _rpc_id
+
+
+# ---------------------------------------------------------------------------
+# WebSocket JSON-RPC helper
+# ---------------------------------------------------------------------------
+
+async def _ws_request(trap_host: str, method: str, params: dict = None) -> dict:
+    """
+    Connect to the trap's WebSocket endpoint, send a JSON-RPC request,
+    and wait for the matching response.
+
+    Protocol (JSON-RPC 2.0-like):
+      Request:  {"id": N, "method": "method_name", "params": {...}}
+      Success:  {"id": N, "result": {...}}
+      Error:    {"id": N, "error": {"code": C, "message": "..."}}
+
+    trap_host example: "rock-3c.local" or "trap-singapore-01.local"
+    """
+    ws_url = f"ws://{trap_host}:{WS_PORT}/ws"
+    request_id = _next_id()
+    request = {
+        "id": request_id,
+        "method": method,
+        "params": params or {},
+    }
+
+    async with websockets.connect(ws_url, max_size=2**20, open_timeout=10) as ws:
+        # Send the request
+        await ws.send(json.dumps(request))
+
+        # Wait for the matching response
+        while True:
+            raw = await asyncio.wait_for(ws.recv(), timeout=30.0)
+            if not isinstance(raw, str):
+                continue  # Skip binary frames (e.g., JPEG images)
+
+            try:
+                response = json.loads(raw)
+            except json.JSONDecodeError:
+                continue
+
+            # Match by ID
+            if response.get("id") == request_id:
+                if "result" in response:
+                    return response["result"]
+                elif "error" in response:
+                    err = response["error"]
+                    code = err.get("code", -1)
+                    msg = err.get("message", "Unknown error")
+                    raise WsRpcException(code, msg)
+                else:
+                    raise WsRpcException(-1, "Malformed response: missing result/error")
+
+    # Should never reach here
+    raise WsRpcException(-1, "WebSocket closed without response")
+
+
+class WsRpcException(Exception):
+    """Exception raised when a WebSocket JSON-RPC call returns an error."""
+    def __init__(self, code: int, message: str):
+        self.code = code
+        self.message = message
+        super().__init__(f"WS RPC error {code}: {message}")
+
+
+# ---------------------------------------------------------------------------
+# Parameter translation: MCP tool params (camelCase) -> WS method params (snake_case)
+# ---------------------------------------------------------------------------
+
+def _translate_params(args: dict, mapping: dict) -> dict:
+    """
+    Translate MCP tool parameter names (camelCase) to WS method parameter names
+    (snake_case) using the given mapping.
+
+    Example mapping: {"sessionId": "session_id", "detectionId": "detection_id"}
+
+    All trapHost is stripped out (not sent over WS).
+    """
+    params = {}
+    for mcp_key, ws_key in mapping.items():
+        if mcp_key in args:
+            params[ws_key] = args[mcp_key]
+    return params
+
 
 # ---------------------------------------------------------------------------
 # BLE helper functions
@@ -251,23 +351,6 @@ async def _ble_connect_and_write(
 
 
 # ---------------------------------------------------------------------------
-# REST API helper
-# ---------------------------------------------------------------------------
-
-async def _request(trap_host: str, method: str, path: str, json_data: dict = None) -> dict:
-    """
-    Make HTTP request to a specific trap using its mDNS hostname.
-    trap_host example: "rock-3c.local" or "trap-singapore-01.local"
-    """
-    # Python's httpx and the system resolver handle .local mDNS automatically
-    base_url = f"http://{trap_host}:8080"
-    async with httpx.AsyncClient(base_url=base_url, timeout=30.0) as client:
-        resp = await client.request(method, path, json=json_data)
-        resp.raise_for_status()
-        return resp.json() if resp.content else {}
-
-
-# ---------------------------------------------------------------------------
 # Tool definitions
 # ---------------------------------------------------------------------------
 
@@ -275,7 +358,7 @@ async def _request(trap_host: str, method: str, path: str, json_data: dict = Non
 async def handle_list_tools() -> list[types.Tool]:
     """Register all MCP tools with trapHost parameter."""
 
-    # Common properties for all REST API tools (trapHost is always required)
+    # Common properties for all WS API tools (trapHost is always required)
     base_properties = {
         "trapHost": {
             "type": "string",
@@ -284,12 +367,12 @@ async def handle_list_tools() -> list[types.Tool]:
     }
 
     return [
-        # ===== REST API tools (existing) =====
+        # ===== WebSocket JSON-RPC tools (replacing former REST API) =====
 
         # ----- Read-only tools (safe for auto-approve) -----
         types.Tool(
             name="get_trap_status",
-            description="Get current status of a provisioned trap",
+            description="Get current status of a provisioned trap (via WebSocket JSON-RPC)",
             inputSchema={
                 "type": "object",
                 "properties": {
@@ -381,7 +464,7 @@ async def handle_list_tools() -> list[types.Tool]:
         ),
         types.Tool(
             name="get_system_metrics",
-            description="Get real-time system metrics (CPU, memory, NPU, pipeline FPS, power)",
+            description="Get real-time system metrics (CPU, memory, NPU, pipeline FPS, power). Currently returns 501 stub.",
             inputSchema={
                 "type": "object",
                 "properties": {
@@ -393,7 +476,7 @@ async def handle_list_tools() -> list[types.Tool]:
         ),
         types.Tool(
             name="get_server_status",
-            description="Get basic server status (runs on trap device)",
+            description="Get basic server status (runs on trap device). Uses get_status WS method.",
             inputSchema={
                 "type": "object",
                 "properties": base_properties,
@@ -475,7 +558,7 @@ async def handle_list_tools() -> list[types.Tool]:
             }
         ),
 
-        # ===== BLE GATT tools (new) =====
+        # ===== BLE GATT tools (unchanged) =====
 
         # ----- BLE read-only tools (safe for auto-approve) -----
         types.Tool(
@@ -600,7 +683,7 @@ async def handle_call_tool(
     if name == "ble_provision_ap":
         return await _handle_ble_provision(args, station_mode=False)
 
-    # ===== REST API tools =====
+    # ===== WebSocket JSON-RPC tools and mDNS discovery =====
 
     # Special case: discover_traps doesn't need trapHost
     if name == "discover_traps":
@@ -651,84 +734,122 @@ async def handle_call_tool(
         )]
 
     try:
-        # ----- Read-only endpoints -----
-        if name == "get_trap_status":
-            result = await _request(trap_host, "GET", f"/v1/traps/{args['trapId']}")
+        # ----- URL construction tools (no WebSocket call needed) -----
+        if name == "get_crop_image_url":
+            url = f"http://{trap_host}:{WS_PORT}/v1/crops/{args['date']}/{args['filename']}"
+            return [types.TextContent(type="text", text=json.dumps({"image_url": url}, indent=2))]
 
-        elif name == "list_sessions":
-            params = {k: v for k, v in args.items() if k not in ["trapHost", "trapId"]}
-            query = "&".join([f"{k}={v}" for k, v in params.items()]) if params else ""
-            path = f"/v1/traps/{args['trapId']}/sessions"
-            if query:
-                path += f"?{query}"
-            result = await _request(trap_host, "GET", path)
-
-        elif name == "get_active_session":
-            result = await _request(trap_host, "GET", f"/v1/traps/{args['trapId']}/sessions/active")
-
-        elif name == "get_session":
-            result = await _request(trap_host, "GET", f"/v1/traps/{args['trapId']}/sessions/{args['sessionId']}")
-
-        elif name == "list_detections":
-            params = {k: v for k, v in args.items() if k not in ["trapHost", "trapId", "sessionId"]}
-            query = "&".join([f"{k}={v}" for k, v in params.items()]) if params else ""
-            path = f"/v1/traps/{args['trapId']}/sessions/{args['sessionId']}/detections"
-            if query:
-                path += f"?{query}"
-            result = await _request(trap_host, "GET", path)
-
-        elif name == "get_detection":
-            result = await _request(trap_host, "GET", f"/v1/traps/{args['trapId']}/detections/{args['detectionId']}")
-
-        elif name == "get_crop_image_url":
-            url = f"http://{trap_host}:8080/v1/crops/{args['date']}/{args['filename']}"
-            result = {"image_url": url}
-
-        elif name == "get_system_metrics":
-            result = await _request(trap_host, "GET", f"/v1/traps/{args['trapId']}/system")
-
-        elif name == "get_server_status":
-            result = await _request(trap_host, "GET", "/status")
-
-        elif name == "get_recent_detections":
-            active = await _request(trap_host, "GET", f"/v1/traps/{args['trapId']}/sessions/active")
-            if not active.get("active"):
-                result = {"message": "No active session", "detections": []}
-            else:
-                detections = await _request(
-                    trap_host,
-                    "GET",
-                    f"/v1/traps/{args['trapId']}/sessions/{active['sessionId']}/detections?limit=100"
-                )
-                result = detections
-
-        elif name == "get_stream_urls":
+        if name == "get_stream_urls":
             result = {
-                "standard_stream": f"http://{trap_host}:8080/stream.mjpg",
-                "hires_stream": f"http://{trap_host}:8080/stream_hires.mjpg",
+                "standard_stream": f"http://{trap_host}:{WS_PORT}/stream.mjpg",
+                "hires_stream": f"http://{trap_host}:{WS_PORT}/stream_hires.mjpg",
                 "note": "Open these URLs in a browser. MJPEG streams cannot be viewed in Cline."
             }
+            return [types.TextContent(type="text", text=json.dumps(result, indent=2))]
 
-        # ----- State-changing endpoints -----
+        # ----- Tools that need a WebSocket connection -----
+
+        if name == "get_server_status":
+            # get_status WS method doesn't need params
+            result = await _ws_request(trap_host, "get_status", {})
+
+        elif name == "get_trap_status":
+            result = await _ws_request(trap_host, "get_status", {})
+
+        elif name == "get_system_metrics":
+            result = await _ws_request(trap_host, "get_system_metrics", {})
+
         elif name == "start_monitoring":
-            result = await _request(trap_host, "POST", f"/v1/traps/{args['trapId']}/sessions")
+            result = await _ws_request(trap_host, "start_session", {})
 
         elif name == "stop_monitoring":
-            result = await _request(trap_host, "PUT", f"/v1/traps/{args['trapId']}/sessions/{args['sessionId']}/stop")
+            params = _translate_params(args, {"sessionId": "session_id"})
+            result = await _ws_request(trap_host, "stop_session", params)
 
-        # ----- Destructive endpoint -----
+        elif name == "list_sessions":
+            params = _translate_params(args, {"limit": "limit", "offset": "offset"})
+            result = await _ws_request(trap_host, "list_sessions", params)
+
+        elif name == "get_active_session":
+            result = await _ws_request(trap_host, "get_active_session", {})
+
+        elif name == "get_session":
+            params = _translate_params(args, {"sessionId": "session_id"})
+            result = await _ws_request(trap_host, "get_session", params)
+
+        elif name == "list_detections":
+            params = _translate_params(args, {
+                "sessionId": "session_id",
+                "limit": "limit",
+                "offset": "offset"
+            })
+            result = await _ws_request(trap_host, "list_detections", params)
+
+        elif name == "get_detection":
+            params = _translate_params(args, {"detectionId": "detection_id"})
+            result = await _ws_request(trap_host, "get_detection", params)
+
         elif name == "provision_trap":
-            result = await _request(trap_host, "POST", "/v1/provision", json_data={"trapId": args["trapId"]})
+            params = {"trapId": args.get("trapId", "")}
+            result = await _ws_request(trap_host, "provision", params)
+
+        elif name == "get_recent_detections":
+            # Composite call: get active session, then list detections
+            try:
+                active = await _ws_request(trap_host, "get_active_session", {})
+            except WsRpcException as e:
+                # If the server doesn't support get_active_session yet, fall back
+                return [types.TextContent(
+                    type="text",
+                    text=json.dumps({
+                        "error": f"get_active_session failed: {e.message}",
+                        "message": "Ensure the trap is provisioned and running."
+                    }, indent=2)
+                )]
+
+            if not active.get("active", False):
+                result = {"message": "No active session", "detections": []}
+            else:
+                session_id = active.get("id") or active.get("sessionId")
+                if session_id is None:
+                    # Try to extract from nested structure
+                    session_info = active.get("activeSession", {})
+                    session_id = session_info.get("id")
+                detections = await _ws_request(trap_host, "list_detections", {
+                    "session_id": session_id,
+                    "limit": 100,
+                    "offset": 0,
+                })
+                result = detections
 
         else:
             raise ValueError(f"Unknown tool: {name}")
 
         return [types.TextContent(type="text", text=json.dumps(result, indent=2))]
 
-    except httpx.HTTPStatusError as e:
+    except WsRpcException as e:
         return [types.TextContent(
             type="text",
-            text=f"HTTP Error {e.response.status_code}: {e.response.text}"
+            text=json.dumps({
+                "error": f"WS RPC error {e.code}",
+                "message": e.message
+            }, indent=2)
+        )]
+    except websockets.exceptions.WebSocketException as e:
+        return [types.TextContent(
+            type="text",
+            text=json.dumps({
+                "error": f"WebSocket connection failed: {str(e)}",
+                "message": f"Ensure the trap at {trap_host}:{WS_PORT} is running and the /ws endpoint is available."
+            }, indent=2)
+        )]
+    except asyncio.TimeoutError:
+        return [types.TextContent(
+            type="text",
+            text=json.dumps({
+                "error": "WebSocket request timed out",
+                "message": "The trap did not respond within the timeout period. Check network connectivity."
+            }, indent=2)
         )]
     except Exception as e:
         return [types.TextContent(type="text", text=f"Error: {str(e)}")]
@@ -995,7 +1116,8 @@ async def main():
             write_stream,
             InitializationOptions(
                 server_name="naturesense-trap-mcp",
-                server_version="1.1.0"
+                server_version="2.0.0",
+                capabilities={}
             )
         )
 

@@ -1,0 +1,33 @@
+# AI Camera Trap — RDK X5 Configuration
+# Uses the D-Robotics SP camera API (sp_vio.h) via CameraHalRdkX5
+# Camera auto-detected — no sensor-specific code needed.
+
+camera:
+  model: "rdkx5"
+  device: ""
+  iq_dir: ""
+  scene_dir: ""
+
+  # Pi Camera v2 (IMX219) max: 3280×2464, use 1920×1080 for performance
+  full_w: 1920
+  full_h: 1080
+
+  med_w: 640
+  med_h: 480
+
+  lores_w: 320
+  lores_h: 320
+
+  fps: 15
+
+storage:
+  output_dir: "/var/lib/ai-trap/data"
+  db_path: "/var/lib/ai-trap/data/detections.json"
+
+cropper:
+  padding_px: 16
+  min_confidence: 0.0
+
+decision:
+  trigger_confidence: 0.0
+  cooldown_ms: 5000

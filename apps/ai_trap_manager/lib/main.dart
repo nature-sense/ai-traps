@@ -18,7 +18,6 @@ import 'package:provider/provider.dart';
 import 'widgets/adaptive_app_shell.dart';
 import 'providers/trap_provider.dart';
 import 'providers/ble_provider.dart';
-import 'providers/websocket_provider.dart';
 
 void main() {
   runApp(const MyApp());
@@ -33,7 +32,6 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => TrapProvider()),
         ChangeNotifierProvider(create: (_) => BleProvider()),
-        ChangeNotifierProvider(create: (_) => WebSocketProvider()),
       ],
       child: MaterialApp(
         title: 'AI Insect Trap Manager',

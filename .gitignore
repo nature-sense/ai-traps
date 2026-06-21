@@ -218,6 +218,27 @@ mlruns/
 docker-compose.override.yml
 
 # ============================================================================
+# Native Build (Clang cross-compilation on macOS)
+# ============================================================================
+
+# Sysroots are large copies of target board filesystems — not source
+tools/native/sysroots/
+
+# ============================================================================
+# Platform Runtime Bundles
+# ============================================================================
+
+# Compiled model binaries in runtime directories (gitignored by *.rknn above)
+# but explicitly listed here for clarity:
+traps/runtimes/*/yolo26n.rknn
+
+# ONNX source models in runtime directories (large, managed separately)
+traps/runtimes/*/yolo26n.onnx
+
+# Compiled trap binaries in runtime directories (build artifacts)
+traps/runtimes/*/ai-trap-detection
+
+# ============================================================================
 # Logs / Temp / Cache
 # ============================================================================
 

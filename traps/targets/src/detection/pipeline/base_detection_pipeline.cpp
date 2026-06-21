@@ -179,28 +179,57 @@ bool BaseDetectionPipeline::init(const PipelineConfig& cfg) {
         std::cerr << "[BaseDetectionPipeline] createSessionActor() failed\n";
         return false;
     }
-    if (!session_actor_->init(cfg_.storage.output_dir, cfg_.storage.db_path, "", 0)) {
+
+    // Auto-provision with the hostname as trap ID (if not otherwise configured).
+    // This allows the Flutter app to start sessions immediately without manual
+    // provisioning. The hostname-based ID is consistent with BLE advertising.
+    std::string default_trap_id;
+    const char* hostname = std::getenv("HOSTNAME");
+    if (hostname && hostname[0] != '\0') {
+        default_trap_id = hostname;
+    } else {
+        default_trap_id = "ai-trap-default";
+    }
+
+    if (!session_actor_->init(cfg_.storage.output_dir, cfg_.storage.db_path, default_trap_id, 0)) {
         std::cerr << "[BaseDetectionPipeline] session actor init failed\n";
         return false;
     }
 
-    // ── 9. Create HTTP actors ──────────────────────────────────────────────────
+    // ── 9. Create WsApiHandler (JSON-RPC over WebSocket) ─────────────────────
+    ws_api_handler_ = std::make_unique<WsApiHandler>();
+    ws_api_handler_->setSessionActor(session_actor_.get());
+
+    // ── 10. Create HTTP actor ─────────────────────────────────────────────────
     http_server_ = createHttpServer();
     if (!http_server_) {
         std::cerr << "[BaseDetectionPipeline] createHttpServer() failed\n";
         return false;
     }
+    // Set the crop image base directory so /v1/crops/{date}/{filename} works
+    http_server_->crop_base_dir_ = cfg_.storage.output_dir;
 
-    http_handler_ = createHttpHandler();
-    if (!http_handler_) {
-        std::cerr << "[BaseDetectionPipeline] createHttpHandler() failed\n";
-        return false;
-    }
+    // Bind the session actor for fast-path status queries
+    http_server_->setSessionActor(session_actor_.get());
 
-    // Bind the session actor to the HTTP handler
-    http_handler_->setSessionActor(session_actor_.get());
+    // Wire back the HttpSseActor reference so WsApiHandler can send responses
+    ws_api_handler_->setHttpSseActor(http_server_.get());
 
-    // ── 10. Create event publisher ────────────────────────────────────────────
+    // Wire the pipeline reference for system metrics reading
+    ws_api_handler_->setPipeline(this);
+
+    // Set the JSON-RPC callback: wrap the WsApiHandler in a lambda
+    http_server_->setWsApiCallback(
+        [this](const std::string& json_text, struct mg_connection* conn) {
+            try {
+                auto json = nlohmann::json::parse(json_text);
+                ws_api_handler_->handleRequest(json, conn);
+            } catch (...) {
+                // Ignore malformed JSON
+            }
+        });
+
+    // ── 11. Create event publisher ────────────────────────────────────────────
     event_publisher_ = createEventPublisher();
     if (!event_publisher_) {
         std::cerr << "[BaseDetectionPipeline] createEventPublisher() failed\n";
@@ -209,9 +238,6 @@ bool BaseDetectionPipeline::init(const PipelineConfig& cfg) {
 
     // Wire the event publisher to the SSE backend
     event_publisher_->setSseActor(http_server_.get());
-
-    // Wire the event publisher to the HTTP handler (for REST action events)
-    http_handler_->setEventPublisher(event_publisher_.get());
 
     // Wire the session actor to publish events when crops are saved
     session_actor_->set_on_saved(
@@ -230,17 +256,15 @@ bool BaseDetectionPipeline::init(const PipelineConfig& cfg) {
             });
         });
 
-    // ── 11. Register actors in ActorRegistry ──────────────────────────────────
+    // ── 12. Register actors in ActorRegistry ──────────────────────────────────
     auto* registry = ramen::ActorRegistry::instance();
     registry->registerActor("http_server", http_server_.get());
-    registry->registerActor("http_handler", http_handler_.get());
     registry->registerActor("session_actor", session_actor_.get());
     registry->registerActor("event_publisher", event_publisher_.get());
     registry->registerActor("mjpeg_bridge", mjpeg_bridge_.get());
 
-    // ── 12. Start actors ──────────────────────────────────────────────────────
+    // ── 13. Start actors ──────────────────────────────────────────────────────
     http_server_->onStart();
-    http_handler_->onStart();
     event_publisher_->onStart();
     mjpeg_bridge_->onStart();
 
@@ -366,7 +390,19 @@ void BaseDetectionPipeline::run_loop() {
 
     while (running_.load()) {
         // ── 1. Check if inference is enabled (session active) ──────────────────
+        // When no session is active, inference is disabled so no NPU cycles are
+        // wasted, the tracker is reset so no stale bounding boxes appear, and
+        // the cropper receives no data. The MJPEG stream still shows clean
+        // video frames (without detection overlays).
         bool inference_enabled = session_actor_->is_inference_enabled();
+        inference_->set_enabled(inference_enabled);
+        if (!inference_enabled) {
+            tracker_->reset();
+            // Push any pending frame WITHOUT drawing overlays, so the MJPEG
+            // stream immediately shows a clean frame instead of continuing to
+            // serve the last frame with stale bounding boxes.
+            overlay_->clear_and_push_clean();
+        }
 
         // ── 2. Capture frame ───────────────────────────────────────────────────
         // camera->tick() pushes frames to out_frame_* ports, which triggers

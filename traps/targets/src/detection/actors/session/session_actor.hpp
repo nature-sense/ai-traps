@@ -18,7 +18,7 @@
 
 #include <ramen.hpp>
 #include "hal/api/types.hpp"
-#include "base-storage/base_storage.hpp"
+#include "data-store/data_store.hpp"
 #include "../types.hpp"
 #include <functional>
 #include <string>
@@ -34,10 +34,13 @@ namespace ct {
 // Combined session lifecycle manager + classification storage actor.
 //
 // Manages monitoring sessions (start/stop/auto-close), inference gating,
-// trap identity provisioning, and persists classification crops to disk/SQLite.
+// trap identity provisioning, and persists classification crops to disk.
 //
-// Exposes Ramen pull/push ports for the REST router to query and modify
-// session state and query the database.
+// Uses DataStore for in-memory session/detection metadata with periodic
+// JSON persistence (replaces previous SQLite-based BaseStorage).
+//
+// Exposes Ramen pull/push ports for the HTTP router to query and modify
+// session state.
 //
 // Registered in the ActorRegistry as "session_actor" so that the HTTP handler
 // can send messages to it via the registry.
@@ -46,13 +49,11 @@ namespace ct {
 //   - start_session() / stop_session() / active_session_id() are thread-safe.
 //   - is_inference_enabled() is lock-free (atomic flag).
 //   - The pipeline thread calls is_inference_enabled() on every tick.
-struct SessionActor : public ramen::Actor, public BaseStorage {
-    // ── Events (stubbed — will be replaced by Ramen event bus) ────────────────
-    // Fired after each classification is saved.
+struct SessionActor : public ramen::Actor {
+    // ── Events ─────────────────────────────────────────────────────────────────
     using OnSaved = std::function<void(const JpegCrop&, const std::string& path, int64_t classification_id)>;
 
-    // ── Ramen ports for REST interface ────────────────────────────────────────
-    // Pull handlers — the REST router pulls these to get domain objects.
+    // ── Ramen ports for REST / WebSocket interface ────────────────────────────
     ramen::Pullable<std::vector<SessionInfo>>   out_list_sessions  = [this](std::vector<SessionInfo>& v) { v = list_sessions(); };
     ramen::Pullable<SessionInfo>                out_get_session    = [this](SessionInfo& s) { s = get_session(session_query_id_); };
     ramen::Pullable<std::vector<DetectionInfo>> out_list_detections = [this](std::vector<DetectionInfo>& v) { v = list_detections(session_query_id_); };
@@ -82,15 +83,13 @@ struct SessionActor : public ramen::Actor, public BaseStorage {
         };
 
     // ── Lifecycle ─────────────────────────────────────────────────────────────
-    // Initialise storage: open SQLite database and create all tables.
-    // Calls BaseStorage::init() internally.
-    // max_sessions: maximum number of sessions allowed (0 = unlimited).
-    using BaseStorage::init;  // bring base class init into scope
+    // Initialise storage: create DataStore and set up output directory.
+    // db_path: path to JSON snapshot file (e.g., /var/lib/ai-trap/datastore.json)
     bool init(const std::string& output_dir, const std::string& db_path,
               const std::string& trap_id = "", int max_sessions = 0);
 
-    // Shutdown: finalize prepared statements, close database.
-    void shutdown() override;
+    // Shutdown: save DataStore state, release resources.
+    void shutdown();
 
     void set_on_saved(OnSaved cb) { on_saved_ = std::move(cb); }
 
@@ -100,34 +99,18 @@ struct SessionActor : public ramen::Actor, public BaseStorage {
     }
 
     // ── Session operations ────────────────────────────────────────────────────
-    // Start a new session.  If a session is already active, it is auto-closed.
-    // Returns the new session_id.
     int64_t start_session();
-
-    // Stop the given session.  Returns false if session_id is not active.
     bool stop_session(int64_t session_id);
-
-    // Get the currently active session, or -1 if none.
     int64_t active_session_id() const;
-
-    // Get active session info as a domain object.
     SessionInfo active_session() const;
 
     // ── Inference gating ──────────────────────────────────────────────────────
-    // Called by Pipeline::run_loop() on every tick — lock-free.
     bool is_inference_enabled() const { return inference_enabled_.load(); }
 
     // ── Queries ───────────────────────────────────────────────────────────────
-    // List all sessions.
     std::vector<SessionInfo> list_sessions(int limit = 50, int offset = 0) const;
-
-    // Get a single session. Returns empty SessionInfo with id=-1 if not found.
     SessionInfo get_session(int64_t session_id) const;
-
-    // Get detections for a session.
     std::vector<DetectionInfo> list_detections(int64_t session_id, int limit = 50, int offset = 0) const;
-
-    // Get a single detection. Returns empty DetectionInfo with id=-1 if not found.
     DetectionInfo get_detection(int64_t detection_id) const;
 
     // ── Trap identity ─────────────────────────────────────────────────────────
@@ -135,12 +118,13 @@ struct SessionActor : public ramen::Actor, public BaseStorage {
     bool provision(const std::string& trap_id);
     std::string trap_id() const;
 
-private:
-    // ── Database helpers ──────────────────────────────────────────────────────
-    bool init_db();
-    void auto_close_active_session();
-    void enforce_max_sessions();
+    // ── Access the underlying DataStore ──────────────────────────────────────
+    DataStore* data_store() { return &data_store_; }
 
+    // Output directory path (for storage metrics)
+    std::string output_dir() const { return output_dir_; }
+
+private:
     // ── Classification storage ────────────────────────────────────────────────
     std::string save_jpeg(const JpegCrop& crop);
     int64_t insert_classification(const JpegCrop& crop, const std::string& path);
@@ -148,15 +132,15 @@ private:
     std::string output_dir_;
     OnSaved     on_saved_;
 
-    // Prepared statements
-    sqlite3_stmt* insert_stmt_ = nullptr;  // prepared INSERT INTO classifications
+    // ── In-memory data store (replaces SQLite) ────────────────────────────────
+    DataStore data_store_;
 
     // ── Session state ─────────────────────────────────────────────────────────
     mutable std::mutex session_mutex_;
     std::atomic<int64_t> active_session_id_{-1};
     std::atomic<bool>    inference_enabled_{false};
 
-    // Trap identity
+    // Trap identity (cached here + in DataStore for atomic fast-path)
     std::string trap_id_;
 
     // Max sessions limit (0 = unlimited)

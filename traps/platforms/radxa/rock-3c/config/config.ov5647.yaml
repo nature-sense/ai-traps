@@ -1,0 +1,51 @@
+# ─── AI Camera Trap Runtime Configuration — ROCK 3C (RK3566) ─────────────────
+# Camera: OV5647 (Raspberry Pi Camera v1.3) via RK_AIQ ISP
+# Inference: Rockchip NPU (RKNN model format) — YOLO26n
+# Scaling: RGA hardware scaler
+#
+# Deploy to: /usr/share/ai-trap/config.yaml
+# Model:    /usr/share/ai-trap/yolo26n.rknn
+
+camera:
+  model: "ov5647"
+  full_w: 1920
+  full_h: 1080
+  med_w: 640
+  med_h: 480
+  lores_w: 320
+  lores_h: 320
+  fps: 15
+  device: "/dev/video0"
+  scene_dir: ""
+  iq_dir: "/usr/share/iqfiles"
+
+inference:
+  backend: "rknn"
+  model_path: "/usr/share/ai-trap/yolo26n.rknn"
+  confidence_threshold: 0.5
+
+storage:
+  output_dir: "/var/lib/ai-trap/detections"
+  db_path: "/var/lib/ai-trap/trap.db"
+
+cropper:
+  padding_px: 10
+  min_confidence: 0.5
+
+classifier:
+  model_path: ""
+  confidence_threshold: 0.5
+  input_width: 224
+  input_height: 224
+
+actuator:
+  type: "none"
+  gpio: -1
+  duration_ms: 3000
+
+motion_sensor:
+  gpio: -1
+
+decision:
+  trigger_confidence: 0.6
+  cooldown_ms: 3000

@@ -1,0 +1,13 @@
+model_parameters:
+  onnx_model: "/models/yolo26n.onnx"
+  output_model_file_prefix: "yolo26n"
+input_parameters:
+  input_name: "images"
+  input_type_rt: "nv12"
+  input_type_train: "bgr"
+  norm_type: "data_scale"
+  scale_value: 0.00392156862745098
+  input_shape: [1, 3, 320, 320]
+calibration_parameters:
+  cal_data_dir: "/models/"
+  calibration_type: "max"

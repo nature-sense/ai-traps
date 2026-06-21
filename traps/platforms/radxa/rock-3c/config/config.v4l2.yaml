@@ -1,0 +1,72 @@
+# AI Camera Trap — Generic V4L2 Camera Configuration
+# ====================================================
+# Works with any sensor or webcam that has a Linux V4L2 driver.
+# The HAL auto-discovers the capture device and negotiates NV12 format.
+#
+# Supported devices include:
+#   - IMX219, IMX415, OV5647 (via rkisp ISP driver)
+#   - USB UVC webcams
+#   - Any V4L2 video capture device
+#
+# Copy to /etc/ai-trap/config.yaml on the target board.
+
+camera:
+  # V4L2 generic HAL (no RKAIQ, no ISP tuning files needed)
+  model: "v4l2"
+
+  # Capture device path.
+  # If device auto-detection fails, set the correct path here:
+  #   /dev/video0  — rkisp mainpath (ROCK 3C ISP output, NV12)
+  #   /dev/video1  — rkisp selfpath (optional)
+  #   /dev/video2  — USB UVC webcam
+  device: "/dev/video0"
+
+  # Capture resolution (must be supported by the sensor/driver)
+  full_w: 1920
+  full_h: 1080
+
+  # Medium-res for MJPEG streaming
+  med_w: 640
+  med_h: 480
+
+  # Lores for YOLO inference
+  lores_w: 320
+  lores_h: 320
+
+  # Target framerate (driver may adjust to nearest supported value)
+  fps: 15
+
+  # Not used by V4L2 HAL (no ISP tuning needed)
+  iq_dir: "/oem/usr/share/iqfiles"
+  scene_dir: ""
+
+inference:
+  backend: "rknn"
+  model_path: "/usr/share/ai-trap/yolo26n.rknn"
+  confidence_threshold: 0.5
+
+storage:
+  output_dir: "/var/lib/ai-trap/data"
+  db_path: "/var/lib/ai-trap/data/detections.json"
+
+cropper:
+  padding_px: 16
+  min_confidence: 0.0
+
+classifier:
+  model_path: ""
+  confidence_threshold: 0.5
+  input_width: 224
+  input_height: 224
+
+actuator:
+  type: "none"
+  gpio: -1
+  duration_ms: 3000
+
+motion_sensor:
+  gpio: -1
+
+decision:
+  trigger_confidence: 0.0
+  cooldown_ms: 5000

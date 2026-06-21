@@ -33,7 +33,8 @@ ai-traps/
 ├── models/
 │   └── detection/insects/yolo26n/  # YOLO training + model conversion
 └── tools/
-    └── mcp/                  # MCP servers for AI-assisted development
+    ├── mcp/                  # MCP server for trap operations
+    └── native/               # Native Clang cross-compilation (macOS)
 ```
 
 ## Supported Platforms
@@ -71,21 +72,24 @@ meson setup build -Dplatform=host
 meson compile -C build
 ```
 
-### Build for ROCK 3C (via SSH)
+### Native Cross-Compilation for ROCK 3C (macOS)
 
 ```bash
-# Rsync source to board, then SSH in
-ssh radxa@rock-3c.local
-cd ~/ai-traps/traps/toolkit
-meson setup build-rock3c -Dplatform=rock3c
-meson compile -C build-rock3c
+# Prerequisites
+brew install llvm meson ninja pkg-config
+export PATH="/opt/homebrew/opt/llvm/bin:$PATH"
 
-cd ~/ai-traps/traps/targets
-meson setup build-rock3c -Dplatform=rock3c
-meson compile -C build-rock3c
+# First time: create sysroot from live board
+./tools/native/setup-sysroot.sh rock3c root@rock-3c.local
+
+# Build everything
+./tools/native/build.sh rock3c all
+
+# Deploy to board
+scp build-rock3c/target/ai-trap-detection root@rock-3c.local:/usr/local/bin/
 ```
 
-Or use the MCP build tools (see [tools/mcp/](tools/mcp/README.md)).
+See [tools/native/](tools/native/) and [docs/native-build.md](docs/native-build.md) for full details.
 
 ## Pipeline Actors
 
@@ -132,11 +136,10 @@ The [Flutter mobile app](apps/ai_trap_manager/) provides:
 
 ## Development Tools
 
-### MCP Servers
+### MCP Server
 
-Two MCP servers enable AI-assisted development:
+The project provides a single MCP server for trap operations:
 
-- **[ai-trap-build](tools/mcp/README.md)** — Build, run, debug, and monitor traps on remote boards via SSH
 - **[trap-ops](tools/mcp/README.md)** — Query trap REST API for status, sessions, detections, and metrics
 
 ### Actor Diagram
@@ -160,6 +163,8 @@ meson compile -C build
 ```
 
 The toolkit builds as a static library (`libai-trap-toolkit.a`) that the detection target links against. Both must be built with the same platform flag.
+
+For cross-compilation on macOS, use the native Clang toolchain in [tools/native/](tools/native/).
 
 ## Status
 

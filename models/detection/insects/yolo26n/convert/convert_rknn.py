@@ -18,7 +18,19 @@
 """
 Convert a trained ONNX model to RKNN format for Rockchip NPU (RK3566 / ROCK 3C).
 
-This script can run in three modes:
+⚠️  PREFERRED APPROACH: Use Ultralytics native RKNN export instead.
+   Ultralytics now supports direct .pt -> .rknn export:
+     from ultralytics import YOLO
+     model = YOLO('yolo26n.pt')
+     model.export(format='rknn', name='rk3566', int8=True)
+
+   This handles pruning the final detection layer, INT8 quantization, and
+   target platform optimization automatically. The training script at
+   train_yolo26n.py supports --rknn flag for one-step train+export.
+
+This script is the LEGACY manual conversion path, kept for compatibility.
+
+It can run in three modes:
   1. Local (x86_64 Linux with rknn-toolkit2 installed)
   2. Docker (x86_64 Linux container)
   3. Remote via SSH (on the ROCK 3C board itself)

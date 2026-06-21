@@ -18,7 +18,7 @@
 
 #include <ramen.hpp>
 #include "hal/api/types.hpp"
-#include "jpeg-encoder/hardware_jpeg_encoder.hpp"
+#include "hal/api/h264_encoder.hpp"
 #include "http_sse_actor.h"
 #include <atomic>
 #include <mutex>
@@ -40,8 +40,8 @@ namespace ct {
 // circular buffer that handles the speed disparity between the pipeline writer
 // thread and the HTTP handler thread.
 //
-// Pipeline thread:  pushes frame_medium → in_frame → JPEG encode → circular buffer
-//                   → sends MjpegFrame to HttpSseActor via ramen::send()
+// Pipeline thread:  pushes frame_medium → in_frame → H.264 encode → circular buffer
+//                   → sends H264Frame to HttpSseActor via ramen::send()
 // HTTP handler thread: calls try_get() to drain latest frame from circular buffer
 //
 // Circular buffer design:
@@ -50,12 +50,9 @@ namespace ct {
 //   - Reader (HTTP handler thread) reads the newest available slot
 //   - No heap allocations during steady-state operation
 //
-// JPEG encoding happens here (not in CaptureNode) so frames are only encoded
-// when at least one HTTP client is connected (active_ guard).
-//
-// Uses Rockchip MPP hardware JPEG encoder (VEPU2 on RK3566) for NV12→JPEG
-// conversion. Falls back to software libjpeg-turbo if MPP is unavailable.
-// Hardware encoding takes ~4ms per 640×480 frame vs ~15ms for software.
+// H.264 encoding uses a platform-specific HAL implementation selected at compile time:
+//   - rock3c: MppH264Encoder (Rockchip MPP hardware VEPU)
+//   - rdk-x5: SoftH264Encoder (FFmpeg libavcodec software encoder)
 class MjpegBridgeActor : public ramen::Actor {
 public:
     MjpegBridgeActor();
@@ -66,23 +63,19 @@ public:
     void onStop() override;
 
     // ── Type-erased message dispatch ───────────────────────────────────────────
-    // Handles requests from the HTTP server for the latest frame.
     void onMessageAny(const std::type_info& type, void* msg) override;
 
     // ── Input (wired inside Ramen graph) ──────────────────────────────────────
-    // Receives NV12 frames from the overlay, encodes to JPEG, and pushes into
-    // the circular buffer. Initialized in constructor.
     ramen::Pushable<FrameBuffer> in_frame;
 
     // ── Called by HTTP handler thread ─────────────────────────────────────────
-    // Returns the latest frame from the circular buffer, or nullopt if empty.
     std::optional<MjpegFrame> try_get();
 
     // Track connected client count so we can skip encoding when idle.
     void client_connected()    { ++active_; }
     void client_disconnected() { if (active_ > 0) --active_; }
 
-    // Name of the HTTP server actor to send MJPEG frames to.
+    // Name of the HTTP server actor to send H.264 frames to.
     std::string server_actor_name_{"http_server"};
 
 private:
@@ -97,10 +90,7 @@ private:
         bool valid = false;
     };
 
-    // Push a new frame into the circular buffer (writer side, pipeline thread).
-    void push_frame(std::vector<uint8_t>&& jpeg_data, int width, int height);
-
-    // Pop the newest valid frame from the circular buffer (reader side, HTTP thread).
+    void push_frame(std::vector<uint8_t>&& h264_data, int width, int height);
     std::optional<MjpegFrame> pop_newest();
 
     std::array<Slot, CIRCULAR_BUFFER_SIZE> buffer_;
@@ -109,16 +99,15 @@ private:
     size_t read_index_{0};
     size_t count_{0};
 
-    // ── JPEG Encoding ──────────────────────────────────────────────────────────
-    std::vector<uint8_t> encode_jpeg(const FrameBuffer& f);
+    // ── H.264 Encoding ────────────────────────────────────────────────────────
+    std::vector<uint8_t> encode_h264(const FrameBuffer& f);
 
-    // Hardware MPP encoder (lazy-initialized, shared across all bridge instances)
-    static std::unique_ptr<HardwareJpegEncoder> hw_encoder_;
-    static std::once_flag hw_init_flag_;
+    // Hardware H.264 encoder (lazy-initialized, shared across all bridge instances)
+    static std::unique_ptr<H264Encoder> h264_encoder_;
+    static std::once_flag h264_init_flag_;
 
     // ── State ──────────────────────────────────────────────────────────────────
     std::atomic<int> active_{0};
 };
-
 
 } // namespace ct

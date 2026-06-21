@@ -19,10 +19,7 @@ class SseEvent {
   final String type;
   final Map<String, dynamic> data;
 
-  SseEvent({
-    required this.type,
-    required this.data,
-  });
+  SseEvent({required this.type, required this.data});
 
   /// Parses an SSE event string into an [SseEvent].
   ///
@@ -59,5 +56,5 @@ class SseEventType {
   static const sessionStopped = 'session_stopped';
   static const trackDetected = 'track_detected';
   static const cropSaved = 'crop_saved';
+  static const classificationSaved = 'classification_saved';
 }
-

@@ -68,6 +68,25 @@ struct OverlayActor {
         }
     }
 
+    // ── Clear ─────────────────────────────────────────────────────────────────
+    // Called when the session is stopped. Discards any pending frame so that
+    // no stale bounding boxes (drawn in a previous tick) are flushed to the
+    // MJPEG stream. The next camera tick will push a clean frame.
+    void clear_pending() {
+        pending_has_frame_ = false;
+    }
+
+    // ── Clear and push clean ───────────────────────────────────────────────────
+    // Called when the session is stopped. Pushes the pending frame WITHOUT
+    // drawing any overlays, so the MJPEG stream immediately shows a clean frame.
+    // If there's no pending frame, does nothing.
+    void clear_and_push_clean() {
+        if (pending_has_frame_ && pending_frame_.data) {
+            out_frame(pending_frame_);
+        }
+        pending_has_frame_ = false;
+    }
+
     // ── Output ────────────────────────────────────────────────────────────────
     ramen::Pusher<FrameBuffer> out_frame{};
 

@@ -26,7 +26,6 @@ class TrapScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final trapProvider = Provider.of<TrapProvider>(context);
-    final api = trapProvider.api;
 
     return Scaffold(
       body: Column(
@@ -34,11 +33,8 @@ class TrapScreen extends StatelessWidget {
           // ── Live MJPEG Stream ──────────────────────────────────────────
           Expanded(
             flex: 3,
-            child: api != null
-                ? CameraStreamWidget(
-                    streamUrl: api.mjpegStreamUrl,
-                    isLive: true,
-                  )
+            child: trapProvider.isConnected
+                ? CameraStreamWidget(wsUrl: trapProvider.wsUrl, isLive: true)
                 : const Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -78,22 +74,28 @@ class TrapScreen extends StatelessWidget {
                       ),
                       child: Row(
                         children: [
-                          const Icon(Icons.monitor_heart,
-                              color: Colors.green, size: 20),
+                          const Icon(
+                            Icons.monitor_heart,
+                            color: Colors.green,
+                            size: 20,
+                          ),
                           const SizedBox(width: 8),
                           Expanded(
-                          child: Text(
-                            'Session #${trapProvider.activeSession!.id} active — '
-                            '${trapProvider.activeSession!.detectionCount} insects',
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.green,
+                            child: Text(
+                              'Session #${trapProvider.activeSession!.id} active — '
+                              '${trapProvider.activeSession!.detectionCount} insects',
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.green,
+                              ),
                             ),
                           ),
+                          const Icon(
+                            Icons.chevron_right,
+                            color: Colors.green,
+                            size: 20,
                           ),
-                          const Icon(Icons.chevron_right,
-                              color: Colors.green, size: 20),
                         ],
                       ),
                     ),

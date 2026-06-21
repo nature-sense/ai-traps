@@ -17,11 +17,12 @@
 // actors/HttpSseActor.cpp
 #include "http_sse_actor.h"
 #include "mjpeg-bridge/mjpeg_bridge_actor.hpp"
-#include "civetweb.h"
+#include <nlohmann/json.hpp>
 #include <sstream>
 #include <algorithm>
 #include <chrono>
 #include <cstring>
+#include <string>
 
 namespace ct {
 
@@ -78,21 +79,12 @@ HttpSseActor::~HttpSseActor() {
 
 void HttpSseActor::onStart() {
     running_ = true;
-    cleanup_running_ = true;
-
-    // Start cleanup thread for stale MJPEG clients
-    cleanup_thread_ = std::thread([this]() {
-        while (cleanup_running_) {
-            std::this_thread::sleep_for(std::chrono::seconds(10));
-            cleanupStaleMjpegClients();
-        }
-    });
 
     // Build options array with stable strings
     std::string port_str = std::to_string(port_);
     const char* options[] = {
         "listening_ports", port_str.c_str(),
-        "num_threads", "4",
+        "num_threads", "12",
         "enable_keep_alive", "yes",
         "keep_alive_timeout_ms", "30000",
         nullptr
@@ -104,26 +96,38 @@ void HttpSseActor::onStart() {
 
     ctx_ = mg_start(&callbacks, this, options);
     if (!ctx_) {
-        // Handle startup error
-        cleanup_running_ = false;
-        if (cleanup_thread_.joinable()) {
-            cleanup_thread_.join();
-        }
+        running_ = false;
         return;
     }
+
+    // Register WebSocket handler at /ws
+    // This replaces the legacy /events (SSE) and /stream.mjpg /stream_hires.mjpg (MJPEG)
+    // endpoints with a single unified WebSocket endpoint:
+    //   - Binary frames → JPEG images
+    //   - Text frames   → JSON events (status, detections)
+    mg_set_websocket_handler(
+        ctx_,
+        "/ws",
+        HttpSseActor::wsConnectHandler,
+        HttpSseActor::wsReadyHandler,
+        HttpSseActor::wsDataHandler,
+        HttpSseActor::wsCloseHandler,
+        this
+    );
 }
 
 void HttpSseActor::onStop() {
     running_ = false;
-    cleanup_running_ = false;
+
+    // Clear WebSocket clients
+    {
+        std::lock_guard<std::mutex> lock(ws_mutex_);
+        ws_clients_.clear();
+    }
 
     if (ctx_) {
         mg_stop(ctx_);
         ctx_ = nullptr;
-    }
-
-    if (cleanup_thread_.joinable()) {
-        cleanup_thread_.join();
     }
 
     std::lock_guard<std::mutex> lock(pending_mutex_);
@@ -208,19 +212,65 @@ int HttpSseActor::requestHandler(struct mg_connection* conn) {
 
     const char* uri = req_info->local_uri ? req_info->local_uri : "";
 
-    // Route to appropriate handler based on URL
-    if (strcmp(uri, "/events") == 0) {
-        return actor->handleSseConnection(conn);
-    }
-    else if (strcmp(uri, "/stream.mjpg") == 0 || strcmp(uri, "/stream_hires.mjpg") == 0) {
-        return actor->handleMjpegStream(conn);
-    }
-    else if (strcmp(uri, "/health") == 0 || strcmp(uri, "/status") == 0) {
+    // Health check endpoint
+    if (strcmp(uri, "/health") == 0) {
         return actor->handleHealthCheck(conn);
     }
-    else {
-        return actor->handleRestRequest(conn);
+
+    // NOTE: /events (SSE) and /stream.mjpg (MJPEG) endpoints are removed.
+    // /status now handled by the REST route registered in HttpHandlerActor,
+    // which includes the trapId from the session actor.
+
+    // Return 0 for known paths that civetweb handles internally (WebSocket)
+    // so the begin_request callback doesn't block the WebSocket upgrade.
+    if (strcmp(uri, "/ws") == 0) {
+        return 0; // Let civetweb handle the WebSocket upgrade
     }
+
+    // ── Crop image serving ────────────────────────────────────────────────
+    // Serve JPEG files from /v1/crops/{date}/{filename} by reading them from
+    // the output directory (known at init time). This avoids the need for
+    // Ramen messaging for binary responses.
+    if (strncmp(uri, "/v1/crops/", 10) == 0) {
+        // URI format: /v1/crops/2026-06-14/1781436445038_2.jpg
+        const char* crop_path = uri + 10; // skip "/v1/crops/"
+        // Sanitize: no ".." allowed
+        if (strstr(crop_path, "..") != nullptr) {
+            mg_printf(conn, "HTTP/1.1 403 Forbidden\r\nContent-Length: 0\r\n\r\n");
+            return 1;
+        }
+        // Build full path. We use a known base directory.
+        // The output dir is passed via config at startup.
+        std::string full_path = actor->crop_base_dir_ + "/" + crop_path;
+        FILE* f = fopen(full_path.c_str(), "rb");
+        if (!f) {
+            mg_printf(conn, "HTTP/1.1 404 Not Found\r\nContent-Length: 0\r\n\r\n");
+            return 1;
+        }
+        fseek(f, 0, SEEK_END);
+        long fsize = ftell(f);
+        fseek(f, 0, SEEK_SET);
+        std::vector<uint8_t> buf(fsize);
+        if (fsize > 0) {
+            fread(buf.data(), 1, fsize, f);
+        }
+        fclose(f);
+
+        mg_printf(conn,
+            "HTTP/1.1 200 OK\r\n"
+            "Content-Type: image/jpeg\r\n"
+            "Content-Length: %ld\r\n"
+            "Cache-Control: public, max-age=86400\r\n"
+            "Access-Control-Allow-Origin: *\r\n"
+            "\r\n", fsize);
+        if (fsize > 0) {
+            mg_write(conn, buf.data(), fsize);
+        }
+        return 1;
+    }
+
+    // Try REST routes (includes /status, /v1/*)
+    return actor->handleRestRequest(conn);
 }
 
 // ============================================================================
@@ -287,8 +337,7 @@ int HttpSseActor::handleRestRequest(struct mg_connection* conn) {
 int HttpSseActor::handleHealthCheck(struct mg_connection* conn) {
     std::string response = R"({
         "status": "running",
-        "sse_clients": )" + std::to_string(sse_clients_.size()) + R"(,
-        "mjpeg_clients": )" + std::to_string(mjpeg_clients_.size()) + R"(
+        "ws_clients": )" + std::to_string(ws_clients_.size()) + R"(
     })";
 
     mg_printf(conn,
@@ -335,254 +384,235 @@ void HttpSseActor::handleHttpResponse(HttpResponse& response) {
 }
 
 // ============================================================================
-// SSE Implementation
+// WebSocket Implementation
+// ============================================================================
+//
+// The /ws WebSocket endpoint replaces both /events (SSE) and /stream.mjpg
+// (MJPEG). It sends:
+//
+//   Binary frames: JPEG image data (from MjpegFrame messages)
+//   Text frames:   JSON event payloads (from SseEvent messages), e.g.:
+//                  {"event":"session_started","sessionId":1,"startedAt":...}
+//
+// When a new client connects, it immediately receives the latest cached
+// JPEG frame (if available) as a binary message.
 // ============================================================================
 
-int HttpSseActor::handleSseConnection(struct mg_connection* conn) {
-    mg_printf(conn,
-        "HTTP/1.1 200 OK\r\n"
-        "Cache-Control: no-cache\r\n"
-        "Content-Type: text/event-stream\r\n"
-        "Transfer-Encoding: chunked\r\n"
-        "Connection: keep-alive\r\n"
-        "\r\n");
+int HttpSseActor::wsConnectHandler(const struct mg_connection* conn, void* cbdata) {
+    // Allow all WebSocket connection requests
+    (void)conn;
+    (void)cbdata;
+    return 0; // 0 = proceed with handshake
+}
+
+void HttpSseActor::wsReadyHandler(struct mg_connection* conn, void* cbdata) {
+    // WebSocket handshake completed. Add client to our list.
+    auto* actor = static_cast<HttpSseActor*>(cbdata);
+    if (!actor || !actor->running_) return;
 
     {
-        std::lock_guard<std::mutex> lock(sse_mutex_);
-        sse_clients_.push_back(conn);
+        std::lock_guard<std::mutex> lock(actor->ws_mutex_);
+        actor->ws_clients_.push_back(conn);
     }
 
-    // Send welcome event
-    std::string welcome = "event: connected\ndata: {\"status\":\"ok\",\"timestamp\":" +
-                          std::to_string(getTimestampMs()) + "}\n\n";
-    mg_send_chunk(conn, welcome.c_str(), welcome.size());
-    mg_send_chunk(conn, "", 0);
+    // Send a welcome text frame to keep the connection alive
+    std::string welcome = R"({"event":"connected","data":{}})";
+    mg_websocket_write(conn, MG_WEBSOCKET_OPCODE_TEXT,
+                       welcome.c_str(), welcome.size());
 
-    return 1; // MG_REQUEST_PROCESSED
+    // Send the latest cached frame immediately (if available)
+    MjpegFrame cached;
+    bool have_cached = false;
+    {
+        std::lock_guard<std::mutex> lock(actor->frame_mutex_);
+        if (actor->latest_frame_.has_value()) {
+            cached = actor->latest_frame_.value();
+            have_cached = true;
+        }
+    }
+
+    if (have_cached && !cached.data.empty()) {
+        mg_websocket_write(conn, MG_WEBSOCKET_OPCODE_BINARY,
+                           reinterpret_cast<const char*>(cached.data.data()),
+                           cached.data.size());
+    }
+
+    // Signal the MJPEG bridge that a client connected, so it starts
+    // encoding frames and sending MjpegFrame messages.
+    auto* registry = ramen::ActorRegistry::instance();
+    auto* bridge = registry ? registry->get("mjpeg_bridge") : nullptr;
+    if (bridge) {
+        auto* mjpeg_bridge = static_cast<ct::MjpegBridgeActor*>(bridge);
+        mjpeg_bridge->client_connected();
+    }
 }
+
+int HttpSseActor::wsDataHandler(struct mg_connection* conn,
+                                int bits,
+                                char* data,
+                                size_t data_len,
+                                void* cbdata) {
+    auto* actor = static_cast<HttpSseActor*>(cbdata);
+    if (!actor || !actor->running_) {
+        return 0; // Close connection
+    }
+
+    // Handle WebSocket control frames
+    int opcode = bits & 0x0f;
+
+    if (opcode == MG_WEBSOCKET_OPCODE_CONNECTION_CLOSE) {
+        return 0; // Close this connection
+    }
+
+    if (opcode == MG_WEBSOCKET_OPCODE_PING) {
+        // Respond with Pong
+        mg_websocket_write(conn, MG_WEBSOCKET_OPCODE_PONG, data, data_len);
+        return 1; // Keep connection open
+    }
+
+    if (opcode == MG_WEBSOCKET_OPCODE_PONG) {
+        return 1; // Ignore pong, keep connection open
+    }
+
+    // ── Handle TEXT frames: try JSON-RPC first, fall back to event handling ──
+    if (opcode == MG_WEBSOCKET_OPCODE_TEXT && data_len > 0) {
+        std::string text(data, data_len);
+
+        // Try to parse as JSON
+        try {
+            auto json = nlohmann::json::parse(text);
+
+            // If it has "id" and "method", it's a JSON-RPC request → route via callback
+            if (json.contains("id") && json.contains("method")) {
+                if (actor->ws_api_callback_) {
+                    actor->ws_api_callback_(text, conn);
+                } else {
+                    // Callback not set — send error response
+                    nlohmann::json error_resp = {
+                        {"id", json["id"]},
+                        {"error", {{"code", 503}, {"message", "API handler not available"}}}
+                    };
+                    std::string error_str = error_resp.dump();
+                    mg_websocket_write(conn, MG_WEBSOCKET_OPCODE_TEXT,
+                                       error_str.c_str(), error_str.size());
+                }
+                return 1;
+            }
+            // Otherwise it might be a push event — ignore for now
+        } catch (const std::exception&) {
+            // Not valid JSON — ignore the frame
+            (void)text;
+        }
+    }
+
+    // BINARY frames from client are currently ignored
+    (void)data;
+    (void)data_len;
+
+    return 1; // Keep connection open
+}
+
+void HttpSseActor::wsCloseHandler(const struct mg_connection* conn, void* cbdata) {
+    // WebSocket connection closed. Remove client from our list.
+    auto* actor = static_cast<HttpSseActor*>(cbdata);
+    if (!actor) return;
+
+    std::lock_guard<std::mutex> lock(actor->ws_mutex_);
+    auto& clients = actor->ws_clients_;
+    // Find by raw pointer identity
+    clients.erase(
+        std::remove_if(clients.begin(), clients.end(),
+            [conn](struct mg_connection* c) { return c == conn; }),
+        clients.end()
+    );
+}
+
+// ============================================================================
+// WebSocket Send to Specific Connection
+// ============================================================================
+
+void HttpSseActor::sendWsTextTo(struct mg_connection* conn, const std::string& message) {
+    if (!conn) return;
+    mg_websocket_write(conn, MG_WEBSOCKET_OPCODE_TEXT,
+                       message.c_str(), message.size());
+}
+
+// ============================================================================
+// WebSocket Broadcast
+// ============================================================================
+
+void HttpSseActor::broadcastWsText(const std::string& message) {
+    std::lock_guard<std::mutex> lock(ws_mutex_);
+
+    // Iterate in reverse so erasing doesn't invalidate remaining indices
+    for (auto it = ws_clients_.rbegin(); it != ws_clients_.rend(); ) {
+        struct mg_connection* conn = *it;
+        if (!conn) {
+            it = decltype(it)(ws_clients_.erase(std::next(it).base()));
+            continue;
+        }
+
+        int ret = mg_websocket_write(conn, MG_WEBSOCKET_OPCODE_TEXT,
+                                     message.c_str(), message.size());
+        if (ret <= 0) {
+            // Write failed — connection is dead, remove it
+            // Convert reverse iterator to forward
+            auto forward = std::next(it).base();
+            it = decltype(it)(ws_clients_.erase(forward));
+        } else {
+            ++it;
+        }
+    }
+}
+
+void HttpSseActor::broadcastWsBinary(const std::vector<uint8_t>& data) {
+    std::lock_guard<std::mutex> lock(ws_mutex_);
+
+    for (auto it = ws_clients_.rbegin(); it != ws_clients_.rend(); ) {
+        struct mg_connection* conn = *it;
+        if (!conn) {
+            it = decltype(it)(ws_clients_.erase(std::next(it).base()));
+            continue;
+        }
+
+        int ret = mg_websocket_write(conn, MG_WEBSOCKET_OPCODE_BINARY,
+                                     reinterpret_cast<const char*>(data.data()),
+                                     data.size());
+        if (ret <= 0) {
+            auto forward = std::next(it).base();
+            it = decltype(it)(ws_clients_.erase(forward));
+        } else {
+            ++it;
+        }
+    }
+}
+
+// ============================================================================
+// Legacy SSE Event Handler — now sends via WebSocket text frames
+// ============================================================================
 
 void HttpSseActor::handleSseEvent(SseEvent& event) {
-    std::string sse_data = "event: " + event.event_type + "\n";
-    sse_data += "data: " + event.data + "\n";
-    if (!event.id.empty()) sse_data += "id: " + event.id + "\n";
-    sse_data += "\n";
+    // Build a compact JSON message: {"event":"...","data":{...}}
+    // The event.data is already JSON from the upstream actor.
+    std::string ws_message = R"({"event":")" + event.event_type +
+                             R"(","data":)" + event.data + "}";
 
-    std::lock_guard<std::mutex> lock(sse_mutex_);
-    for (auto* conn : sse_clients_) {
-        mg_send_chunk(conn, sse_data.c_str(), sse_data.size());
-        mg_send_chunk(conn, "", 0);
-    }
-}
-
-void HttpSseActor::broadcastSse(const SseEvent& event) {
-    // Make a copy since handleSseEvent takes a non-const ref
-    SseEvent copy = event;
-    handleSseEvent(copy);
+    broadcastWsText(ws_message);
 }
 
 // ============================================================================
-// MJPEG Implementation
+// Legacy MJPEG Frame Handler — now sends via WebSocket binary frames
 // ============================================================================
-
-int HttpSseActor::handleMjpegStream(struct mg_connection* conn) {
-    const struct mg_request_info* req_info = mg_get_request_info(conn);
-
-    // Parse quality from query string (e.g., /stream.mjpg?quality=75)
-    int quality = 75;
-    bool is_hires = (strcmp(req_info->local_uri, "/stream_hires.mjpg") == 0);
-
-    if (is_hires) {
-        quality = 95;
-    }
-
-    if (req_info->query_string) {
-        auto params = parseQueryParams(req_info->query_string);
-        auto it = params.find("quality");
-        if (it != params.end()) {
-            quality = std::stoi(it->second);
-            quality = std::clamp(quality, 1, 100);
-        }
-    }
-
-    // Register this client
-    uint64_t client_id = registerMjpegClient(conn, quality);
-
-    // Send MJPEG headers with chunked transfer encoding so civetweb
-    // keeps the connection alive for streaming frames.
-    std::string boundary = "boundary_" + std::to_string(client_id);
-
-    mg_printf(conn,
-        "HTTP/1.1 200 OK\r\n"
-        "Content-Type: multipart/x-mixed-replace; boundary=%s\r\n"
-        "Cache-Control: no-cache\r\n"
-        "Transfer-Encoding: chunked\r\n"
-        "Connection: keep-alive\r\n"
-        "Access-Control-Allow-Origin: *\r\n"
-        "\r\n",
-        boundary.c_str());
-
-    // Notify the MJPEG bridge that a client connected (so it starts encoding)
-    {
-        auto* registry = ramen::ActorRegistry::instance();
-        auto* bridge = registry ? registry->get("mjpeg_bridge") : nullptr;
-        if (bridge) {
-            // Cast to MjpegBridgeActor to call client_connected()
-            auto* mjpeg_bridge = static_cast<ct::MjpegBridgeActor*>(bridge);
-            mjpeg_bridge->client_connected();
-        }
-    }
-
-    // Send the latest frame immediately if available.
-    // First try the MJPEG bridge's circular buffer (more recent), then fall
-    // back to our own cache.
-    std::optional<MjpegFrame> initial_frame;
-    {
-        auto* registry = ramen::ActorRegistry::instance();
-        auto* bridge = registry ? registry->get("mjpeg_bridge") : nullptr;
-        if (bridge) {
-            // Request the latest frame from the bridge's circular buffer
-            auto* mjpeg_bridge = static_cast<ct::MjpegBridgeActor*>(bridge);
-            auto latest = mjpeg_bridge->try_get();
-            if (latest.has_value()) {
-                initial_frame = std::move(latest.value());
-            }
-        }
-    }
-    if (!initial_frame.has_value()) {
-        std::lock_guard<std::mutex> lock(frame_mutex_);
-        if (latest_frame_.has_value()) {
-            initial_frame = latest_frame_.value();
-        }
-    }
-    if (initial_frame.has_value()) {
-        std::string part = formatMjpegPart(initial_frame.value(), boundary);
-        mg_send_chunk(conn, part.c_str(), part.size());
-        mg_send_chunk(conn, "", 0);
-    }
-
-    // Update client activity
-    {
-        std::lock_guard<std::mutex> lock(mjpeg_mutex_);
-        auto it = mjpeg_clients_.find(client_id);
-        if (it != mjpeg_clients_.end()) {
-            it->second.last_activity = std::chrono::steady_clock::now();
-        }
-    }
-
-    return 1; // MG_REQUEST_PROCESSED
-}
 
 void HttpSseActor::handleMjpegFrame(MjpegFrame& frame) {
-    // Cache latest frame
+    // Cache the latest frame for new WebSocket clients
     {
         std::lock_guard<std::mutex> lock(frame_mutex_);
         latest_frame_ = frame;
     }
 
-    // Broadcast to all connected MJPEG clients
-    broadcastMjpegFrame(frame);
-}
-
-void HttpSseActor::broadcastMjpegFrame(const MjpegFrame& frame) {
-    std::lock_guard<std::mutex> lock(mjpeg_mutex_);
-
-    std::vector<uint64_t> stale_clients;
-
-    for (auto& [id, client] : mjpeg_clients_) {
-        // Check if connection is still valid
-        if (!client.conn) {
-            stale_clients.push_back(id);
-            continue;
-        }
-
-        // Update last activity
-        client.last_activity = std::chrono::steady_clock::now();
-
-        // Format and send frame using chunked encoding (matches the
-        // Transfer-Encoding: chunked header sent in handleMjpegStream).
-        std::string part = formatMjpegPart(frame, client.boundary);
-        mg_send_chunk(client.conn, part.c_str(), part.size());
-        mg_send_chunk(client.conn, "", 0);
-    }
-
-    // Clean up stale clients
-    for (uint64_t id : stale_clients) {
-        unregisterMjpegClient(id);
-    }
-}
-
-std::string HttpSseActor::formatMjpegPart(const MjpegFrame& frame, const std::string& boundary) {
-    std::string result;
-    result.reserve(256 + frame.data.size());
-
-    result += "--" + boundary + "\r\n";
-    result += "Content-Type: image/jpeg\r\n";
-    result += "Content-Length: " + std::to_string(frame.data.size()) + "\r\n";
-    result += "X-Timestamp: " + std::to_string(frame.timestamp) + "\r\n";
-    result += "\r\n";
-
-    // Append JPEG binary data
-    result.append(reinterpret_cast<const char*>(frame.data.data()), frame.data.size());
-    result += "\r\n";
-
-    return result;
-}
-
-uint64_t HttpSseActor::registerMjpegClient(struct mg_connection* conn, int quality) {
-    uint64_t client_id = next_client_id_++;
-
-    MjpegClient client;
-    client.id = client_id;
-    client.conn = conn;
-    client.boundary = "boundary_" + std::to_string(client_id);
-    client.quality = quality;
-    client.last_activity = std::chrono::steady_clock::now();
-
-    {
-        std::lock_guard<std::mutex> lock(mjpeg_mutex_);
-        mjpeg_clients_[client_id] = std::move(client);
-    }
-
-    return client_id;
-}
-
-void HttpSseActor::unregisterMjpegClient(uint64_t client_id) {
-    std::lock_guard<std::mutex> lock(mjpeg_mutex_);
-    mjpeg_clients_.erase(client_id);
-}
-
-void HttpSseActor::cleanupStaleMjpegClients() {
-    std::lock_guard<std::mutex> lock(mjpeg_mutex_);
-
-    auto now = std::chrono::steady_clock::now();
-    std::vector<uint64_t> stale_clients;
-
-    for (const auto& [id, client] : mjpeg_clients_) {
-        auto elapsed = std::chrono::duration_cast<std::chrono::seconds>(now - client.last_activity);
-        if (elapsed.count() > STALE_TIMEOUT_SECONDS) {
-            stale_clients.push_back(id);
-        }
-    }
-
-    for (uint64_t id : stale_clients) {
-        mjpeg_clients_.erase(id);
-    }
-}
-
-// ============================================================================
-// Connection Helpers
-// ============================================================================
-
-bool HttpSseActor::writeToConnection(struct mg_connection* conn, const std::string& data) {
-    if (!conn) return false;
-    int result = mg_write(conn, data.c_str(), data.size());
-    return result == static_cast<int>(data.size());
-}
-
-bool HttpSseActor::writeToConnection(struct mg_connection* conn, const std::vector<uint8_t>& data) {
-    if (!conn || data.empty()) return false;
-    int result = mg_write(conn, data.data(), data.size());
-    return result == static_cast<int>(data.size());
+    // Broadcast to all WebSocket clients as binary frame
+    broadcastWsBinary(frame.data);
 }
 
 // ============================================================================
@@ -604,11 +634,6 @@ std::unordered_map<std::string, std::string> HttpSseActor::parseQueryParams(cons
         }
     }
     return params;
-}
-
-std::string HttpSseActor::generateEventId() {
-    static std::atomic<uint64_t> counter{0};
-    return std::to_string(getTimestampMs()) + "-" + std::to_string(counter++);
 }
 
 uint64_t HttpSseActor::getTimestampMs() {

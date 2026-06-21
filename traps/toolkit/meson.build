@@ -43,10 +43,15 @@ endif
 lib_dirs = [sdk_path + '/lib', '/usr/lib', '/lib', '/usr/local/lib']
 inc_dirs = ['/usr/local/include']
 
-# macOS Homebrew paths (only add if they exist)
+# macOS Homebrew paths (only add if they exist and we're not cross-compiling)
+# When cross-compiling, Homebrew headers can conflict with sysroot headers.
 foreach d : ['/opt/homebrew/include', '/opt/homebrew/Cellar/nlohmann-json/3.12.0/include']
   if run_command('sh', '-c', 'test -d ' + d + ' && echo yes || echo no', check: false).stdout().strip() == 'yes'
-    inc_dirs += [d]
+    if meson.is_cross_build()
+      message('Skipping Homebrew include path ' + d + ' during cross-compilation')
+    else
+      inc_dirs += [d]
+    endif
   endif
 endforeach
 
@@ -80,9 +85,29 @@ if run_command('sh', '-c', 'test -d ' + rockchip_inc + ' && echo yes || echo no'
 endif
 
 # Add RKAIQ include subdirectories (mandatory for uAPI2 headers)
-rkaiq_inc_dir = sdk_path + '/include/rkaiq'
-rkaiq_inc_exists = run_command('sh', '-c', 'test -d ' + rkaiq_inc_dir + ' && echo yes || echo no', check: false).stdout().strip() == 'yes'
-if rkaiq_inc_exists
+# When cross-compiling, the SDK headers live inside the sysroot, not on the
+# build machine.  Check both the native path and the sysroot path.
+rkaiq_candidates = [sdk_path + '/include/rkaiq']
+if meson.is_cross_build()
+  # Extract sysroot from the cross-compilation c_args (--sysroot=...)
+  sysroot_arg = ''
+  foreach a : get_option('c_args')
+    if a.startswith('--sysroot=')
+      sysroot_arg = a.strip('--sysroot=')
+    endif
+  endforeach
+  if sysroot_arg != ''
+    rkaiq_candidates += [sysroot_arg + '/usr/include/rkaiq']
+  endif
+endif
+rkaiq_inc_dir = ''
+foreach cand : rkaiq_candidates
+  if run_command('sh', '-c', 'test -d ' + cand + ' && echo yes || echo no', check: false).stdout().strip() == 'yes'
+    rkaiq_inc_dir = cand
+    break
+  endif
+endforeach
+if rkaiq_inc_dir != ''
     # rkaiq headers use relative includes across sub-directories
     foreach sub : ['common', 'algos', 'xcore', 'iq_parser', 'iq_parser_v2', 'uAPI2']
         subdir = rkaiq_inc_dir + '/' + sub
@@ -91,6 +116,22 @@ if rkaiq_inc_exists
         endif
     endforeach
     inc_dirs += [rkaiq_inc_dir]
+endif
+
+# Add RKNN include directory
+rknn_candidates = [sdk_path + '/include/rknn']
+if meson.is_cross_build() and sysroot_arg != ''
+  rknn_candidates += [sysroot_arg + '/usr/include/rknn']
+endif
+rknn_inc_dir = ''
+foreach cand : rknn_candidates
+  if run_command('sh', '-c', 'test -d ' + cand + ' && echo yes || echo no', check: false).stdout().strip() == 'yes'
+    rknn_inc_dir = cand
+    break
+  endif
+endforeach
+if rknn_inc_dir != ''
+    inc_dirs += [rknn_inc_dir]
 endif
 
 # Find hardware libraries (Rockchip)
@@ -157,7 +198,7 @@ gal_dep = declare_dependency(
 )
 
 # ─── Global Include Paths ─────────────────────────────────────────────────────
-inc = [include_directories(['src', 'src/hal/api', 'src/actors', 'src/actors/http-sse', 'include']), rk_inc]
+inc = [include_directories(['src', 'src/hal/api', 'src/actors', 'src/actors/http-sse', 'include', '../platforms']), rk_inc]
 
 # ─── Global Compile Arguments ─────────────────────────────────────────────────
 if rknn_lib.found()
@@ -203,19 +244,36 @@ platform = get_option('platform')
 subdir('src/actors')
 
 if platform == 'host'
-  subdir('src/hal/platforms/native')
+  subdir('../platforms/native/hal')
 endif
 
 if platform == 'rock3c'
-  subdir('src/hal/platforms/rock3c')
+  subdir('../platforms/radxa/rock-3c/hal')
 endif
 
 if platform == 'cubie-a7s'
-  subdir('src/hal/platforms/cubie-a7s')
+  add_project_arguments('-DHAVE_A7S', language: 'cpp')
+  subdir('../platforms/radxa/cubie-a7s/hal')
 endif
 
 if platform == 'rdk-x5'
-  subdir('src/hal/platforms/rdk-x5')
+  add_project_arguments('-DHAVE_SOFTENC', language: 'cpp')
+  # D-Robotics BPU (libdnn) headers are inside the sysroot
+  dnn_inc_dir = ''
+  dnn_candidates = [sdk_path + '/include/dnn']
+  if meson.is_cross_build() and sysroot_arg != ''
+    dnn_candidates += [sysroot_arg + '/usr/include/dnn']
+  endif
+  foreach cand : dnn_candidates
+    if run_command('sh', '-c', 'test -d ' + cand + ' && echo yes || echo no', check: false).stdout().strip() == 'yes'
+      dnn_inc_dir = cand
+      break
+    endif
+  endforeach
+  if dnn_inc_dir != ''
+    inc_dirs += [dnn_inc_dir]
+  endif
+  subdir('../platforms/d-robotics/rdk-x5/hal')
 endif
 
 # ─── Static Library ───────────────────────────────────────────────────────────
@@ -229,15 +287,24 @@ config_loader_sources = files('src/hal/api/config_loader.cpp')
 # CivetWeb HTTP/SSE server (C library, compiled alongside C++ sources)
 civetweb_sources = files('src/actors/http-sse/civetweb.c')
 
-if platform == 'host' or platform == 'rock3c' or platform == 'cubie-a7s'
+# Shared V4L2 camera HAL — compiled for all platforms, no #ifdef guards.
+# The camera_factory.cpp entry is unguarded and works on any board.
+common_v4l2_sources = files('../platforms/common/camera_hal_v4l2.cpp')
+
+if platform == 'host' or platform == 'rock3c' or platform == 'cubie-a7s' or platform == 'rdk-x5'
   all_sources += platform_sources
 endif
+
+# Always add the generic V4L2 HAL for all platforms (including rdk-x5)
+all_sources += common_v4l2_sources
 
 all_sources += config_loader_sources
 all_sources += civetweb_sources
 
-# CivetWeb needs NO_SSL when building without OpenSSL
+# CivetWeb needs NO_SSL and USE_WEBSOCKET for WebSocket support
+# sha1.inl is included in the source tree for the WebSocket SHA-1 handshake
 add_project_arguments('-DNO_SSL', language: 'c')
+add_project_arguments('-DUSE_WEBSOCKET', language: 'c')
 # Suppress unused-variable warning in civetweb (upstream issue with USE_ZLIB)
 add_project_arguments('-Wno-unused-variable', language: 'c')
 
@@ -252,10 +319,14 @@ lib_toolkit = static_library('ai-trap-toolkit',
 # test_inference.cpp is optional — only build if the file exists
 test_inf_exists = run_command('sh', '-c', 'test -f test_inference.cpp && echo yes || echo no', check: false).stdout().strip() == 'yes'
 if rknn_lib.found() and test_inf_exists
+  test_inf_deps = [rknn_dep]
+  if png_dep.found()
+    test_inf_deps += png_dep
+  endif
   executable('test_inference',
              'test_inference.cpp',
              include_directories : inc,
-             dependencies: [rknn_dep],
+             dependencies: test_inf_deps,
              install : true,
              install_dir : '/usr/bin')
 endif

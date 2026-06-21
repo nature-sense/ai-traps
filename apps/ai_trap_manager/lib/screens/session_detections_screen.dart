@@ -18,16 +18,10 @@ import '../providers/trap_provider.dart';
 import '../models/detection.dart';
 
 /// Displays a responsive grid of detection cards for a given session.
-///
-/// Shows the cropped insect images with metadata (classId, confidence, timestamp).
-/// Uses a responsive grid layout: smaller cards on phones, larger cards on tablets.
 class SessionDetectionsScreen extends StatefulWidget {
   final int sessionId;
 
-  const SessionDetectionsScreen({
-    super.key,
-    required this.sessionId,
-  });
+  const SessionDetectionsScreen({super.key, required this.sessionId});
 
   @override
   State<SessionDetectionsScreen> createState() =>
@@ -43,19 +37,25 @@ class _SessionDetectionsScreenState extends State<SessionDetectionsScreen> {
     });
   }
 
+  /// Prepend the trap host to relative image URLs.
+  String _imageUrl(String url, String host) {
+    if (url.startsWith('http://') || url.startsWith('https://')) return url;
+    if (url.startsWith('/')) return 'http://$host:8080$url';
+    return url;
+  }
+
   @override
   Widget build(BuildContext context) {
     final trapProvider = Provider.of<TrapProvider>(context);
     final detections = trapProvider.detections;
-    final api = trapProvider.api;
+    final host = trapProvider.trapIp;
 
     return Scaffold(
       appBar: AppBar(
         title: Text('Session #${widget.sessionId} Detections'),
         actions: [
           IconButton(
-            onPressed: () =>
-                trapProvider.listDetections(widget.sessionId),
+            onPressed: () => trapProvider.listDetections(widget.sessionId),
             icon: const Icon(Icons.refresh),
           ),
         ],
@@ -75,16 +75,14 @@ class _SessionDetectionsScreenState extends State<SessionDetectionsScreen> {
               ),
             )
           : RefreshIndicator(
-              onRefresh: () =>
-                  trapProvider.listDetections(widget.sessionId),
+              onRefresh: () => trapProvider.listDetections(widget.sessionId),
               child: LayoutBuilder(
                 builder: (context, constraints) {
-                  // Responsive grid: more columns on wider screens
                   final crossAxisCount = constraints.maxWidth > 900
                       ? 4
                       : constraints.maxWidth > 600
-                          ? 3
-                          : 2;
+                      ? 3
+                      : 2;
 
                   return GridView.builder(
                     padding: const EdgeInsets.all(8),
@@ -100,8 +98,8 @@ class _SessionDetectionsScreenState extends State<SessionDetectionsScreen> {
                       return _DetectionCard(
                         key: ValueKey(detection.id),
                         detection: detection,
-                        imageUrl: api != null
-                            ? _buildImageUrl(api, detection)
+                        imageUrl: detection.imageUrl.isNotEmpty
+                            ? _imageUrl(detection.imageUrl, host)
                             : null,
                       );
                     },
@@ -111,36 +109,13 @@ class _SessionDetectionsScreenState extends State<SessionDetectionsScreen> {
             ),
     );
   }
-
-  String _buildImageUrl(dynamic api, Detection detection) {
-    final imageUrl = detection.imageUrl;
-
-    // If the imageUrl is already absolute, return as-is
-    if (imageUrl.startsWith('http')) {
-      return imageUrl;
-    }
-
-    // The SSE crop_saved event sends a server-relative URL like "/v1/crops/2026-05-12/1715500000_3.jpg"
-    if (imageUrl.startsWith('/v1/crops/')) {
-      return '${api.baseUrl}$imageUrl';
-    }
-
-    // The REST API returns a relative path like "2026-05-13/1778662275387_1.jpg"
-    // Construct the full URL as: http://host:port/v1/crops/2026-05-13/1778662275387_1.jpg
-    final fullUrl = '${api.baseUrl}/v1/crops/$imageUrl';
-    return fullUrl;
-  }
 }
 
 class _DetectionCard extends StatelessWidget {
   final Detection detection;
   final String? imageUrl;
 
-  const _DetectionCard({
-    super.key,
-    required this.detection,
-    this.imageUrl,
-  });
+  const _DetectionCard({super.key, required this.detection, this.imageUrl});
 
   @override
   Widget build(BuildContext context) {
@@ -149,7 +124,6 @@ class _DetectionCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // ── Thumbnail ──────────────────────────────────────────────────
           Expanded(
             child: AnimatedSwitcher(
               duration: const Duration(milliseconds: 300),
@@ -163,8 +137,11 @@ class _DetectionCard extends StatelessWidget {
                         return Container(
                           color: Colors.grey.shade200,
                           child: const Center(
-                            child: Icon(Icons.broken_image,
-                                size: 32, color: Colors.grey),
+                            child: Icon(
+                              Icons.broken_image,
+                              size: 32,
+                              color: Colors.grey,
+                            ),
                           ),
                         );
                       },
@@ -191,8 +168,6 @@ class _DetectionCard extends StatelessWidget {
                     ),
             ),
           ),
-
-          // ── Metadata ───────────────────────────────────────────────────
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
             color: Colors.green.shade50,
@@ -223,7 +198,9 @@ class _DetectionCard extends StatelessWidget {
                 ),
                 Container(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: 6, vertical: 2),
+                    horizontal: 6,
+                    vertical: 2,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.green.shade100,
                     borderRadius: BorderRadius.circular(4),

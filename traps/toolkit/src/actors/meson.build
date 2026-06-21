@@ -62,4 +62,7 @@ actor_sources = files(
 
   # WiFi provisioning (BLE GATT service for remote WiFi configuration)
   'wifi-provisioning/wifi_provisioning_actor.cpp',
+
+  # DataStore (in-memory store with JSON persistence, replaces SQLite)
+  'data-store/data_store.cpp',
 )

@@ -1,0 +1,19 @@
+[Unit]
+Description=AI Trap Management Daemon (trapd)
+After=network.target bluetooth.target
+Wants=bluetooth.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/trapd.py --port 9090 --binary /usr/local/bin/ai-trap-detection --config-path /etc/ai-trap/config.yaml --log-file /var/log/ai-trap/trapd.log --pid-file /run/ai-trap/trapd.pid --no-fork --quiet
+WorkingDirectory=/var/lib/ai-trap
+Restart=on-failure
+RestartSec=3
+User=root
+Group=root
+StandardOutput=journal
+StandardError=journal
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target

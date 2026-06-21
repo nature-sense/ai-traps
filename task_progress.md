@@ -1,12 +1,14 @@
 # Task Progress
 
-## Build Server as Systemd Service
+## Cleanup: Remove Docker Cross-Platform Build & MCP Build Tools
 
-- [x] Review existing systemd service unit file (`ai-trap-build-server.service`)
-- [x] Update deploy script (`deploy_build_server.sh`) to install systemd service
-- [x] Fix entry point (`build_server.py`) to find package in system location
-- [x] Install Python dependencies system-wide (for root/systemd)
-- [x] Deploy build server to rock-3c.local as systemd service
-- [x] Verify build server is running and responding on port 8081
-- [x] Update documentation (`docs/build-server.md`) to reflect systemd service management
-- [x] Update Memory Bank (`activeContext.md`, `progress.md`) to reflect completed work
+- [x] Delete tools/docker/ directory (entire Docker cross-platform build system)
+- [x] Delete MCP build server files (mcp-build-server.py)
+- [x] Update MCP config files (remove ai-trap-build from cline_mcp_settings.json)
+- [x] Update README.md (remove Docker/MCP build references)
+- [x] Update tools/mcp/README.md (remove ai-trap-build references)
+- [x] Update memory-bank/activeContext.md
+- [x] Update memory-bank/progress.md
+- [x] Update memory-bank/systemPatterns.md
+- [x] Update memory-bank/techContext.md
+- [x] Clean up stale plan files (deploy-runtime-plan.md, native-build-plan.md)

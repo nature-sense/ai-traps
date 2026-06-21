@@ -1,12 +1,13 @@
 # ─── AI Camera Trap Configuration — ROCK 3C (RK3566) ──────────────────────────
-# Camera: picamera2 (IMX219) via RK_AIQ ISP
+# Camera: OV5647 (Raspberry Pi Camera v1.3) via RK_AIQ ISP
 # Inference: Rockchip NPU (RKNN model format)
 # Scaling: RGA hardware scaler
 #
 # To switch to Radxa Camera 4K (IMX415), change model to "imx415".
+# To switch to Raspberry Pi Camera v2 (IMX219), change model to "imx219".
 
 camera:
-  model: "imx219"
+  model: "ov5647"
   full_w: 1920
   full_h: 1080
   med_w: 640
@@ -20,7 +21,7 @@ camera:
 
 inference:
   backend: "rknn"
-  model_path: "/usr/share/ai-trap/models/yolo11n.rknn"
+  model_path: "/usr/share/ai-trap/yolo26n.rknn"
   confidence_threshold: 0.5
 
 storage:

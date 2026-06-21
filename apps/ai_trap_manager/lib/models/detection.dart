@@ -21,6 +21,7 @@ class Detection {
   final double confidence;
   final int sessionId;
   final String imageUrl;
+  final String imageFormat; // "jpg" or "h264"
 
   Detection({
     required this.id,
@@ -30,25 +31,28 @@ class Detection {
     required this.confidence,
     required this.sessionId,
     required this.imageUrl,
+    this.imageFormat = 'h264',
   });
 
   factory Detection.fromJson(Map<String, dynamic> json) => Detection(
-        id: json['id'] as int,
-        timestamp: json['timestamp'] as int,
-        trackId: json['trackId'] as int,
-        classId: json['classId'] as int,
-        confidence: (json['confidence'] as num).toDouble(),
-        sessionId: json['sessionId'] as int,
-        imageUrl: json['imageUrl'] as String,
-      );
+    id: json['id'] as int,
+    timestamp: json['timestamp'] as int,
+    trackId: json['trackId'] as int,
+    classId: json['classId'] as int,
+    confidence: (json['confidence'] as num).toDouble(),
+    sessionId: json['sessionId'] as int,
+    imageUrl: json['imageUrl'] as String,
+    imageFormat: (json['imageFormat'] as String?) ?? 'h264',
+  );
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'timestamp': timestamp,
-        'trackId': trackId,
-        'classId': classId,
-        'confidence': confidence,
-        'sessionId': sessionId,
-        'imageUrl': imageUrl,
-      };
+    'id': id,
+    'timestamp': timestamp,
+    'trackId': trackId,
+    'classId': classId,
+    'confidence': confidence,
+    'sessionId': sessionId,
+    'imageUrl': imageUrl,
+    'imageFormat': imageFormat,
+  };
 }

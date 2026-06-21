@@ -124,6 +124,17 @@ public:
     void sendJsonResponse(uint64_t request_id, int status_code, const nlohmann::json& json_response);
 
     /**
+     * Send a binary response (e.g. image/jpeg for crop images).
+     * @param request_id ID from the original HttpRequest
+     * @param status_code HTTP status code
+     * @param content_type MIME type (e.g. "image/jpeg")
+     * @param data Raw binary data
+     */
+    void sendBinaryResponse(uint64_t request_id, int status_code,
+                            const std::string& content_type,
+                            const std::vector<uint8_t>& data);
+
+    /**
      * Send an error response.
      * @param request_id ID from the original HttpRequest
      * @param status_code HTTP status code (400, 404, 500)

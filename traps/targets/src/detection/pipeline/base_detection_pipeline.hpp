@@ -34,6 +34,7 @@
 
 #include "session_actor.hpp"
 #include "http_handler_actor.hpp"
+#include "../actors/ws-api/ws_api_handler.hpp"
 
 #include <memory>
 #include <atomic>
@@ -104,6 +105,12 @@ public:
     // Access the pipeline config.
     const PipelineConfig& config() const { return cfg_; }
 
+    // ── Metrics accessors (for WsApiHandler) ────────────────────────────────────
+    int64_t  metricsFramesProcessed() const { return metrics_frames_processed_.load(); }
+    double   metricsInferenceTimeUs() const { return metrics_inference_time_us_.load(); }
+    double   metricsTrackingTimeUs() const { return metrics_tracking_time_us_.load(); }
+    double   metricsTickTimeUs()     const { return metrics_tick_time_us_.load(); }
+
 protected:
     // ── Factory methods (all overridable by subclasses) ────────────────────────
     // Each factory creates and returns the corresponding actor.
@@ -170,10 +177,20 @@ protected:
     // Event publisher (registered in ActorRegistry for message passing)
     std::unique_ptr<EventPublisherActor> event_publisher_;
 
+    // WebSocket JSON-RPC handler (owned by pipeline, pointed to by HttpSseActor)
+    std::unique_ptr<WsApiHandler> ws_api_handler_;
+
     // ── Wiring ─────────────────────────────────────────────────────────────────
     // Wire all actors together. Called during init().
     // Virtual so subclasses can customise the wiring (e.g., add/remove actors).
     virtual void wire();
+
+    // ── Pipeline metrics (read by WsApiHandler) ─────────────────────────────────
+    // Updated each tick by the run loop.
+    std::atomic<int64_t>  metrics_frames_processed_{0};
+    std::atomic<double>   metrics_inference_time_us_{0.0};
+    std::atomic<double>   metrics_tracking_time_us_{0.0};
+    std::atomic<double>   metrics_tick_time_us_{0.0};
 
     // ── Run loop control ───────────────────────────────────────────────────────
     std::atomic<bool> running_{false};

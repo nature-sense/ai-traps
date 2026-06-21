@@ -102,9 +102,7 @@ class _SessionsMasterDetailState extends State<SessionsMasterDetail> {
                         ],
                       ),
                     )
-                  : _DetectionGrid(
-                      sessionId: _selectedSession!.id,
-                    ),
+                  : _DetectionGrid(sessionId: _selectedSession!.id),
             ),
           ],
         );
@@ -210,7 +208,6 @@ class _DetectionGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     final trapProvider = Provider.of<TrapProvider>(context);
     final detections = trapProvider.detections;
-    final api = trapProvider.api;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -224,10 +221,7 @@ class _DetectionGrid extends StatelessWidget {
           ),
           child: Text(
             'Session #$sessionId — ${detections.length} detections',
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-            ),
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
           ),
         ),
         // Grid
@@ -237,8 +231,11 @@ class _DetectionGrid extends StatelessWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.image_not_supported,
-                          size: 48, color: Colors.grey),
+                      Icon(
+                        Icons.image_not_supported,
+                        size: 48,
+                        color: Colors.grey,
+                      ),
                       SizedBox(height: 12),
                       Text(
                         'No detections in this session',
@@ -249,8 +246,7 @@ class _DetectionGrid extends StatelessWidget {
                 )
               : GridView.builder(
                   padding: const EdgeInsets.all(8),
-                  gridDelegate:
-                      const SliverGridDelegateWithFixedCrossAxisCount(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 3,
                     crossAxisSpacing: 8,
                     mainAxisSpacing: 8,
@@ -259,11 +255,21 @@ class _DetectionGrid extends StatelessWidget {
                   itemCount: detections.length,
                   itemBuilder: (context, index) {
                     final detection = detections[index];
+                    final host = trapProvider.trapIp;
+                    String _imageUrl(String url) {
+                      if (url.startsWith('http://') ||
+                          url.startsWith('https://'))
+                        return url;
+                      if (url.startsWith('/')) return 'http://$host:8080$url';
+                      return url;
+                    }
+
+                    final imageUrl = detection.imageUrl;
                     return _EmbeddedDetectionCard(
                       key: ValueKey(detection.id),
                       detection: detection,
-                      imageUrl: api != null
-                          ? _buildImageUrl(api, detection)
+                      imageUrl: imageUrl.isNotEmpty
+                          ? _imageUrl(imageUrl)
                           : null,
                     );
                   },
@@ -314,8 +320,11 @@ class _EmbeddedDetectionCard extends StatelessWidget {
                       errorBuilder: (context, error, stackTrace) => Container(
                         color: Colors.grey.shade200,
                         child: const Center(
-                          child: Icon(Icons.broken_image,
-                              size: 40, color: Colors.grey),
+                          child: Icon(
+                            Icons.broken_image,
+                            size: 40,
+                            color: Colors.grey,
+                          ),
                         ),
                       ),
                       loadingBuilder: (context, child, loadingProgress) {
@@ -352,10 +361,7 @@ class _EmbeddedDetectionCard extends StatelessWidget {
                 const SizedBox(height: 2),
                 Text(
                   _formatTimestamp(detection.timestamp),
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey.shade600,
-                  ),
+                  style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
                 ),
               ],
             ),

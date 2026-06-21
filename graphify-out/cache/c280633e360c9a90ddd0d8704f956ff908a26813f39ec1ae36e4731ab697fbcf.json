@@ -1,0 +1,1 @@
+{"nodes": [{"id": "tools_native_sysroots_rock3c_usr_include_aarch64_linux_gnu_bits_syscall_h", "label": "syscall.h", "file_type": "code", "source_file": "tools/native/sysroots/rock3c/usr/include/aarch64-linux-gnu/bits/syscall.h", "source_location": "L1"}], "edges": []}

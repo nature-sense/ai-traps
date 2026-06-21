@@ -431,9 +431,20 @@ void HttpHandlerActor::handleGetDetection(HttpRequest& request) {
     sendJsonResponse(request.request_id, 200, detectionToJson(det));
 }
 
-// ── GET /v1/crops/{date}/{filename} (stub) ────────────────────────────────────
+// ── GET /v1/crops/{date}/{filename} ───────────────────────────────────────────
 
 void HttpHandlerActor::handleGetCropImage(HttpRequest& request) {
+    // Build the file path from the URL parameters
+    std::string date = getPathParam(request, "date");
+    std::string filename = getPathParam(request, "filename");
+
+    if (date.empty() || filename.empty()) {
+        sendErrorResponse(request.request_id, 400, "Missing date or filename");
+        return;
+    }
+
+    // TODO: Serve actual files using CivetWeb's document_root or
+    // implement static file serving via /v1/crops/{date}/{filename}.
     sendErrorResponse(request.request_id, 501, "Crop image serving not implemented yet");
 }
 
@@ -446,13 +457,24 @@ void HttpHandlerActor::handleGetSystemMetrics(HttpRequest& request) {
 // ── GET /status ──────────────────────────────────────────────────────────────
 
 void HttpHandlerActor::handleGetStatus(HttpRequest& request) {
+    auto* session = getSessionActor();
+
     nlohmann::json resp = {
         {"status", "running"},
-        {"port", 8080},
-        {"clients_served", 0},
-        {"frames_served", 0},
-        {"sse_clients", 0}
+        {"port", 8080}
     };
+
+    // Include the trapId if the session actor has been provisioned or
+    // auto-provisioned (e.g., via hostname). The Flutter app uses this
+    // to construct /v1/traps/{trapId}/sessions URLs.
+    if (session) {
+        std::string stored_id;
+        session->out_trap_id(stored_id);
+        if (!stored_id.empty()) {
+            resp["trapId"] = stored_id;
+        }
+    }
+
     sendJsonResponse(request.request_id, 200, resp);
 }
 

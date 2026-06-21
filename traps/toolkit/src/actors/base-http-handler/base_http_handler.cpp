@@ -98,6 +98,19 @@ void BaseHttpHandler::sendJsonResponse(uint64_t request_id, int status_code, con
     sendResponse(request_id, status_code, json_response.dump());
 }
 
+void BaseHttpHandler::sendBinaryResponse(uint64_t request_id, int status_code,
+                                          const std::string& content_type,
+                                          const std::vector<uint8_t>& data) {
+    // Send binary data as an HTTP response via the Ramen message system.
+    // The HttpResponse type supports arbitrary content_type strings.
+    HttpResponse response;
+    response.request_id = request_id;
+    response.status_code = status_code;
+    response.content_type = content_type;
+    response.body = std::string(reinterpret_cast<const char*>(data.data()), data.size());
+    ramen::send("http_server", std::move(response));
+}
+
 void BaseHttpHandler::sendErrorResponse(uint64_t request_id, int status_code, const std::string& error_message) {
     nlohmann::json error_json = {
         {"error", error_message}

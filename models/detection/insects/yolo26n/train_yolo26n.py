@@ -29,6 +29,7 @@ Usage:
 
 import argparse
 import os
+import subprocess
 import sys
 from pathlib import Path
 
@@ -158,6 +159,26 @@ def main():
         default=20,
         help="Early stopping patience (default: 20)",
     )
+    parser.add_argument(
+        "--rknn",
+        action="store_true",
+        default=False,
+        help="Enable RKNN export after training (requires rknn-toolkit2)",
+    )
+    parser.add_argument(
+        "--rknn-target",
+        type=str,
+        default="rk3566",
+        choices=["rk3566", "rk3568", "rk3588", "rv1106", "rv1103"],
+        help="Rockchip target platform for RKNN export (default: rk3566)",
+    )
+    parser.add_argument(
+        "--no-rknn-int8",
+        action="store_false",
+        dest="rknn_int8",
+        help="Disable INT8 quantization for RKNN export (use FP16 instead)",
+    )
+    parser.set_defaults(rknn_int8=True)
     args = parser.parse_args()
 
     # ── Auto-detect device ──────────────────────────────────────────────────
@@ -225,6 +246,31 @@ def main():
     else:
         print(f"[WARN] best.pt not found at {best_pt}, skipping ONNX export")
 
+    # ── Export to RKNN (Ultralytics native) ──────────────────────────────────
+    print(f"\n[INFO] Exporting best model to RKNN (target={args.rknn_target})...")
+    rknn_path = None
+    if best_pt.exists():
+        try:
+            # The --rknn flag controls whether RKNN export is attempted.
+            # It requires rknn-toolkit2 to be installed (typically on the board).
+            if args.rknn:
+                best_model = YOLO(str(best_pt))
+                rknn_path = best_model.export(
+                    format="rknn",
+                    name=args.rknn_target,
+                    int8=args.rknn_int8,
+                    imgsz=args.imgsz,
+                )
+                print(f"[INFO] RKNN model exported to: {rknn_path}")
+            else:
+                print(f"[INFO] RKNN export skipped (use --rknn to enable)")
+        except Exception as e:
+            print(f"[WARN] RKNN export failed: {e}")
+            print("[WARN] rknn-toolkit2 may not be installed.")
+            print("[WARN] To install: pip install rknn-toolkit2")
+    else:
+        print(f"[WARN] best.pt not found at {best_pt}, skipping RKNN export")
+
     # ── Summary ──────────────────────────────────────────────────────────────
     print(f"\n{'='*60}")
     print(f"Training complete!")
@@ -232,6 +278,8 @@ def main():
     print(f"  Best PT:  {best_pt}")
     if best_pt.exists():
         print(f"  Best ONNX: {onnx_path}")
+    if rknn_path:
+        print(f"  Best RKNN: {rknn_path}")
     print(f"{'='*60}")
 
 

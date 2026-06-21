@@ -24,8 +24,7 @@
 #include <cerrno>
 #include <cstring>
 #include <chrono>
-
-#include <sqlite3.h>
+#include <thread>
 
 namespace ct {
 
@@ -58,119 +57,44 @@ bool SessionActor::init(const std::string& output_dir, const std::string& db_pat
 
     if (!make_dirs(output_dir_)) return false;
 
-    // Open database via BaseStorage
-    if (!BaseStorage::init(db_path)) {
-        std::cerr << "[SessionActor] BaseStorage::init failed\n";
-        return false;
-    }
-
-    // Create tables and prepare statements
-    if (!init_db()) {
-        std::cerr << "[SessionActor] init_db failed\n";
+    // Initialise the DataStore (in-memory store with JSON persistence)
+    if (!data_store_.init(db_path)) {
+        std::cerr << "[SessionActor] DataStore::init failed\n";
         return false;
     }
 
     // If a trap_id was provided via config, pre-provision it
     if (!trap_id.empty()) {
         trap_id_ = trap_id;
-        std::cout << "[SessionActor] pre-provisioned trap_id=" << trap_id_
-                  << " (from config)\n";
+        // If DataStore was loaded from disk and already has a trap_id, use that
+        // instead of overriding it.
+        std::string stored_id = data_store_.get_trap_id();
+        if (!stored_id.empty()) {
+            trap_id_ = stored_id;
+            std::cout << "[SessionActor] using stored trap_id=" << trap_id_
+                      << " (from disk)\n";
+        } else {
+            data_store_.provision(trap_id);
+            std::cout << "[SessionActor] pre-provisioned trap_id=" << trap_id_
+                      << " (from config)\n";
+        }
+    } else {
+        // Load any existing trap_id from DataStore
+        std::string stored_id = data_store_.get_trap_id();
+        if (!stored_id.empty()) {
+            trap_id_ = stored_id;
+            std::cout << "[SessionActor] loaded trap_id=" << trap_id_
+                      << " from disk\n";
+        }
     }
-
-    // Enforce max_sessions limit on startup
-    enforce_max_sessions();
 
     std::cout << "[SessionActor] ready\n";
     return true;
 }
 
 void SessionActor::shutdown() {
-    if (insert_stmt_) {
-        sqlite3_finalize(insert_stmt_);
-        insert_stmt_ = nullptr;
-    }
-
-    BaseStorage::shutdown();
-
+    data_store_.shutdown();
     std::cout << "[SessionActor] shutdown\n";
-}
-
-// ── Database initialisation ───────────────────────────────────────────────────
-
-bool SessionActor::init_db() {
-    // Create the sessions table
-    if (!exec_sql(R"(
-        CREATE TABLE IF NOT EXISTS sessions (
-            id              INTEGER PRIMARY KEY AUTOINCREMENT,
-            started_at      INTEGER NOT NULL,
-            stopped_at      INTEGER,
-            detection_count INTEGER DEFAULT 0
-        );
-    )")) {
-        return false;
-    }
-
-    // Create trap_info table
-    if (!exec_sql(R"(
-        CREATE TABLE IF NOT EXISTS trap_info (
-            id              TEXT PRIMARY KEY,
-            name            TEXT,
-            provisioned_at  INTEGER NOT NULL
-        );
-    )")) {
-        // Non-fatal
-    }
-
-    // Create the classifications table
-    if (!exec_sql(R"(
-        CREATE TABLE IF NOT EXISTS classifications (
-            id                  INTEGER PRIMARY KEY AUTOINCREMENT,
-            timestamp           INTEGER NOT NULL,
-            track_id            INTEGER NOT NULL,
-            class_id            INTEGER NOT NULL,
-            confidence          REAL NOT NULL,
-            detection_class_id  INTEGER NOT NULL DEFAULT 0,
-            detection_confidence REAL NOT NULL DEFAULT 0.0,
-            image_path          TEXT NOT NULL,
-            session_id          INTEGER REFERENCES sessions(id)
-        );
-    )")) {
-        return false;
-    }
-
-    // Create indexes
-    exec_sql(
-        "CREATE INDEX IF NOT EXISTS idx_classifications_timestamp "
-        "ON classifications(timestamp);");
-    exec_sql(
-        "CREATE INDEX IF NOT EXISTS idx_classifications_session "
-        "ON classifications(session_id);");
-
-    // Prepare the INSERT statement for reuse
-    const char* insert_sql = R"(
-        INSERT INTO classifications
-            (timestamp, track_id, class_id, confidence,
-             detection_class_id, detection_confidence, image_path, session_id)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    )";
-
-    if (!prepare_stmt(insert_sql, &insert_stmt_)) {
-        return false;
-    }
-
-    // Load trap_id if provisioned
-    sqlite3_stmt* trap_stmt = nullptr;
-    int trap_rc = sqlite3_prepare_v2(db(),
-        "SELECT id FROM trap_info LIMIT 1;", -1, &trap_stmt, nullptr);
-    if (trap_rc == SQLITE_OK && trap_stmt) {
-        if (sqlite3_step(trap_stmt) == SQLITE_ROW) {
-            trap_id_ = reinterpret_cast<const char*>(sqlite3_column_text(trap_stmt, 0));
-        }
-        sqlite3_finalize(trap_stmt);
-    }
-
-    std::cout << "[SessionActor] SQLite ready (all tables created)\n";
-    return true;
 }
 
 // ── Session operations ────────────────────────────────────────────────────────
@@ -178,43 +102,19 @@ bool SessionActor::init_db() {
 int64_t SessionActor::start_session() {
     std::lock_guard<std::mutex> lock(session_mutex_);
 
-    // Auto-close any existing active session
-    if (active_session_id_ >= 0) {
-        auto_close_active_session();
-    }
-
     auto now_ms = std::chrono::duration_cast<std::chrono::milliseconds>(
         std::chrono::system_clock::now().time_since_epoch()).count();
 
-    // Insert new session
-    sqlite3_stmt* stmt = nullptr;
-    const char* insert = "INSERT INTO sessions (started_at) VALUES (?);";
-    int rc = sqlite3_prepare_v2(db(), insert, -1, &stmt, nullptr);
-    if (rc != SQLITE_OK) {
-        std::cerr << "[SessionActor] prepare INSERT failed: "
-                  << sqlite3_errmsg(db()) << "\n";
+    // Delegate to DataStore (handles auto-close, ID generation, persistence)
+    int64_t session_id = data_store_.create_session(now_ms);
+    if (session_id < 0) {
         return -1;
     }
-    sqlite3_bind_int64(stmt, 1, now_ms);
-    rc = sqlite3_step(stmt);
-    if (rc != SQLITE_DONE) {
-        std::cerr << "[SessionActor] INSERT failed: "
-                  << sqlite3_errmsg(db()) << "\n";
-        sqlite3_finalize(stmt);
-        return -1;
-    }
-    int64_t session_id = sqlite3_last_insert_rowid(db());
-    sqlite3_finalize(stmt);
 
     active_session_id_.store(session_id);
     inference_enabled_.store(true);
 
     std::cout << "[SessionActor] session " << session_id << " started\n";
-
-    // TODO: Publish SessionStartedEvent via Ramen event bus when available
-
-    // Enforce max_sessions limit
-    enforce_max_sessions();
 
     return session_id;
 }
@@ -231,37 +131,15 @@ bool SessionActor::stop_session(int64_t session_id) {
     auto now_ms = std::chrono::duration_cast<std::chrono::milliseconds>(
         std::chrono::system_clock::now().time_since_epoch()).count();
 
-    // Count classifications for this session
-    int detection_count = 0;
-    sqlite3_stmt* count_stmt = nullptr;
-    const char* count_sql = "SELECT COUNT(*) FROM classifications WHERE session_id = ?;";
-    if (sqlite3_prepare_v2(db(), count_sql, -1, &count_stmt, nullptr) == SQLITE_OK) {
-        sqlite3_bind_int64(count_stmt, 1, session_id);
-        if (sqlite3_step(count_stmt) == SQLITE_ROW) {
-            detection_count = sqlite3_column_int(count_stmt, 0);
-        }
-        sqlite3_finalize(count_stmt);
-    }
-
-    // Update session
-    sqlite3_stmt* stmt = nullptr;
-    const char* update = "UPDATE sessions SET stopped_at = ?, detection_count = ? WHERE id = ?;";
-    int rc = sqlite3_prepare_v2(db(), update, -1, &stmt, nullptr);
-    if (rc == SQLITE_OK) {
-        sqlite3_bind_int64(stmt, 1, now_ms);
-        sqlite3_bind_int(stmt, 2, detection_count);
-        sqlite3_bind_int64(stmt, 3, session_id);
-        sqlite3_step(stmt);
-        sqlite3_finalize(stmt);
+    // Delegate to DataStore (handles stop, detection count, persistence)
+    if (!data_store_.stop_session(session_id, now_ms)) {
+        return false;
     }
 
     active_session_id_.store(-1);
     inference_enabled_.store(false);
 
-    std::cout << "[SessionActor] session " << session_id << " stopped ("
-              << detection_count << " classifications)\n";
-
-    // TODO: Publish SessionStoppedEvent via Ramen event bus when available
+    std::cout << "[SessionActor] session " << session_id << " stopped\n";
 
     return true;
 }
@@ -271,233 +149,100 @@ int64_t SessionActor::active_session_id() const {
 }
 
 SessionInfo SessionActor::active_session() const {
+    std::lock_guard<std::mutex> lock(session_mutex_);
+
     int64_t sid = active_session_id_.load();
     if (sid < 0) {
         return SessionInfo{};
     }
 
-    sqlite3_stmt* stmt = nullptr;
-    const char* sql = "SELECT id, started_at, stopped_at, detection_count "
-                      "FROM sessions WHERE id = ?;";
+    auto rec = data_store_.get_session(sid);
+    if (rec.id < 0) {
+        return SessionInfo{};
+    }
 
     SessionInfo info;
-    if (sqlite3_prepare_v2(db(), sql, -1, &stmt, nullptr) == SQLITE_OK) {
-        sqlite3_bind_int64(stmt, 1, sid);
-        if (sqlite3_step(stmt) == SQLITE_ROW) {
-            info.id              = sqlite3_column_int64(stmt, 0);
-            info.started_at      = sqlite3_column_int64(stmt, 1);
-            info.stopped_at      = sqlite3_column_type(stmt, 2) != SQLITE_NULL
-                                   ? sqlite3_column_int64(stmt, 2) : 0;
-            info.detection_count = sqlite3_column_int(stmt, 3);
-            info.active          = true;
-        }
-        sqlite3_finalize(stmt);
-    }
-
+    info.id              = rec.id;
+    info.started_at      = rec.started_at;
+    info.stopped_at      = rec.stopped_at;
+    info.detection_count = rec.detection_count;
+    info.active          = (rec.id == active_session_id_.load());
     return info;
-}
-
-void SessionActor::auto_close_active_session() {
-    int64_t sid = active_session_id_.load();
-    if (sid < 0) return;
-
-    auto now_ms = std::chrono::duration_cast<std::chrono::milliseconds>(
-        std::chrono::system_clock::now().time_since_epoch()).count();
-
-    // Count classifications for this session
-    int detection_count = 0;
-    sqlite3_stmt* count_stmt = nullptr;
-    const char* count_sql = "SELECT COUNT(*) FROM classifications WHERE session_id = ?;";
-    if (sqlite3_prepare_v2(db(), count_sql, -1, &count_stmt, nullptr) == SQLITE_OK) {
-        sqlite3_bind_int64(count_stmt, 1, sid);
-        if (sqlite3_step(count_stmt) == SQLITE_ROW) {
-            detection_count = sqlite3_column_int(count_stmt, 0);
-        }
-        sqlite3_finalize(count_stmt);
-    }
-
-    sqlite3_stmt* stmt = nullptr;
-    const char* update = "UPDATE sessions SET stopped_at = ?, detection_count = ? WHERE id = ? AND stopped_at IS NULL;";
-    if (sqlite3_prepare_v2(db(), update, -1, &stmt, nullptr) == SQLITE_OK) {
-        sqlite3_bind_int64(stmt, 1, now_ms);
-        sqlite3_bind_int(stmt, 2, detection_count);
-        sqlite3_bind_int64(stmt, 3, sid);
-        sqlite3_step(stmt);
-        sqlite3_finalize(stmt);
-    }
-
-    active_session_id_.store(-1);
-    inference_enabled_.store(false);
-
-    std::cout << "[SessionActor] auto-closed session " << sid
-              << " (" << detection_count << " classifications)\n";
-
-    // TODO: Publish SessionStoppedEvent via Ramen event bus when available
-}
-
-void SessionActor::enforce_max_sessions() {
-    if (max_sessions_ <= 0) return;
-
-    // Count total sessions
-    int total = 0;
-    sqlite3_stmt* count_stmt = nullptr;
-    const char* count_sql = "SELECT COUNT(*) FROM sessions;";
-    if (sqlite3_prepare_v2(db(), count_sql, -1, &count_stmt, nullptr) == SQLITE_OK) {
-        if (sqlite3_step(count_stmt) == SQLITE_ROW) {
-            total = sqlite3_column_int(count_stmt, 0);
-        }
-        sqlite3_finalize(count_stmt);
-    }
-
-    int to_delete = total - max_sessions_;
-    if (to_delete <= 0) return;
-
-    std::cout << "[SessionActor] enforcing max_sessions=" << max_sessions_
-              << " (total=" << total << ", deleting " << to_delete << " oldest)\n";
-
-    sqlite3_stmt* select_stmt = nullptr;
-    const char* select_sql = "SELECT id, started_at, detection_count FROM sessions "
-                             "ORDER BY started_at ASC LIMIT ?;";
-    if (sqlite3_prepare_v2(db(), select_sql, -1, &select_stmt, nullptr) == SQLITE_OK) {
-        sqlite3_bind_int(select_stmt, 1, to_delete);
-
-        while (sqlite3_step(select_stmt) == SQLITE_ROW) {
-            int64_t sid = sqlite3_column_int64(select_stmt, 0);
-            int64_t started_at = sqlite3_column_int64(select_stmt, 1);
-            int detection_count = sqlite3_column_int(select_stmt, 2);
-
-            // Delete associated classifications first
-            sqlite3_stmt* del_det = nullptr;
-            const char* del_det_sql = "DELETE FROM classifications WHERE session_id = ?;";
-            if (sqlite3_prepare_v2(db(), del_det_sql, -1, &del_det, nullptr) == SQLITE_OK) {
-                sqlite3_bind_int64(del_det, 1, sid);
-                sqlite3_step(del_det);
-                sqlite3_finalize(del_det);
-            }
-
-            // Delete the session
-            sqlite3_stmt* del_ses = nullptr;
-            const char* del_ses_sql = "DELETE FROM sessions WHERE id = ?;";
-            if (sqlite3_prepare_v2(db(), del_ses_sql, -1, &del_ses, nullptr) == SQLITE_OK) {
-                sqlite3_bind_int64(del_ses, 1, sid);
-                sqlite3_step(del_ses);
-                sqlite3_finalize(del_ses);
-            }
-
-            std::cout << "[SessionActor] deleted session " << sid
-                      << " (started=" << started_at
-                      << ", classifications=" << detection_count << ")\n";
-
-            // TODO: Publish SessionDeletedEvent via Ramen event bus when available
-        }
-        sqlite3_finalize(select_stmt);
-    }
 }
 
 // ── Queries ───────────────────────────────────────────────────────────────────
 
 std::vector<SessionInfo> SessionActor::list_sessions(int limit, int offset) const {
-    sqlite3_stmt* stmt = nullptr;
-    const char* sql = "SELECT id, started_at, stopped_at, detection_count "
-                      "FROM sessions ORDER BY started_at DESC LIMIT ? OFFSET ?;";
+    auto records = data_store_.list_sessions(limit, offset);
 
     std::vector<SessionInfo> sessions;
-    if (sqlite3_prepare_v2(db(), sql, -1, &stmt, nullptr) == SQLITE_OK) {
-        sqlite3_bind_int(stmt, 1, limit);
-        sqlite3_bind_int(stmt, 2, offset);
+    sessions.reserve(records.size());
 
-        while (sqlite3_step(stmt) == SQLITE_ROW) {
-            SessionInfo info;
-            info.id              = sqlite3_column_int64(stmt, 0);
-            info.started_at      = sqlite3_column_int64(stmt, 1);
-            info.stopped_at      = sqlite3_column_type(stmt, 2) != SQLITE_NULL
-                                   ? sqlite3_column_int64(stmt, 2) : 0;
-            info.detection_count = sqlite3_column_int(stmt, 3);
-            info.active          = (info.id == active_session_id_.load());
-            sessions.push_back(std::move(info));
-        }
-        sqlite3_finalize(stmt);
+    for (const auto& rec : records) {
+        SessionInfo info;
+        info.id              = rec.id;
+        info.started_at      = rec.started_at;
+        info.stopped_at      = rec.stopped_at;
+        info.detection_count = rec.detection_count;
+        info.active          = (rec.id == active_session_id_.load());
+        sessions.push_back(std::move(info));
     }
 
     return sessions;
 }
 
 SessionInfo SessionActor::get_session(int64_t session_id) const {
-    sqlite3_stmt* stmt = nullptr;
-    const char* sql = "SELECT id, started_at, stopped_at, detection_count "
-                      "FROM sessions WHERE id = ?;";
-
-    SessionInfo info;
-    if (sqlite3_prepare_v2(db(), sql, -1, &stmt, nullptr) == SQLITE_OK) {
-        sqlite3_bind_int64(stmt, 1, session_id);
-        if (sqlite3_step(stmt) == SQLITE_ROW) {
-            info.id              = sqlite3_column_int64(stmt, 0);
-            info.started_at      = sqlite3_column_int64(stmt, 1);
-            info.stopped_at      = sqlite3_column_type(stmt, 2) != SQLITE_NULL
-                                   ? sqlite3_column_int64(stmt, 2) : 0;
-            info.detection_count = sqlite3_column_int(stmt, 3);
-            info.active          = (info.id == active_session_id_.load());
-        }
-        sqlite3_finalize(stmt);
+    auto rec = data_store_.get_session(session_id);
+    if (rec.id < 0) {
+        return SessionInfo{};
     }
 
+    SessionInfo info;
+    info.id              = rec.id;
+    info.started_at      = rec.started_at;
+    info.stopped_at      = rec.stopped_at;
+    info.detection_count = rec.detection_count;
+    info.active          = (rec.id == active_session_id_.load());
     return info;
 }
 
 std::vector<DetectionInfo> SessionActor::list_detections(int64_t session_id, int limit, int offset) const {
-    sqlite3_stmt* stmt = nullptr;
-    const char* sql = "SELECT id, timestamp, track_id, class_id, confidence, image_path, session_id "
-                      "FROM classifications WHERE session_id = ? "
-                      "ORDER BY timestamp DESC LIMIT ? OFFSET ?;";
+    auto records = data_store_.list_detections(session_id, limit, offset);
 
     std::vector<DetectionInfo> detections;
-    if (sqlite3_prepare_v2(db(), sql, -1, &stmt, nullptr) == SQLITE_OK) {
-        sqlite3_bind_int64(stmt, 1, session_id);
-        sqlite3_bind_int(stmt, 2, limit);
-        sqlite3_bind_int(stmt, 3, offset);
+    detections.reserve(records.size());
 
-        while (sqlite3_step(stmt) == SQLITE_ROW) {
-            DetectionInfo det;
-            det.id         = sqlite3_column_int64(stmt, 0);
-            det.timestamp  = sqlite3_column_int64(stmt, 1);
-            det.track_id   = sqlite3_column_int(stmt, 2);
-            det.class_id   = sqlite3_column_int(stmt, 3);
-            det.confidence = sqlite3_column_double(stmt, 4);
-            det.session_id = sqlite3_column_int64(stmt, 6);
-
-            const char* path = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 5));
-            if (path) det.image_path = path;
-
-            detections.push_back(std::move(det));
-        }
-        sqlite3_finalize(stmt);
+    for (const auto& rec : records) {
+        DetectionInfo det;
+        det.id         = rec.id;
+        det.timestamp  = rec.timestamp;
+        det.track_id   = rec.track_id;
+        det.class_id   = rec.class_id;
+        det.confidence = rec.confidence;
+        det.image_path = rec.image_path;
+        det.session_id = rec.session_id;
+        detections.push_back(std::move(det));
     }
 
     return detections;
 }
 
 DetectionInfo SessionActor::get_detection(int64_t detection_id) const {
-    sqlite3_stmt* stmt = nullptr;
-    const char* sql = "SELECT id, timestamp, track_id, class_id, confidence, image_path, session_id "
-                      "FROM classifications WHERE id = ?;";
-
-    DetectionInfo det;
-    if (sqlite3_prepare_v2(db(), sql, -1, &stmt, nullptr) == SQLITE_OK) {
-        sqlite3_bind_int64(stmt, 1, detection_id);
-        if (sqlite3_step(stmt) == SQLITE_ROW) {
-            det.id         = sqlite3_column_int64(stmt, 0);
-            det.timestamp  = sqlite3_column_int64(stmt, 1);
-            det.track_id   = sqlite3_column_int(stmt, 2);
-            det.class_id   = sqlite3_column_int(stmt, 3);
-            det.confidence = sqlite3_column_double(stmt, 4);
-            det.session_id = sqlite3_column_int64(stmt, 6);
-
-            const char* path = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 5));
-            if (path) det.image_path = path;
-        }
-        sqlite3_finalize(stmt);
+    auto rec = data_store_.get_detection(detection_id);
+    if (rec.id < 0) {
+        DetectionInfo empty;
+        empty.id = -1;
+        return empty;
     }
 
+    DetectionInfo det;
+    det.id         = rec.id;
+    det.timestamp  = rec.timestamp;
+    det.track_id   = rec.track_id;
+    det.class_id   = rec.class_id;
+    det.confidence = rec.confidence;
+    det.image_path = rec.image_path;
+    det.session_id = rec.session_id;
     return det;
 }
 
@@ -513,30 +258,9 @@ bool SessionActor::provision(const std::string& trap_id) {
         return false;
     }
 
-    auto now_ms = std::chrono::duration_cast<std::chrono::milliseconds>(
-        std::chrono::system_clock::now().time_since_epoch()).count();
-
-    sqlite3_stmt* stmt = nullptr;
-    const char* insert = "INSERT INTO trap_info (id, name, provisioned_at) VALUES (?, ?, ?);";
-    int rc = sqlite3_prepare_v2(db(), insert, -1, &stmt, nullptr);
-    if (rc != SQLITE_OK) {
-        std::cerr << "[SessionActor] provision prepare failed: "
-                  << sqlite3_errmsg(db()) << "\n";
+    if (!data_store_.provision(trap_id)) {
         return false;
     }
-
-    sqlite3_bind_text(stmt, 1, trap_id.c_str(), -1, SQLITE_TRANSIENT);
-    sqlite3_bind_text(stmt, 2, trap_id.c_str(), -1, SQLITE_TRANSIENT);
-    sqlite3_bind_int64(stmt, 3, now_ms);
-
-    rc = sqlite3_step(stmt);
-    if (rc != SQLITE_DONE) {
-        std::cerr << "[SessionActor] provision INSERT failed: "
-                  << sqlite3_errmsg(db()) << "\n";
-        sqlite3_finalize(stmt);
-        return false;
-    }
-    sqlite3_finalize(stmt);
 
     trap_id_ = trap_id;
     std::cout << "[SessionActor] provisioned trap_id=" << trap_id << "\n";
@@ -575,33 +299,24 @@ std::string SessionActor::save_jpeg(const JpegCrop& crop) {
 }
 
 int64_t SessionActor::insert_classification(const JpegCrop& crop, const std::string& path) {
-    if (!insert_stmt_) return -1;
-
     int64_t session_id = active_session_id_.load();
 
-    sqlite3_bind_int64(insert_stmt_, 1, crop.timestamp_ms);
-    sqlite3_bind_int(insert_stmt_, 2, crop.track_id);
-    sqlite3_bind_int(insert_stmt_, 3, crop.class_id);
-    sqlite3_bind_double(insert_stmt_, 4, static_cast<double>(crop.confidence));
-    sqlite3_bind_int(insert_stmt_, 5, 0);      // detection_class_id placeholder
-    sqlite3_bind_double(insert_stmt_, 6, 0.0); // detection_confidence placeholder
-    sqlite3_bind_text(insert_stmt_, 7, path.c_str(), -1, SQLITE_TRANSIENT);
-    sqlite3_bind_int64(insert_stmt_, 8, session_id);
+    DataStore::DetectionRecord rec;
+    rec.session_id = session_id;
+    rec.timestamp  = crop.timestamp_ms;
+    rec.track_id   = crop.track_id;
+    rec.class_id   = crop.class_id;
+    rec.confidence = static_cast<double>(crop.confidence);
+    rec.image_path = path;
 
-    int rc = sqlite3_step(insert_stmt_);
-    if (rc != SQLITE_DONE) {
-        std::cerr << "[SessionActor] INSERT failed: " << sqlite3_errmsg(db()) << "\n";
-        sqlite3_reset(insert_stmt_);
-        return -1;
+    int64_t classification_id = data_store_.insert_detection(rec);
+
+    if (classification_id >= 0) {
+        std::cout << "[SessionActor] saved classification id=" << classification_id
+                  << " track=" << crop.track_id
+                  << " class=" << crop.class_id
+                  << " conf=" << crop.confidence << "\n";
     }
-
-    int64_t classification_id = sqlite3_last_insert_rowid(db());
-    sqlite3_reset(insert_stmt_);
-
-    std::cout << "[SessionActor] inserted classification id=" << classification_id
-              << " track=" << crop.track_id
-              << " class=" << crop.class_id
-              << " conf=" << crop.confidence << "\n";
 
     return classification_id;
 }

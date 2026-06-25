@@ -256,11 +256,15 @@ class _DetectionGrid extends StatelessWidget {
                   itemBuilder: (context, index) {
                     final detection = detections[index];
                     final host = trapProvider.trapIp;
-                    String _imageUrl(String url) {
+
+                    String resolveImageUrl(String url) {
                       if (url.startsWith('http://') ||
-                          url.startsWith('https://'))
+                          url.startsWith('https://')) {
                         return url;
-                      if (url.startsWith('/')) return 'http://$host:8080$url';
+                      }
+                      if (url.startsWith('/')) {
+                        return 'http://$host:8080$url';
+                      }
                       return url;
                     }
 
@@ -269,7 +273,7 @@ class _DetectionGrid extends StatelessWidget {
                       key: ValueKey(detection.id),
                       detection: detection,
                       imageUrl: imageUrl.isNotEmpty
-                          ? _imageUrl(imageUrl)
+                          ? resolveImageUrl(imageUrl)
                           : null,
                     );
                   },
@@ -277,15 +281,6 @@ class _DetectionGrid extends StatelessWidget {
         ),
       ],
     );
-  }
-
-  String _buildImageUrl(dynamic api, Detection detection) {
-    final imageUrl = detection.imageUrl;
-    if (imageUrl.startsWith('http')) return imageUrl;
-    if (imageUrl.startsWith('/v1/crops/')) {
-      return '${api.baseUrl}$imageUrl';
-    }
-    return '${api.baseUrl}/v1/crops/$imageUrl';
   }
 }
 

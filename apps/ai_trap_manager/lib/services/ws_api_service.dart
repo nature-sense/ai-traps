@@ -63,16 +63,11 @@ class WsApiService {
   /// Whether the service is currently connected.
   bool get isConnected => _ws != null;
 
-  /// Completer that resolves when the WebSocket connection is established.
-  Completer<void>? _connectCompleter;
-
   /// Connect to the WebSocket at the given [url].
   /// Returns a Future that completes when the connection is established
   /// or fails if the connection cannot be made.
   Future<void> connect(String url) async {
     disconnect();
-    final completer = Completer<void>();
-    _connectCompleter = completer;
 
     try {
       final ws = await WebSocket.connect(url);
